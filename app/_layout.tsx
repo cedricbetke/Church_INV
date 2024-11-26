@@ -13,6 +13,7 @@ export default function RootLayout() {
 
 const MyCustomTheme = {
   ...DefaultTheme,
+    flex:1,
   colors: {
     ...DefaultTheme.colors,
     primary: '#1976d2', // Beispiel für eine Hauptfarbe (violett)

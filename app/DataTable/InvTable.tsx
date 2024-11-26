@@ -5,7 +5,7 @@ import {StyleSheet} from "react-native";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
-    const [numberOfItemsPerPageList] = React.useState([5,10,15,20]);
+    const [numberOfItemsPerPageList] = React.useState([5,10,15,20,30]);
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[1]
     );
@@ -105,6 +105,54 @@ const MyComponent = () => {
             calories: 262,
             fat: 16,
         },
+        {
+            key: 18,
+            name: 'Eclair',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 19,
+            name: 'Eclair',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 20,
+            name: 'Eclair',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 21,
+            name: 'Eclair',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 22,
+            name: 'Eclair',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 23,
+            name: 'dritt letzte',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 24,
+            name: 'vorletzte',
+            calories: 262,
+            fat: 16,
+        },
+        {
+            key: 25,
+            name: 'dasdad',
+            calories: 262,
+            fat: 16,
+        },
     ]);
 
     const from = page * itemsPerPage;
@@ -116,24 +164,22 @@ const MyComponent = () => {
 
     return (
         <View style={styles.container}>
-            <ScrollView style={styles.scrollView}>
                 <DataTable>
                     <DataTable.Header>
                         <DataTable.Title>Dessert</DataTable.Title>
                         <DataTable.Title numeric>Calories</DataTable.Title>
                         <DataTable.Title numeric>Fat</DataTable.Title>
                     </DataTable.Header>
-
-                    {items.slice(from, to).map((item) => (
-                        <DataTable.Row key={item.key}>
-                            <DataTable.Cell>{item.name}</DataTable.Cell>
-                            <DataTable.Cell numeric>{item.calories}</DataTable.Cell>
-                            <DataTable.Cell numeric>{item.fat}</DataTable.Cell>
-                        </DataTable.Row>
-                    ))}
+                    <ScrollView style={styles.scrollView}>
+                        {items.slice(from, to).map((item) => (
+                            <DataTable.Row key={item.key}>
+                                <DataTable.Cell>{item.name}</DataTable.Cell>
+                                <DataTable.Cell numeric>{item.calories}</DataTable.Cell>
+                                <DataTable.Cell numeric>{item.fat}</DataTable.Cell>
+                            </DataTable.Row>
+                        ))}
+                    </ScrollView>
                 </DataTable>
-            </ScrollView>
-
             <View style={styles.pagination}>
                 <DataTable.Pagination
                     page={page}
@@ -157,7 +203,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     scrollView: {
-        maxHeight: '85%', // Setzt die Höhe der ScrollView
+        maxHeight: '55%', // Setzt die Höhe der ScrollView
     },
     pagination: {
         position: 'absolute', // Mach die Pagination sticky
@@ -165,7 +211,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: 'white',
-        padding: 16,
+        paddingTop:15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
