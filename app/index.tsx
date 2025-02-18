@@ -12,7 +12,7 @@ import InvTable from "@/app/DataTable/InvTable";
 export default function Index() {
     const theme = useTheme();
     return (
-        <View style={{flex:1}}>
+        <View style={{height: "100%"}}>
             <InvTable></InvTable>
         </View>
     );

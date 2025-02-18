@@ -169,13 +169,13 @@ const MyComponent = () => {
 
     return (
         <View style={styles.container}>
-                <DataTable>
+                <DataTable style={styles.datacontainer}>
                     <DataTable.Header>
                         <DataTable.Title>Dessert</DataTable.Title>
                         <DataTable.Title numeric>Calories</DataTable.Title>
                         <DataTable.Title numeric>Fat</DataTable.Title>
                     </DataTable.Header>
-                    <ScrollView style={styles.scrollView}>
+                    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                         {items.slice(from, to).map((item) => (
                             <DataTable.Row key={item.key}>
                                 <DataTable.Cell>{item.name}</DataTable.Cell>
@@ -204,16 +204,24 @@ const MyComponent = () => {
 
 const styles = StyleSheet.create({
     container: {
+        display: "flex",
         flex:1,
-        padding: 16,
+        justifyContent:"space-between",
+        height:"100%",
+        overflow:"hidden"
+    },
+    datacontainer:{
+        flex:1,
     },
     scrollView: {
-        flex:1
+        flex:1,
+    },
+    scrollContent: {
+        flexGrow: 1, // Verhindert, dass der ScrollView größer als der Bildschirm wird
     },
     pagination: {
         width:"100%",
-        flex:1,
-        alignSelf:"flex-end",
+        marginTop:"auto",
         backgroundColor: 'white',
         paddingTop:15,
         shadowColor: '#000',
