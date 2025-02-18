@@ -12,6 +12,7 @@ export default function RootLayout() {
 }
 
 const MyCustomTheme = {
+    flexShrink:1,
   ...DefaultTheme,
     flex:1,
   colors: {

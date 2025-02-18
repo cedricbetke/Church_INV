@@ -2,6 +2,7 @@ import * as React from 'react';
 import { DataTable } from 'react-native-paper';
 import {ScrollView, View} from "react-native";
 import {StyleSheet} from "react-native";
+import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
@@ -155,6 +156,10 @@ const MyComponent = () => {
         },
     ]);
 
+    const overriddenStyle = StyleSheet.flatten([
+        defaultTheme,
+        { flexShrink: 1 }, // Überschreibt den Default
+    ]);
     const from = page * itemsPerPage;
     const to = Math.min((page + 1) * itemsPerPage, items.length);
 
@@ -199,17 +204,16 @@ const MyComponent = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex:1,
         padding: 16,
     },
     scrollView: {
-        maxHeight: '55%', // Setzt die Höhe der ScrollView
+        flex:1
     },
     pagination: {
-        position: 'absolute', // Mach die Pagination sticky
-        bottom: 0,
-        left: 0,
-        right: 0,
+        width:"100%",
+        flex:1,
+        alignSelf:"flex-end",
         backgroundColor: 'white',
         paddingTop:15,
         shadowColor: '#000',
