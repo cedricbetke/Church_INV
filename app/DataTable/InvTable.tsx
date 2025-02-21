@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { DataTable } from 'react-native-paper';
-import {ScrollView, View} from "react-native";
-import {StyleSheet, Image} from "react-native";
+import {DataTable} from 'react-native-paper';
+import {Image, ScrollView, StyleSheet, View} from "react-native";
 import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
-import {UNDEFINED} from "turbo-stream/dist/utils";
+import {Status} from "@/app/Status";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
@@ -23,8 +22,8 @@ const MyComponent = () => {
         Descending = "descending",
     }
     const [columns, setColumns] = React.useState([
-        { title: 'Dessert', key: 'name', numeric: false, sortDirection: undefined}, //sortDirection: SortDirection.Ascending z.B.
-        { title: 'Calories', key: 'calories', numeric: false, sortDirection:undefined },
+        { title: 'Dessert', key: 'invNr', numeric: false, sortDirection: undefined}, //sortDirection: SortDirection.Ascending z.B.
+        { title: 'Status', key: 'stat', numeric: false, sortDirection:undefined },
         { title: 'Fat', key: 'fat', numeric: false, sortDirection:undefined },
         { title: 'Gerätefoto', key: 'foto', numeric: false, sortDirection:undefined },
 
@@ -33,59 +32,59 @@ const MyComponent = () => {
     const [items, setItems] = React.useState([
         {
             key: 1,
-            name: 'Cupcake',
-            calories: 356,
+            invNr: '1',
+            stat: Status.IN_VERWENDUNG,
             fat: 16,
             foto:"",
         },
         {
             key: 2,
-            name: 'Eclair',
-            calories: 262,
+            invNr: '2',
+            stat: Status.AUSGEMUSTER,
             fat: 16,
             foto:"",
         },
         {
             key: 3,
-            name: 'Frozen yogurt',
-            calories: 159,
+            invNr: '3',
+            stat: 159,
             fat: 6,
         },
         {
             key: 4,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '4',
+            stat: 305,
             fat: 3.7,
         },
         {
             key: 5,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '5',
+            stat: 305,
             fat: 3.7,
         },{
             key: 6,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '7',
+            stat: 305,
             fat: 3.7,
         },{
             key: 7,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '8',
+            stat: 305,
             fat: 3.7,
         },{
             key: 8,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '9',
+            stat: 305,
             fat: 3.7,
         },{
             key: 9,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '10',
+            stat: 305,
             fat: 3.7,
         },{
             key: 10,
-            name: 'Gingerbread',
-            calories: 305,
+            invNr: '11',
+            stat: 305,
             fat: 3.7,
         },{
             key: 11,
