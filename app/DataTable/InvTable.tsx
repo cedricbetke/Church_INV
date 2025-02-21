@@ -6,7 +6,7 @@ import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
-    const [numberOfItemsPerPageList] = React.useState([5,10,15,20,30]);
+    const [numberOfItemsPerPageList] = React.useState([5,10,15,20,30,50]);
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[1]
     );
