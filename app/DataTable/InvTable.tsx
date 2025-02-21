@@ -3,6 +3,7 @@ import { DataTable } from 'react-native-paper';
 import {ScrollView, View} from "react-native";
 import {StyleSheet} from "react-native";
 import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
+import {UNDEFINED} from "turbo-stream/dist/utils";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
@@ -10,8 +11,26 @@ const MyComponent = () => {
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[1]
     );
+    type Column = { //type für die Titel der Tabelle
+        title:string;
+        key: string,
+        numeric:boolean,
+        sortDirection: "ascending" | "descending" | undefined;
+    }
+    enum SortOrder { //Enum für Sortorder für Titel der Tabelle
+        Ascending = "ascending",
+        Descending = "descending",
+        Undefined = UNDEFINED,
+    }
+    const [columns, setColumns] = React.useState([
+        { title: 'Dessert', key: 'name', numeric: false, sortDirection: undefined}, //sortDirection: SortDirection.Ascending z.B.
+        { title: 'Calories', key: 'calories', numeric: false, sortDirection:undefined },
+        { title: 'Fat', key: 'fat', numeric: false, sortDirection:undefined },
+        { title: 'Gerätefoto', key: 'foto', numeric: false, sortDirection:undefined },
 
-    const [items] = React.useState([
+    ]);
+
+    const [items, setItems] = React.useState([
         {
             key: 1,
             name: 'Cupcake',
@@ -150,7 +169,7 @@ const MyComponent = () => {
         },
         {
             key: 25,
-            name: 'dasdad',
+            name: 'letzte',
             calories: 262,
             fat: 16,
         },
@@ -170,17 +189,21 @@ const MyComponent = () => {
     return (
         <View style={styles.container}>
                 <DataTable style={styles.datacontainer}>
-                    <DataTable.Header>
-                        <DataTable.Title>Dessert</DataTable.Title>
-                        <DataTable.Title numeric>Calories</DataTable.Title>
-                        <DataTable.Title numeric>Fat</DataTable.Title>
+                        <DataTable.Header>
+                        {columns.map((col) => (
+                            <DataTable.Title sortDirection={col.sortDirection} key={col.key} numeric={col.numeric}>
+                                {col.title}
+                            </DataTable.Title>
+                        ))}
                     </DataTable.Header>
                     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                        {items.slice(from, to).map((item) => (
+                        {items.map((item) => (
                             <DataTable.Row key={item.key}>
-                                <DataTable.Cell>{item.name}</DataTable.Cell>
-                                <DataTable.Cell numeric>{item.calories}</DataTable.Cell>
-                                <DataTable.Cell numeric>{item.fat}</DataTable.Cell>
+                                {columns.map((col) => (
+                                    <DataTable.Cell key={col.key} numeric={col.numeric}>
+                                        {item[col.key as keyof typeof item]}
+                                    </DataTable.Cell>
+                                ))}
                             </DataTable.Row>
                         ))}
                     </ScrollView>
@@ -208,7 +231,8 @@ const styles = StyleSheet.create({
         flex:1,
         justifyContent:"space-between",
         height:"100%",
-        overflow:"hidden"
+        overflow:"hidden",
+
     },
     datacontainer:{
         flex:1,
