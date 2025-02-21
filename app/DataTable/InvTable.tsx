@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataTable } from 'react-native-paper';
 import {ScrollView, View} from "react-native";
-import {StyleSheet} from "react-native";
+import {StyleSheet, Image} from "react-native";
 import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
 import {UNDEFINED} from "turbo-stream/dist/utils";
 
@@ -16,11 +16,11 @@ const MyComponent = () => {
         key: string,
         numeric:boolean,
         sortDirection: "ascending" | "descending" | undefined;
+        foto?: string; // Hier speichern wir das Bild als Base64-String
     }
     enum SortOrder { //Enum für Sortorder für Titel der Tabelle
         Ascending = "ascending",
         Descending = "descending",
-        Undefined = UNDEFINED,
     }
     const [columns, setColumns] = React.useState([
         { title: 'Dessert', key: 'name', numeric: false, sortDirection: undefined}, //sortDirection: SortDirection.Ascending z.B.
@@ -36,12 +36,14 @@ const MyComponent = () => {
             name: 'Cupcake',
             calories: 356,
             fat: 16,
+            foto:"",
         },
         {
             key: 2,
             name: 'Eclair',
             calories: 262,
             fat: 16,
+            foto:"",
         },
         {
             key: 3,
@@ -175,6 +177,21 @@ const MyComponent = () => {
         },
     ]);
 
+    // Funktion zum Hochladen eines Bildes und Speichern im Zustand
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+        const file = event.target.files?.[0]; // Hole die ausgewählte Datei
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                const newItems = [...items];
+                newItems[index].foto = reader.result as string; // Speichern des Base64-Strings im Zustand
+                setItems(newItems);
+            };
+
+            reader.readAsDataURL(file); // Liest die Datei als Data-URL (Base64)
+        }
+    };
     const overriddenStyle = StyleSheet.flatten([
         defaultTheme,
         { flexShrink: 1 }, // Überschreibt den Default
@@ -197,11 +214,30 @@ const MyComponent = () => {
                         ))}
                     </DataTable.Header>
                     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                        {items.map((item) => (
+                        {items.map((item, rowIndex) => (
                             <DataTable.Row key={item.key}>
                                 {columns.map((col) => (
                                     <DataTable.Cell key={col.key} numeric={col.numeric}>
-                                        {item[col.key as keyof typeof item]}
+                                        {col.key === "foto" ? (
+                                            // Wenn die Spalte "foto" ist, zeigen wir das Bild oder ein Datei-Auswahlfeld an
+                                            <>
+                                                {item.foto ? (
+                                                    <Image
+                                                        source={{ uri: item.foto }}
+                                                        style={{ width: 50, height: 50, borderRadius: 5 }}
+                                                    />
+                                                ) : (
+                                                    <input
+                                                        type="file"
+                                                        accept="image/png, image/jpeg"
+                                                        onChange={(e) => handleFileChange(e, rowIndex)} // Bild hochladen
+                                                    />
+                                                )}
+                                            </>
+                                        ) : (
+                                            // Ansonsten den Wert der Zelle direkt anzeigen
+                                            item[col.key as keyof typeof item]
+                                        )}
                                     </DataTable.Cell>
                                 ))}
                             </DataTable.Row>
