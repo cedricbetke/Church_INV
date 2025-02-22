@@ -5,7 +5,7 @@ export default function RootLayout() {
   return (
       <PaperProvider theme={MyCustomTheme}>
         <Stack>
-          <Stack.Screen name="index" options={{ title: 'Home' }} />
+          <Stack.Screen name="index" options={{ title: 'ChurchINV' }} />
         </Stack>
       </PaperProvider>
   );

@@ -7,7 +7,7 @@ import { ThemedView } from '@/components/ThemedView';
 import {useTheme} from "react-native-paper";
 
 import { Text, View, /* @tutinfo Import <CODE>StyleSheet</CODE> to define styles. */ } from 'react-native';
-import InvTable from "@/app/DataTable/InvTable";
+import InvTable from "@/app/dataTable/InvTable";
 
 export default function Index() {
     const theme = useTheme();
