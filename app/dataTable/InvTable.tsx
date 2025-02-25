@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {DataTable} from 'react-native-paper';
-import {Image, ScrollView, StyleSheet, View} from "react-native";
+import {DataTable, Modal, Portal, Button} from 'react-native-paper';
+import { Image, ScrollView, StyleSheet, Text, View} from "react-native";
 import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
 import {Status} from "@/app/inventoryItem/Status";
 import {testInventoryItems} from "@/app/inventoryItem/testdata";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
 
 const MyComponent = () => {
@@ -58,6 +58,13 @@ const MyComponent = () => {
         setPage(0);
     }, [itemsPerPage]);
 
+    const [visibleModal, setVisibleModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<any>(null);
+    const openDetailModal = (item: any) => {
+        setSelectedItem(item);
+        setVisibleModal(true);
+    };
+
     return (
         <View style={styles.container}>
                 <DataTable style={styles.datacontainer}>
@@ -69,8 +76,8 @@ const MyComponent = () => {
                         ))}
                     </DataTable.Header>
                     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                        {items.map((item, rowIndex) => (
-                            <DataTable.Row key={item.invNr}>
+                        {items.slice(from, to).map((item, rowIndex) => (
+                            <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
                                 {columns.map((col) => (
                                     <DataTable.Cell key={col.key} numeric={col.numeric}>
                                         {col.key === "foto" ? (
@@ -111,6 +118,49 @@ const MyComponent = () => {
                     showFastPaginationControls
                 />
             </View>
+            {/* Detail-Modal */}
+            <Portal>
+                <Modal
+                    visible={visibleModal}
+                    onDismiss={() => setVisibleModal(false)}
+                    contentContainerStyle={{
+                        backgroundColor: "white",
+                        padding: 20,
+                        borderRadius: 10,
+                        alignItems: "center",
+                    }}
+                >
+                    {selectedItem && (
+                        <>
+                            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
+                                Details zu {selectedItem.invNr}
+                            </Text>
+                            {selectedItem.geräteFoto && (
+                                <Image
+                                    source={{ uri: selectedItem.geräteFoto }}
+                                    style={{ width: 400, height: 400, borderRadius: 10, marginBottom: 10 }}
+                                />
+                            )}
+                            {columns.map((col) => (
+                                <Text key={col.key} style={{ fontSize: 16 }}>
+                                    <Text style={{ fontWeight: "bold" }}>{col.title}: </Text>
+                                    {selectedItem[col.key as keyof typeof selectedItem] || "N/A"}
+                                </Text>
+                            ))}
+                            <Button
+                                onPress={() => setVisibleModal(false)}
+                                style={{
+                                    marginTop: 10, // Button-Abstand oben
+                                    backgroundColor: '#6200ea', // Hintergrundfarbe
+                                    borderRadius: 5, // Runder Rand
+                                }}
+                            >
+                                Schließen
+                            </Button>
+                        </>
+                    )}
+                </Modal>
+            </Portal>
         </View>
     );
 };

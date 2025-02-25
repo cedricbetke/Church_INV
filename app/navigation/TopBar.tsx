@@ -7,6 +7,7 @@ const MyComponent = () => (
         <Appbar.Content title="ChurchINV" />
         <Appbar.Action icon="plus" onPress={() => {}} />
         <Appbar.Action icon="magnify" onPress={() => {}} />
+        <Appbar.Action icon="qrcode-scan" onPress={() => {}} />
         <Appbar.Action icon="filter" onPress={() => {}} />
     </Appbar.Header>
 );
