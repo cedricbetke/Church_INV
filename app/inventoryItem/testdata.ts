@@ -199,5 +199,80 @@ const testItem8 = new InventoryItem(
         ],
         "qrCode77799"
     );
+const testItem9 = new InventoryItem(
+    1009,
+    Status.VERFUEGBAR,
+    "Samsung",
+    "https://example.com/images/monitor.jpg",
+    "Odyssey G7",
+    "Monitor",
+    "SN777999",
+    new Date("2022-07-30"),
+    699.99,
+    "Frankfurt",
+    "Thomas Müller",
+    "Entwicklung",
+    "Elektronik",
+    [
+        {
+            id: "att5",
+            name: "Lieferungsschein.pdf",
+            type: "application/pdf",
+            file: "https://example.com/lieferungsschein.pdf",
+            uploadedAt: new Date("2022-08-01"),
+        },
+    ],
+    "qrCode77799"
+);
+const testItem10 = new InventoryItem(
+    1010,
+    Status.VERFUEGBAR,
+    "Samsung",
+    "https://example.com/images/monitor.jpg",
+    "Odyssey G7",
+    "Monitor",
+    "SN777999",
+    new Date("2022-07-30"),
+    699.99,
+    "Frankfurt",
+    "Thomas Müller",
+    "Entwicklung",
+    "Elektronik",
+    [
+        {
+            id: "att5",
+            name: "Lieferungsschein.pdf",
+            type: "application/pdf",
+            file: "https://example.com/lieferungsschein.pdf",
+            uploadedAt: new Date("2022-08-01"),
+        },
+    ],
+    "qrCode77799"
+);
+const testItem11 = new InventoryItem(
+    1011,
+    Status.VERFUEGBAR,
+    "Samsung",
+    "https://example.com/images/monitor.jpg",
+    "Odyssey G7",
+    "Monitor",
+    "SN777999",
+    new Date("2022-07-30"),
+    699.99,
+    "Frankfurt",
+    "Thomas Müller",
+    "Entwicklung",
+    "Elektronik",
+    [
+        {
+            id: "att5",
+            name: "Lieferungsschein.pdf",
+            type: "application/pdf",
+            file: "https://example.com/lieferungsschein.pdf",
+            uploadedAt: new Date("2022-08-01"),
+        },
+    ],
+    "qrCode77799"
+);
 // Alle Testobjekte in einem Array zusammenfassen
-export const testInventoryItems: InventoryItem[] = [testItem1, testItem2, testItem3,testItem4, testItem5, testItem6, testItem7, testItem8];
+export const testInventoryItems: InventoryItem[] = [testItem1, testItem2, testItem3,testItem4, testItem5, testItem6, testItem7, testItem8, testItem9, testItem10,testItem11];

@@ -6,6 +6,7 @@ import {Status} from "@/app/inventoryItem/Status";
 import {testInventoryItems} from "@/app/inventoryItem/testdata";
 import {useEffect, useState} from "react";
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
+import * as ImagePicker from 'expo-image-picker';
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
@@ -33,20 +34,30 @@ const MyComponent = () => {
     }, []);
 
     // Funktion zum Hochladen eines Bildes und Speichern im Zustand
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-        const file = event.target.files?.[0]; // Hole die ausgewählte Datei
-        if (file) {
-            const reader = new FileReader();
+    const handleFileChange = async (index: number) => {
+        // Request media library permissions
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-            reader.onloadend = () => {
-                const newItems = [...items];
-                newItems[index].geräteFoto = reader.result as string; // Speichern des Base64-Strings im Zustand
-                setItems(newItems);
-            };
+        if (!permissionResult.granted) {
+            alert('Permission to access media library is required!');
+            return;
+        }
 
-            reader.readAsDataURL(file); // Liest die Datei als Data-URL (Base64)
+        // Launch image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+            base64: true,
+        });
+
+        if (!result.canceled && result.assets && result.assets[0].base64) {
+            const newItems = [...items];
+            newItems[index].geräteFoto = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            setItems(newItems);
         }
     };
+
     const overriddenStyle = StyleSheet.flatten([
         defaultTheme,
         { flexShrink: 1 }, // Überschreibt den Default
@@ -64,6 +75,17 @@ const MyComponent = () => {
         setSelectedItem(item);
         setVisibleModal(true);
     };
+// Step 1: Extract constant
+    const FALLBACK_VALUE = "N/A";
+
+// Step 2: Extract function with meaningful name and type annotations
+    function getValueOrFallback<T>(
+        item: T,
+        key: keyof T,
+        fallback: string = FALLBACK_VALUE
+    ): string {
+        return (item[key] as string) || fallback;
+    }
 
     return (
         <View style={styles.container}>
@@ -89,16 +111,12 @@ const MyComponent = () => {
                                                         style={{ width: 50, height: 50, borderRadius: 5 }}
                                                     />
                                                 ) : (
-                                                    <input
-                                                        type="file"
-                                                        accept="image/png, image/jpeg"
-                                                        onChange={(e) => handleFileChange(e, rowIndex)} // Bild hochladen
-                                                    />
+                                                    <Button onPress={()=>handleFileChange(rowIndex)}> Upload Image </Button>
                                                 )}
                                             </>
                                         ) : (
                                             // Ansonsten den Wert der Zelle direkt anzeigen
-                                            <>{item[col.key as keyof InventoryItem] || "N/A"}</>
+                                            <Text>{getValueOrFallback(item,col.key as keyof InventoryItem)}</Text>
                                         )}
                                     </DataTable.Cell>
                                 ))}
