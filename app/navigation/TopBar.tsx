@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {Appbar, Modal, Portal} from 'react-native-paper';
-import {useNavigation} from "expo-router";
 import { View} from "react-native";
 import {useState} from "react";
 import QrCodeScanner from "@/app/Scanner/QrCodeScanner";
