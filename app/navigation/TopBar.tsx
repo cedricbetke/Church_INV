@@ -6,7 +6,7 @@ import QrCodeScanner from "@/app/Scanner/QrCodeScanner";
 
 const MyComponent = () => {
         const [showModal, setShowModal] = useState<boolean>(false);
-
+        const [showSearchModal, setShowSearchModas] = useState(false);
         return (
             <View>
                     <Appbar.Header>
