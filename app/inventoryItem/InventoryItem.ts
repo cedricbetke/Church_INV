@@ -18,11 +18,11 @@ export default class InventoryItem {
     qrCode: string; // Eindeutiger Wert, der im QR-Code kodiert wird
 
 
-    constructor(invNr: number, status: Status, hersteller:string, geräteFoto: string, modell: string, objekttyp: string, seriennummer: string, kaufdatum: Date, einkaufspreis: number, standort: string, verantwortlicher: string, bereich:string, kategorie: string, attachments: Attachment[], qrCode: string) {
+    constructor(invNr: number, status: Status, hersteller:string, geraeteFoto: string, modell: string, objekttyp: string, seriennummer: string, kaufdatum: Date, einkaufspreis: number, standort: string, verantwortlicher: string, bereich:string, kategorie: string, attachments: Attachment[], qrCode: string) {
         this.invNr = invNr;
         this.status = status;
         this.hersteller = hersteller;
-        this.geraeteFoto = geräteFoto;
+        this.geraeteFoto = geraeteFoto;
         this.modell = modell;
         this.objekttyp = objekttyp;
         this.seriennummer = seriennummer;
