@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {DataTable, Modal, Portal, Button} from 'react-native-paper';
-import { Image, ScrollView, StyleSheet, Text, View} from "react-native";
+import {Image, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
 import {Status} from "@/app/inventoryItem/Status";
 import {testInventoryItems} from "@/app/inventoryItem/testdata";
@@ -14,6 +14,8 @@ const MyComponent = () => {
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[1]
     );
+    const [searchQuery, setSearchQuery] = useState<string>("");
+
     enum SortOrder { //Enum für Sortorder für Titel der Tabelle
         Ascending = "ascending",
         Descending = "descending",
@@ -86,9 +88,22 @@ const MyComponent = () => {
     ): string {
         return (item[key] as string) || fallback;
     }
-
+    const filteredItems = items.filter(item => {
+        return (
+            String(item.invNr).toLowerCase().includes(searchQuery.toLowerCase()) ||
+            String(item.modell).toLowerCase().includes(searchQuery.toLowerCase()) ||
+            String(item.standort).toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    });
     return (
         <View style={styles.container}>
+            {/* Textinput für die Suche */}
+            <TextInput
+                placeholder={"Suche..."}
+                value={searchQuery}
+                onChangeText={(query) => setSearchQuery(query)} // Aktualisiere die searchQuery
+                style={{ marginBottom: 10 }}
+            />
                 <DataTable style={styles.datacontainer}>
                         <DataTable.Header>
                         {columns.map((col) => (
@@ -98,7 +113,7 @@ const MyComponent = () => {
                         ))}
                     </DataTable.Header>
                     <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                        {items.slice(from, to).map((item, rowIndex) => (
+                        {filteredItems.slice(from, to).map((item, rowIndex) => (
                             <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
                                 {columns.map((col) => (
                                     <DataTable.Cell key={col.key} numeric={col.numeric}>

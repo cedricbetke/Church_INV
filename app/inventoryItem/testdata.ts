@@ -275,4 +275,4 @@ const testItem11 = new InventoryItem(
     "qrCode77799"
 );
 // Alle Testobjekte in einem Array zusammenfassen
-export const testInventoryItems: InventoryItem[] = [testItem1, testItem2, testItem3,testItem4, testItem5, testItem6, testItem7, testItem8, testItem9, testItem10,testItem11];
+export const testInventoryItems: InventoryItem[] = [testItem1, testItem2, testItem3,testItem4, testItem5, testItem6, testItem7, testItem8, testItem9, testItem10];

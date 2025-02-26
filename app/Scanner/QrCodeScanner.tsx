@@ -8,7 +8,6 @@ type CameraProps = {
 
 const MyComponent: React.FC<CameraProps> = ({ setShowModal }) => {
     const [scanned, setScanned] = useState(false); // ✅ Zustand, um Mehrfach-Scans zu verhindern
-
     const handleBarcodeScanned = ({ data }: { data: string }) => {
         if (!scanned) {
             setScanned(true); // Scanning deaktivieren

@@ -5,9 +5,7 @@ import {useState} from "react";
 import QrCodeScanner from "@/app/Scanner/QrCodeScanner";
 
 const MyComponent = () => {
-        const [showModal, setShowModal] = useState<boolean>(false);
-        const [showSearchModal, setShowSearchModas] = useState(false);
-        return (
+        const [showModal, setShowModal] = useState<boolean>(false);return (
             <View>
                     <Appbar.Header>
                             <Appbar.BackAction onPress={() => {
