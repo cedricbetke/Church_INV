@@ -1,12 +1,11 @@
 import * as React from 'react';
-import {Appbar, Button, Modal, Portal} from 'react-native-paper';
+import {Appbar, Modal, Portal} from 'react-native-paper';
 import {useNavigation} from "expo-router";
-import {Text, View} from "react-native";
+import { View} from "react-native";
 import {useState} from "react";
 import QrCodeScanner from "@/app/Scanner/QrCodeScanner";
 
 const MyComponent = () => {
-        const navigation = useNavigation();
         const [showModal, setShowModal] = useState<boolean>(false);
 
         return (

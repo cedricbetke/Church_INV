@@ -53,7 +53,7 @@ const MyComponent = () => {
 
         if (!result.canceled && result.assets && result.assets[0].base64) {
             const newItems = [...items];
-            newItems[index].geräteFoto = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            newItems[index].geraeteFoto = `data:image/jpeg;base64,${result.assets[0].base64}`;
             setItems(newItems);
         }
     };
@@ -105,9 +105,9 @@ const MyComponent = () => {
                                         {col.key === "foto" ? (
                                             // Wenn die Spalte "foto" ist, zeigen wir das Bild oder ein Datei-Auswahlfeld an
                                             <>
-                                                {item.geräteFoto ? (
+                                                {item.geraeteFoto ? (
                                                     <Image
-                                                        source={{ uri: item.geräteFoto }}
+                                                        source={{ uri: item.geraeteFoto }}
                                                         style={{ width: 50, height: 50, borderRadius: 5 }}
                                                     />
                                                 ) : (
@@ -153,9 +153,9 @@ const MyComponent = () => {
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
                                 Details zu {selectedItem.invNr}
                             </Text>
-                            {selectedItem.geräteFoto && (
+                            {selectedItem.geraeteFoto && (
                                 <Image
-                                    source={{ uri: selectedItem.geräteFoto }}
+                                    source={{ uri: selectedItem.geraeteFoto }}
                                     style={{ width: 400, height: 400, borderRadius: 10, marginBottom: 10 }}
                                 />
                             )}

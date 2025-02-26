@@ -4,7 +4,7 @@ export default class InventoryItem {
     invNr: number;
     status: Status;
     hersteller: string;
-    geräteFoto: string;
+    geraeteFoto: string;
     modell: string;
     objekttyp: string;
     seriennummer: string;
@@ -22,7 +22,7 @@ export default class InventoryItem {
         this.invNr = invNr;
         this.status = status;
         this.hersteller = hersteller;
-        this.geräteFoto = geräteFoto;
+        this.geraeteFoto = geräteFoto;
         this.modell = modell;
         this.objekttyp = objekttyp;
         this.seriennummer = seriennummer;
