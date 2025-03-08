@@ -1,6 +1,6 @@
 // testData.ts
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
-import { Status } from "@/app/inventoryItem/Status";
+import { Status } from "@/app/types/Status";
 
 
 // Testobjekt 1 mit einem Attachment

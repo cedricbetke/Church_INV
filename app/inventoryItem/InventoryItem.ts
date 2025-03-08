@@ -1,4 +1,5 @@
-import {Status} from "@/app/inventoryItem/Status";
+import {Status} from "@/app/types/Status";
+import Attachment from "@/app/inventoryItem/Attachment";
 
 export default class InventoryItem {
     invNr: number;

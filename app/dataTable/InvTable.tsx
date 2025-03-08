@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {DataTable, Modal, Portal, Button} from 'react-native-paper';
 import {Image, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
-import defaultTheme from "@react-navigation/native/src/theming/DefaultTheme";
-import {Status} from "@/app/inventoryItem/Status";
+import { DefaultTheme } from '@react-navigation/native';
+import {Status} from "@/app/types/Status";
 import {testInventoryItems} from "@/app/inventoryItem/testdata";
 import {useEffect, useState} from "react";
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
@@ -61,7 +61,7 @@ const MyComponent = () => {
     };
 
     const overriddenStyle = StyleSheet.flatten([
-        defaultTheme,
+        DefaultTheme,
         { flexShrink: 1 }, // Überschreibt den Default
     ]);
     const from = page * itemsPerPage;
