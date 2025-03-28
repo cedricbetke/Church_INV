@@ -1,12 +1,14 @@
 import * as React from 'react';
-import {DataTable, Modal, Portal, Button} from 'react-native-paper';
+import {DataTable, Modal, Portal, Button, Searchbar} from 'react-native-paper';
 import {Image, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import { DefaultTheme } from '@react-navigation/native';
-import {Status} from "@/app/types/Status";
 import {testInventoryItems} from "@/app/inventoryItem/testdata";
 import {useEffect, useState} from "react";
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
 import * as ImagePicker from 'expo-image-picker';
+import geraetServiceWithMapping from "@/web/geraetserviceMapper";
+import {useInventory} from "@/app/context/InventoryContext";
+import UIGrid from "@/app/components/dataTable/DetailGrid";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
@@ -14,26 +16,44 @@ const MyComponent = () => {
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[1]
     );
+    const [visibleModal, setVisibleModal] = useState(false);
+    const {selectedItem, setSelectedItem} = useInventory()
+    const openDetailModal = (item: any) => {
+        setSelectedItem(item);
+        setVisibleModal(true);
+    };
     const [searchQuery, setSearchQuery] = useState<string>("");
-
+    const FALLBACK_VALUE = "N/A";
+    const {items, setItems} = useInventory();
     enum SortOrder { //Enum für Sortorder für Titel der Tabelle
         Ascending = "ascending",
         Descending = "descending",
     }
     const [columns, setColumns] = React.useState([
         { title: 'InvNr', key: 'invNr', numeric: false, sortDirection: undefined}, //sortDirection: SortDirection.Ascending z.B.
-        { title: 'Status', key: 'stat', numeric: false, sortDirection:undefined },
+        { title: 'Status', key: 'statusid', numeric: false, sortDirection:undefined },
         { title: 'Modell', key: 'modell', numeric: false, sortDirection:undefined },
         { title: 'Standort', key: 'standort', numeric: false, sortDirection:undefined },
         { title: 'Foto', key: 'foto', numeric: false, sortDirection:undefined },
 
     ]);
 
-    const [items, setItems] = React.useState<InventoryItem[]>([]);
+    /*
     useEffect(() => {
-        // Hier kannst du die Testdaten verwenden, anstatt sie von einer API zu laden:
-        setItems(testInventoryItems);
-    }, []);
+        const fetchData = async () => {
+            try {
+                // API-Aufruf, um alle Geräte zu bekommen und sie in InventoryItem umzuwandeln
+                const response = await geraetServiceWithMapping.getAll();
+                setItems(response); // Setze die Geräte in den State
+            } catch (error) {
+                console.error("Fehler beim Laden der Geräte:", error);
+            }
+        };
+
+        fetchData(); // Aufruf der fetchData-Funktion
+    }, []); // Nur beim ersten Rendern
+     */
+
 
     // Funktion zum Hochladen eines Bildes und Speichern im Zustand
     const handleFileChange = async (index: number) => {
@@ -71,14 +91,7 @@ const MyComponent = () => {
         setPage(0);
     }, [itemsPerPage]);
 
-    const [visibleModal, setVisibleModal] = useState(false);
-    const [selectedItem, setSelectedItem] = useState<any>(null);
-    const openDetailModal = (item: any) => {
-        setSelectedItem(item);
-        setVisibleModal(true);
-    };
 // Step 1: Extract constant
-    const FALLBACK_VALUE = "N/A";
 
 // Step 2: Extract function with meaningful name and type annotations
     function getValueOrFallback<T>(
@@ -98,11 +111,11 @@ const MyComponent = () => {
     return (
         <View style={styles.container}>
             {/* Textinput für die Suche */}
-            <TextInput
+            <Searchbar
                 placeholder={"Suche..."}
                 value={searchQuery}
                 onChangeText={(query) => setSearchQuery(query)} // Aktualisiere die searchQuery
-                style={{ marginBottom: 10 }}
+                //style={{ marginBottom: 10 }}
             />
                 <DataTable style={styles.datacontainer}>
                         <DataTable.Header>
@@ -163,6 +176,7 @@ const MyComponent = () => {
                         alignItems: "center",
                     }}
                 >
+                    <UIGrid>
                     {selectedItem && (
                         <>
                             <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
@@ -177,7 +191,7 @@ const MyComponent = () => {
                             {columns.map((col) => (
                                 <Text key={col.key} style={{ fontSize: 16 }}>
                                     <Text style={{ fontWeight: "bold" }}>{col.title}: </Text>
-                                    {selectedItem[col.key as keyof typeof selectedItem] || "N/A"}
+                                    {(selectedItem[col.key as keyof typeof selectedItem] || "N/A").toString()}
                                 </Text>
                             ))}
                             <Button
@@ -192,6 +206,7 @@ const MyComponent = () => {
                             </Button>
                         </>
                     )}
+                    </UIGrid>
                 </Modal>
             </Portal>
         </View>

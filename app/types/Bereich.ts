@@ -1,4 +1,4 @@
-interface Status {
+interface Bereich {
     id: number;
     name: string;
 }

@@ -1,12 +1,14 @@
 // testData.ts
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
-import { Status } from "@/app/types/Status";
 
 
 // Testobjekt 1 mit einem Attachment
 const testItem1 = new InventoryItem(
     1001,
-    Status.VERFUEGBAR,
+    {
+        "id":1,
+        "name":2
+    },
     "Dell",
     "https://example.com/images/dell-laptop.jpg",
     "Latitude 7420",
@@ -33,7 +35,10 @@ const testItem1 = new InventoryItem(
 // Testobjekt 2 ohne Attachments
 const testItem2 = new InventoryItem(
     1002,
-    Status.IN_VERWENDUNG,
+    {
+        "id":1,
+        "name":2
+    },
     "Apple",
     "",
     "iPhone 13",
@@ -52,7 +57,10 @@ const testItem2 = new InventoryItem(
 // Testobjekt 3 mit einem Attachment
 const testItem3 = new InventoryItem(
     1003,
-    Status.IN_REPERATUR,
+    {
+        "id":1,
+        "name":2
+    },
     "HP",
     "",
     "OfficeJet Pro 9025",
@@ -77,7 +85,10 @@ const testItem3 = new InventoryItem(
 );
 const testItem4 = new InventoryItem(
     1004,
-    Status.VERFUEGBAR,
+    {
+        "id":1,
+        "name":2
+    },
     "Dell",
     "https://example.com/images/dell-laptop.jpg",
     "Latitude 7420",
@@ -102,7 +113,10 @@ const testItem4 = new InventoryItem(
 );
 const testItem5 = new InventoryItem(
     1005,
-    Status.IN_REPERATUR,
+    {
+        "id":1,
+        "name":2
+    },
     "HP",
     "https://example.com/images/hp-printer.jpg",
     "LaserJet Pro MFP",
@@ -134,7 +148,10 @@ const testItem5 = new InventoryItem(
     );
 const testItem6 = new InventoryItem(
     1006,
-    Status.RESERVIERT,
+    {
+        "id":1,
+        "name":2
+    },
     "Apple",
     "https://example.com/images/macbook.jpg",
     "MacBook Pro 16",
@@ -159,7 +176,10 @@ const testItem6 = new InventoryItem(
 );
 const testItem7 =    new InventoryItem(
         1007,
-        Status.IN_REPERATUR,
+    {
+        "id":1,
+        "name":2
+    },
         "Logitech",
         "https://example.com/images/mouse.jpg",
         "MX Master 3",
@@ -176,7 +196,10 @@ const testItem7 =    new InventoryItem(
     );
 const testItem8 = new InventoryItem(
         1008,
-        Status.VERFUEGBAR,
+    {
+        "id":1,
+        "name":2
+    },
         "Samsung",
         "https://example.com/images/monitor.jpg",
         "Odyssey G7",
@@ -201,7 +224,10 @@ const testItem8 = new InventoryItem(
     );
 const testItem9 = new InventoryItem(
     1009,
-    Status.VERFUEGBAR,
+    {
+        "id":1,
+        "name":2
+    },
     "Samsung",
     "https://example.com/images/monitor.jpg",
     "Odyssey G7",
@@ -226,7 +252,10 @@ const testItem9 = new InventoryItem(
 );
 const testItem10 = new InventoryItem(
     1010,
-    Status.VERFUEGBAR,
+    {
+        "id":1,
+        "name":2
+    },
     "Samsung",
     "https://example.com/images/monitor.jpg",
     "Odyssey G7",
@@ -251,7 +280,10 @@ const testItem10 = new InventoryItem(
 );
 const testItem11 = new InventoryItem(
     1011,
-    Status.VERFUEGBAR,
+    {
+        "id":1,
+        "name":2
+    },
     "Samsung",
     "https://example.com/images/monitor.jpg",
     "Odyssey G7",

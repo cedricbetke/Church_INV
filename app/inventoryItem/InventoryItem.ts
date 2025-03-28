@@ -1,9 +1,8 @@
-import {Status} from "@/app/types/Status";
 import Attachment from "@/app/inventoryItem/Attachment";
 
 export default class InventoryItem {
     invNr: number;
-    status: Status;
+    statusid: number;
     hersteller: string;
     geraeteFoto: string;
     modell: string;
@@ -19,9 +18,9 @@ export default class InventoryItem {
     qrCode: string; // Eindeutiger Wert, der im QR-Code kodiert wird
 
 
-    constructor(invNr: number, status: Status, hersteller:string, geraeteFoto: string, modell: string, objekttyp: string, seriennummer: string, kaufdatum: Date, einkaufspreis: number, standort: string, verantwortlicher: string, bereich:string, kategorie: string, attachments: Attachment[], qrCode: string) {
+    constructor(invNr: number, statusid: number, hersteller:string, geraeteFoto: string, modell: string, objekttyp: string, seriennummer: string, kaufdatum: Date, einkaufspreis: number, standort: string, verantwortlicher: string, bereich:string, kategorie: string, attachments: Attachment[], qrCode: string) {
         this.invNr = invNr;
-        this.status = status;
+        this.statusid = statusid;
         this.hersteller = hersteller;
         this.geraeteFoto = geraeteFoto;
         this.modell = modell;
