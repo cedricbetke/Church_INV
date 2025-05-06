@@ -3,16 +3,18 @@ import {Appbar, Modal, Portal} from 'react-native-paper';
 import { View} from "react-native";
 import {useState} from "react";
 import QrCodeScanner from "@/app/Scanner/QrCodeScanner";
+import {useInventory} from "@/app/context/InventoryContext";
 
 const MyComponent = () => {
-        const [showModal, setShowModal] = useState<boolean>(false);return (
+        const [showModal, setShowModal] = useState<boolean>(false);
+        const {isAddPageVisible,setIsAddPageVisible} = useInventory();
+        return (
             <View>
                     <Appbar.Header>
                             <Appbar.BackAction onPress={() => {
                             }}/>
                             <Appbar.Content title="ChurchINV"/>
-                            <Appbar.Action icon="plus" onPress={() => {
-                            }}/>
+                            <Appbar.Action icon="plus" onPress={() => setIsAddPageVisible(true)}/>
                             <Appbar.Action icon="magnify" onPress={() => {
                             }}/>
                             <Appbar.Action icon="qrcode-scan" onPress={() => setShowModal(true)}/>

@@ -9,19 +9,23 @@ import * as ImagePicker from 'expo-image-picker';
 import geraetServiceWithMapping from "@/web/geraetserviceMapper";
 import {useInventory} from "@/app/context/InventoryContext";
 import UIGrid from "@/app/components/dataTable/DetailGrid";
+import DetailModal from "@/app/components/dataTable/DetailPage";
+import DataTableComponent from "@/app/components/dataTable/dataTable";
+import AddPage from "@/app/components/dataTable/AddPage";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
-    const [numberOfItemsPerPageList] = React.useState([5,10,15,20,30,50]);
+    const {numberOfItemsPerPageList} = useInventory();
     const [itemsPerPage, onItemsPerPageChange] = React.useState(
         numberOfItemsPerPageList[1]
     );
     const [visibleModal, setVisibleModal] = useState(false);
-    const {selectedItem, setSelectedItem} = useInventory()
+    const {selectedItem, setSelectedItem} = useInventory();
     const openDetailModal = (item: any) => {
         setSelectedItem(item);
         setVisibleModal(true);
     };
+    const {isAddPageVisible,setIsAddPageVisible} = useInventory();
     const [searchQuery, setSearchQuery] = useState<string>("");
     const FALLBACK_VALUE = "N/A";
     const {items, setItems} = useInventory();
@@ -37,48 +41,6 @@ const MyComponent = () => {
         { title: 'Foto', key: 'foto', numeric: false, sortDirection:undefined },
 
     ]);
-
-    /*
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // API-Aufruf, um alle Geräte zu bekommen und sie in InventoryItem umzuwandeln
-                const response = await geraetServiceWithMapping.getAll();
-                setItems(response); // Setze die Geräte in den State
-            } catch (error) {
-                console.error("Fehler beim Laden der Geräte:", error);
-            }
-        };
-
-        fetchData(); // Aufruf der fetchData-Funktion
-    }, []); // Nur beim ersten Rendern
-     */
-
-
-    // Funktion zum Hochladen eines Bildes und Speichern im Zustand
-    const handleFileChange = async (index: number) => {
-        // Request media library permissions
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (!permissionResult.granted) {
-            alert('Permission to access media library is required!');
-            return;
-        }
-
-        // Launch image picker
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-            base64: true,
-        });
-
-        if (!result.canceled && result.assets && result.assets[0].base64) {
-            const newItems = [...items];
-            newItems[index].geraeteFoto = `data:image/jpeg;base64,${result.assets[0].base64}`;
-            setItems(newItems);
-        }
-    };
 
     const overriddenStyle = StyleSheet.flatten([
         DefaultTheme,
@@ -110,109 +72,29 @@ const MyComponent = () => {
     });
     return (
         <View style={styles.container}>
-            {/* Textinput für die Suche */}
-            <Searchbar
-                placeholder={"Suche..."}
-                value={searchQuery}
-                onChangeText={(query) => setSearchQuery(query)} // Aktualisiere die searchQuery
-                //style={{ marginBottom: 10 }}
-            />
-                <DataTable style={styles.datacontainer}>
-                        <DataTable.Header>
-                        {columns.map((col) => (
-                            <DataTable.Title sortDirection={col.sortDirection} key={col.key} numeric={col.numeric}>
-                                {col.title}
-                            </DataTable.Title>
-                        ))}
-                    </DataTable.Header>
-                    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                        {filteredItems.slice(from, to).map((item, rowIndex) => (
-                            <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
-                                {columns.map((col) => (
-                                    <DataTable.Cell key={col.key} numeric={col.numeric}>
-                                        {col.key === "foto" ? (
-                                            // Wenn die Spalte "foto" ist, zeigen wir das Bild oder ein Datei-Auswahlfeld an
-                                            <>
-                                                {item.geraeteFoto ? (
-                                                    <Image
-                                                        source={{ uri: item.geraeteFoto }}
-                                                        style={{ width: 50, height: 50, borderRadius: 5 }}
-                                                    />
-                                                ) : (
-                                                    <Button onPress={()=>handleFileChange(rowIndex)}> Upload Image </Button>
-                                                )}
-                                            </>
-                                        ) : (
-                                            // Ansonsten den Wert der Zelle direkt anzeigen
-                                            <Text>{getValueOrFallback(item,col.key as keyof InventoryItem)}</Text>
-                                        )}
-                                    </DataTable.Cell>
-                                ))}
-                            </DataTable.Row>
-                        ))}
-                    </ScrollView>
-                </DataTable>
-            <View style={styles.pagination}>
-                <DataTable.Pagination
-                    page={page}
-                    numberOfPages={Math.ceil(items.length / itemsPerPage)}
-                    onPageChange={(page) => setPage(page)}
-                    label={`${from + 1}-${to} of ${items.length}`}
-                    numberOfItemsPerPageList={numberOfItemsPerPageList}
-                    numberOfItemsPerPage={itemsPerPage}
-                    onItemsPerPageChange={onItemsPerPageChange}
-                    showFastPaginationControls
-                />
-            </View>
+            <DataTableComponent columns={columns} from={from} to={to} openDetailModal={openDetailModal} page={page} setPage={setPage} itemsPerPage={itemsPerPage} onItemsPerPageChange={onItemsPerPageChange} numberOfItemsPerPageList={numberOfItemsPerPageList}></DataTableComponent>
             {/* Detail-Modal */}
-            <Portal>
-                <Modal
-                    visible={visibleModal}
-                    onDismiss={() => setVisibleModal(false)}
-                    contentContainerStyle={{
-                        backgroundColor: "white",
-                        padding: 20,
-                        borderRadius: 10,
-                        alignItems: "center",
-                    }}
-                >
-                    <UIGrid>
-                    {selectedItem && (
-                        <>
-                            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
-                                Details zu {selectedItem.invNr}
-                            </Text>
-                            {selectedItem.geraeteFoto && (
-                                <Image
-                                    source={{ uri: selectedItem.geraeteFoto }}
-                                    style={{ width: 400, height: 400, borderRadius: 10, marginBottom: 10 }}
-                                />
-                            )}
-                            {columns.map((col) => (
-                                <Text key={col.key} style={{ fontSize: 16 }}>
-                                    <Text style={{ fontWeight: "bold" }}>{col.title}: </Text>
-                                    {(selectedItem[col.key as keyof typeof selectedItem] || "N/A").toString()}
-                                </Text>
-                            ))}
-                            <Button
-                                onPress={() => setVisibleModal(false)}
-                                style={{
-                                    marginTop: 10, // Button-Abstand oben
-                                    backgroundColor: '#6200ea', // Hintergrundfarbe
-                                    borderRadius: 5, // Runder Rand
-                                }}
-                            >
-                                Schließen
-                            </Button>
-                        </>
-                    )}
-                    </UIGrid>
-                </Modal>
-            </Portal>
+            <DetailModal visible={visibleModal} onDismiss={()=>setVisibleModal(false)} selectedItem={selectedItem} columns={columns}>
+            </DetailModal>
+            <AddPage visible={isAddPageVisible} onDismiss={() =>setIsAddPageVisible(false)} existingBrands={brands} onAddBrand={handleAddBrand} onSubmit={handleSubmit}></AddPage>
         </View>
     );
 };
+const [brands, setBrands] = useState<Brand[]>([
+    { id: 1, name: 'Apple' },
+    { id: 2, name: 'Samsung' },
+]);
+interface Brand {
+    id: number;
+    name: string;
+}
+const handleAddBrand = async (brandName: string) => {
 
+};
+
+const handleSubmit = (itemData: any) => {
+
+};
 
 const styles = StyleSheet.create({
     container: {

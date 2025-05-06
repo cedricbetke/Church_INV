@@ -13,6 +13,11 @@ interface InventoryContextType {
     setSelectedItem: React.Dispatch<React.SetStateAction<InventoryItem | null>>;
     states: Status[];
     setStates: React.Dispatch<React.SetStateAction<Status[]>>;
+    searchQuery: string;
+    setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+    numberOfItemsPerPageList: number[];
+    isAddPageVisible: boolean;
+    setIsAddPageVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // 2. Initialen Kontext erstellen
@@ -24,6 +29,10 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
     const [filter, setFilter] = useState<string>(""); // Beispiel: Filter für Suchfunktion
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null); // Beispiel: Aktuell ausgewähltes Gerät
     const [states,setStates] = useState<Status[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>(""); //seachquery für Table search
+    const [numberOfItemsPerPageList] = React.useState([5,10,15,20,30,50]);
+    const [isAddPageVisible, setIsAddPageVisible] = useState<boolean>(false);
+
     // Funktion zum Laden der Items (API-Call)
     const fetchItems = async () => {
         try {
@@ -46,7 +55,7 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
         fetchItems();
     }, []);
     return (
-        <InventoryContext.Provider value={{ items, setItems, filter, setFilter, selectedItem, setSelectedItem,states,setStates }}>
+        <InventoryContext.Provider value={{ items, setItems, filter, setFilter, selectedItem, setSelectedItem,states,setStates, searchQuery, setSearchQuery,numberOfItemsPerPageList, setIsAddPageVisible, isAddPageVisible }}>
             {children}
         </InventoryContext.Provider>
     );
