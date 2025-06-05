@@ -1,11 +1,13 @@
 import { Stack } from 'expo-router';
 import {DefaultTheme, PaperProvider} from "react-native-paper";
+import Index from "@/app/Booking";
 
 export default function RootLayout() {
   return (
       <PaperProvider theme={MyCustomTheme}>
         <Stack>
-          <Stack.Screen name="index" options={{ title: 'ChurchINV', headerShown: false }} />
+            <Stack.Screen name="index" options={{ title: 'ChurchINV', headerShown: false }} />
+            <Stack.Screen name="Booking/index" options={{ title: 'Buchung' }} />
         </Stack>
       </PaperProvider>
   );

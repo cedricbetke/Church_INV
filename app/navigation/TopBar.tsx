@@ -3,6 +3,7 @@ import {Appbar, Modal, Portal} from 'react-native-paper';
 import { View} from "react-native";
 import {useState} from "react";
 import QrCodeScanner from "@/app/Scanner/QrCodeScanner";
+import { router } from 'expo-router'; // ← Dieser Import fehlt!
 
 const MyComponent = () => {
         const [showModal, setShowModal] = useState<boolean>(false);return (
@@ -13,8 +14,7 @@ const MyComponent = () => {
                             <Appbar.Content title="ChurchINV"/>
                             <Appbar.Action icon="plus" onPress={() => {
                             }}/>
-                            <Appbar.Action icon="magnify" onPress={() => {
-                            }}/>
+                            <Appbar.Action icon="calendar-plus" onPress={() => router.push('/Booking')}/>
                             <Appbar.Action icon="qrcode-scan" onPress={() => setShowModal(true)}/>
                             <Appbar.Action icon="filter" onPress={() => {}}/>
                     </Appbar.Header>
