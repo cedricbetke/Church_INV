@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import {View, ScrollView, StyleSheet, SafeAreaView} from 'react-native';
 import { 
     Text, 
     TextInput, 
@@ -16,6 +16,7 @@ import {
     Dialog,
     Portal
 } from 'react-native-paper';
+import { TimePickerModal, DatePickerInput,DatePickerModal   } from 'react-native-paper-dates';
 import { testInventoryItems } from "@/app/inventoryItem/testdata";
 import InventoryItem from "@/app/inventoryItem/InventoryItem";
 
@@ -39,7 +40,7 @@ interface GroupedItem {
 const BookingIndex = () => {
     // State für die Suchfunktion
     const [searchQuery, setSearchQuery] = useState('');
-    
+
     // State für ausgewählte Items in der aktuellen Buchung
     const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
     
@@ -50,7 +51,10 @@ const BookingIndex = () => {
     const [bookingDate, setBookingDate] = useState('');      // Datum der Buchung
     const [bookingPerson, setBookingPerson] = useState('');  // Person/Abteilung die bucht
     const [bookingReason, setBookingReason] = useState('');  // Grund für die Buchung (optional)
-    
+
+    const [inputDateStart, setInputDateStart] = React.useState(undefined);
+    const [inputDateEnd, setInputDateEnd] = React.useState(undefined);
+
     // State für Mengenauswahl-Dialog
     const [quantityDialog, setQuantityDialog] = useState<{
         visible: boolean;           // Dialog sichtbar oder nicht
@@ -66,7 +70,12 @@ const BookingIndex = () => {
     useEffect(() => {
         setAvailableItems(testInventoryItems);
     }, []);
-
+    const showMode = () => {
+        setShow(true);
+    };
+    const showDatepicker = () => {
+        showMode();
+    };
     /**
      * Gruppiert Items nach Modell, Standort und Hersteller
      * Gleiche Items werden zu einer Gruppe zusammengefasst
@@ -226,14 +235,26 @@ const BookingIndex = () => {
                 <Card.Content>
                     <Title>Buchungsdetails</Title>
                     {/* Datum der Buchung (Pflichtfeld) */}
-                    <TextInput
-                        label="Buchungsdatum *"
-                        placeholder="YYYY-MM-DD"
-                        value={bookingDate}
-                        onChangeText={setBookingDate}
-                        style={styles.input}
-                        mode="outlined"
-                    />
+                    <SafeAreaView style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12, gap:12 }}>
+                        <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                            <DatePickerInput
+                                locale="de"
+                                label="Datum Start"
+                                value={inputDateStart}
+                                onChange={(d) => setInputDateStart(d)}
+                                inputMode="start"
+                            />
+                        </View>
+                        <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+                            <DatePickerInput
+                                locale="de"
+                                label="Datum Ende"
+                                value={inputDateEnd}
+                                onChange={(d) => setInputDateEnd(d)}
+                                inputMode="start"
+                            />
+                        </View>
+                    </SafeAreaView>
                     {/* Person/Abteilung die bucht (Pflichtfeld) */}
                     <TextInput
                         label="Person/Abteilung *"
