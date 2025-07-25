@@ -12,6 +12,7 @@ import UIGrid from "@/app/components/dataTable/DetailGrid";
 import DetailModal from "@/app/components/dataTable/DetailPage";
 import DataTableComponent from "@/app/components/dataTable/dataTable";
 import AddPage from "@/app/components/dataTable/AddPage";
+import herstellerService from "@/web/herstellerService";
 
 const MyComponent = () => {
     const [page, setPage] = React.useState<number>(0);
@@ -25,9 +26,11 @@ const MyComponent = () => {
         setSelectedItem(item);
         setVisibleModal(true);
     };
+    const {brands, addBrand, fetchItems} = useInventory()
     const {isAddPageVisible,setIsAddPageVisible} = useInventory();
     const [searchQuery, setSearchQuery] = useState<string>("");
     const FALLBACK_VALUE = "N/A";
+    const {models, setModels} = useInventory();
     const {items, setItems} = useInventory();
     enum SortOrder { //Enum für Sortorder für Titel der Tabelle
         Ascending = "ascending",
@@ -44,7 +47,9 @@ const MyComponent = () => {
 
     const overriddenStyle = StyleSheet.flatten([
         DefaultTheme,
-        { flexShrink: 1 }, // Überschreibt den Default
+        { flexShrink: 1 }, //
+        // Überschreibt den Default
+
     ]);
     const from = page * itemsPerPage;
     const to = Math.min((page + 1) * itemsPerPage, items.length);
@@ -52,6 +57,8 @@ const MyComponent = () => {
     React.useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
+
+
 
 // Step 1: Extract constant
 
@@ -63,6 +70,10 @@ const MyComponent = () => {
     ): string {
         return (item[key] as string) || fallback;
     }
+    const handleAddBrand = async (brandName: string) => {
+        return await addBrand(brandName);
+    };
+
     const filteredItems = items.filter(item => {
         return (
             String(item.invNr).toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -70,31 +81,34 @@ const MyComponent = () => {
             String(item.standort).toLowerCase().includes(searchQuery.toLowerCase())
         );
     });
+    const handleSubmit = async (itemData: any) => {
+        try {
+            await fetchItems();
+        } catch (error) {
+            console.error('Fehler beim Einfügen eines neuen Geraets:', error);
+            throw error;
+        }
+    };
     return (
         <View style={styles.container}>
             <DataTableComponent columns={columns} from={from} to={to} openDetailModal={openDetailModal} page={page} setPage={setPage} itemsPerPage={itemsPerPage} onItemsPerPageChange={onItemsPerPageChange} numberOfItemsPerPageList={numberOfItemsPerPageList}></DataTableComponent>
             {/* Detail-Modal */}
             <DetailModal visible={visibleModal} onDismiss={()=>setVisibleModal(false)} selectedItem={selectedItem} columns={columns}>
             </DetailModal>
-            <AddPage visible={isAddPageVisible} onDismiss={() =>setIsAddPageVisible(false)} existingBrands={brands} onAddBrand={handleAddBrand} onSubmit={handleSubmit}></AddPage>
+            <AddPage
+                visible={isAddPageVisible}
+                onDismiss={() =>setIsAddPageVisible(false)}
+                existingBrands={brands}
+                existingModels={models}
+                onAddBrand={handleAddBrand}
+                onSubmit={handleSubmit}></AddPage>
         </View>
     );
 };
-const [brands, setBrands] = useState<Brand[]>([
-    { id: 1, name: 'Apple' },
-    { id: 2, name: 'Samsung' },
-]);
-interface Brand {
-    id: number;
-    name: string;
-}
-const handleAddBrand = async (brandName: string) => {
 
-};
 
-const handleSubmit = (itemData: any) => {
 
-};
+
 
 const styles = StyleSheet.create({
     container: {

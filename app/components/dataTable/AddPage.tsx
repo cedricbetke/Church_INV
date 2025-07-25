@@ -1,70 +1,146 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { TextInput, Button, Portal, Dialog, List, Modal, Title } from 'react-native-paper';
+import { Modal, Portal, Button, Title } from 'react-native-paper';
+import { FormFields } from './FormFields';
+import { useInventory } from '@/app/context/InventoryContext';
+import SelectionDialog from './SelectionDialog';
+import { FormData } from '@/app/types/FormData';
 
-interface Brand {
-    id: number;
-    name: string;
-}
-
-interface AddItemModalProps {
+interface AddPageProps {
     visible: boolean;
     onDismiss: () => void;
-    existingBrands: Brand[];
+    existingBrands: Array<{ id: number; name: string }>;
+    existingModels: Array<{ id: number; name: string }>;
     onAddBrand: (brandName: string) => Promise<void>;
-    onSubmit: (itemData: any) => void;
+    onSubmit: (itemData: any) => Promise<void>;
 }
 
-const AddItemModal: React.FC<AddItemModalProps> = ({
-                                                       visible,
-                                                       onDismiss,
-                                                       existingBrands,
-                                                       onAddBrand,
-                                                       onSubmit
-                                                   }) => {
-    const [selectedBrand, setSelectedBrand] = useState<string>('');
+const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, existingBrands, onAddBrand, onSubmit}) => {
+    const { states, fetchMaxGeraeteId } = useInventory();
+    const [showStatusDialog, setShowStatusDialog] = useState(false);
     const [showBrandDialog, setShowBrandDialog] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [showModelDialog, setShowModelDialog] = useState(false);
+    const [statusSearchQuery, setStatusSearchQuery] = useState('');
+    const [brandSearchQuery, setBrandSearchQuery] = useState('');
+    const [modelSearchQuery, setModelSearchQuery] = useState('');
     const [isNewBrand, setIsNewBrand] = useState(false);
+    const [isNewModel, setIsNewModel] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null); // Neue Brand die erst beim Submit erstellt wird
 
-    // Weitere Formularfelder hier...
-    const [itemNumber, setItemNumber] = useState('');
-    const [description, setDescription] = useState('');
+    const [formData, setFormData] = useState<FormData>({
+        invNr: '',
+        modell: '',
+        hersteller: '',
+        serien_nr: '',
+        kaufdatum: '',
+        einkaufspreis: '',
+        standort: '',
+        bereich: '',
+        kategorie: '',
+        status: '',
+        verantwortlicher: ''
+    });
 
-    const filteredBrands = existingBrands.filter(brand =>
-        brand.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-    const handleBrandSelect = (brandName: string) => {
-        setSelectedBrand(brandName);
-        setShowBrandDialog(false);
-        setSearchQuery('');
+    useEffect(() => {
+        if (visible) {
+            const loadMaxId = async () => {
+                try {
+                    setLoading(true);
+                    const maxId = await fetchMaxGeraeteId();
+                    setFormData(prev => ({
+                        ...prev,
+                        invNr: (maxId).toString()
+                    }));
+                } catch (err) {
+                    console.error('Fehler beim Laden der Max-ID:', err);
+                    setError('Fehler beim Laden der Max-ID');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            loadMaxId();
+        }
+    }, [visible, fetchMaxGeraeteId]);
+
+    const handleChange = (name: string, value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
+        }
     };
 
-    const handleAddNewBrand = async () => {
-        if (searchQuery.trim()) {
-            await onAddBrand(searchQuery);
-            handleBrandSelect(searchQuery);
+    const handleBrandSelect = (brandName: string) => {
+        handleChange('hersteller', brandName);
+        setShowBrandDialog(false);
+        setBrandSearchQuery('');
+    };
+
+    const handleAddNewBrand = async () => { //Todo: Nur adden wenn form submitted wird. Vorher nicht. Stand jetzt: auswhlen von Brand bedeuted erstellen in DB
+        if (brandSearchQuery.trim()) {
+            //speichere den neuen Brand-Namen für das spätere Erstellen beim submit
+            setPendingNewBrand(brandSearchQuery)
+            handleBrandSelect(brandSearchQuery)
             setIsNewBrand(false);
         }
     };
 
-    const handleSubmit = () => {
-        onSubmit({
-            brand: selectedBrand,
-            itemNumber,
-            description,
-            // Weitere Felder hier...
-        });
-        resetForm();
-        onDismiss();
+    const handleModelSelect = (modelName: string) => {
+        handleChange('modell', modelName);
+        setShowModelDialog(false);
+        setModelSearchQuery('');
     };
 
-    const resetForm = () => {
-        setSelectedBrand('');
-        setItemNumber('');
-        setDescription('');
-        // Weitere Felder zurücksetzen...
+    const validateForm = () => {
+        const newErrors: { [key: string]: string } = {};
+
+        if (!formData.invNr) newErrors.invNr = 'Inventarnummer ist erforderlich';
+        if (!formData.modell) newErrors.modell = 'Modell ist erforderlich';
+        if (!formData.status) newErrors.status = 'Status ist erforderlich';
+        if (!formData.hersteller) newErrors.hersteller = 'Hersteller ist erforderlich';
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async () => {
+        if (validateForm()) {
+            try {
+                if (pendingNewBrand) {
+                    await onAddBrand(pendingNewBrand);
+                    setPendingNewBrand(null);
+
+                }
+                onSubmit(formData);
+                setFormData({
+                    invNr: '',
+                    modell: '',
+                    hersteller: '',
+                    serien_nr: '',
+                    kaufdatum: '',
+                    einkaufspreis: '',
+                    standort: '',
+                    bereich: '',
+                    kategorie: '',
+                    status: '',
+                    verantwortlicher: ''
+                });
+                onDismiss();
+            }catch (error){
+                console.error('Fehler beim Speichern:', error);
+                setError('Fehler beim speichern des Items');
+            }
+
+        }
     };
 
     return (
@@ -76,37 +152,17 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
             >
                 <ScrollView>
                     <Title style={styles.title}>Neuen Artikel hinzufügen</Title>
-
                     <View style={styles.form}>
-                        <TextInput
-                            mode="outlined"
-                            label="Artikelnummer"
-                            value={itemNumber}
-                            onChangeText={setItemNumber}
-                            style={styles.input}
+                        <FormFields
+                            formData={formData}
+                            handleChange={handleChange}
+                            errors={errors}
+                            loading={loading}
+                            error={error}
+                            setShowStatusDialog={setShowStatusDialog}
+                            setShowBrandDialog={setShowBrandDialog}
+                            setShowModelDialog={setShowModelDialog}
                         />
-
-                        <TextInput
-                            mode="outlined"
-                            label="Marke"
-                            value={selectedBrand}
-                            onFocus={() => setShowBrandDialog(true)}
-                            right={<TextInput.Icon icon="chevron-down" />}
-                            style={styles.input}
-                        />
-
-                        <TextInput
-                            mode="outlined"
-                            label="Beschreibung"
-                            value={description}
-                            onChangeText={setDescription}
-                            multiline
-                            numberOfLines={3}
-                            style={styles.input}
-                        />
-
-                        {/* Weitere Formularfelder hier... */}
-
                         <View style={styles.buttonContainer}>
                             <Button
                                 mode="outlined"
@@ -126,49 +182,58 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                     </View>
                 </ScrollView>
 
-                {/* Dialog für Markenauswahl */}
-                <Portal>
-                    <Dialog visible={showBrandDialog} onDismiss={() => setShowBrandDialog(false)}>
-                        <Dialog.Title>Marke auswählen</Dialog.Title>
-                        <Dialog.Content>
-                            <TextInput
-                                mode="outlined"
-                                label="Marke suchen oder neue eingeben"
-                                value={searchQuery}
-                                onChangeText={text => {
-                                    setSearchQuery(text);
-                                    setIsNewBrand(!filteredBrands.some(
-                                        brand => brand.name.toLowerCase() === text.toLowerCase()
-                                    ));
-                                }}
-                                style={styles.searchInput}
-                            />
+                <SelectionDialog
+                    visible={showStatusDialog}
+                    onDismiss={() => setShowStatusDialog(false)}
+                    title="Status auswählen"
+                    searchQuery={statusSearchQuery}
+                    onSearchChange={setStatusSearchQuery}
+                    items={states}
+                    onSelect={(statusName) => {
+                        handleChange('status', statusName);
+                        setShowStatusDialog(false);
+                        setStatusSearchQuery('');
+                    }}
+                    onAddNew={async () => {
+                        console.log('Neue Status können nur vom Administrator hinzugefügt werden');
+                    }}
+                    isNewItem={false}
+                />
 
-                            <ScrollView style={styles.brandList}>
-                                {filteredBrands.map((brand) => (
-                                    <List.Item
-                                        key={brand.id}
-                                        title={brand.name}
-                                        onPress={() => handleBrandSelect(brand.name)}
-                                        style={styles.listItem}
-                                    />
-                                ))}
+                <SelectionDialog
+                    visible={showBrandDialog}
+                    onDismiss={() => setShowBrandDialog(false)}
+                    title="Hersteller auswählen"
+                    searchQuery={brandSearchQuery}
+                    onSearchChange={(text) => {
+                        setBrandSearchQuery(text);
+                        setIsNewBrand(!existingBrands.some(
+                            brand => brand.name.toLowerCase() === text.toLowerCase()
+                        ));
+                    }}
+                    items={existingBrands}
+                    onSelect={handleBrandSelect}
+                    onAddNew={handleAddNewBrand}
+                    isNewItem={isNewBrand}
+                />
 
-                                {isNewBrand && searchQuery.trim() && (
-                                    <List.Item
-                                        title={`"${searchQuery}" als neue Marke hinzufügen`}
-                                        left={props => <List.Icon {...props} icon="plus" />}
-                                        onPress={handleAddNewBrand}
-                                        style={styles.newBrandItem}
-                                    />
-                                )}
-                            </ScrollView>
-                        </Dialog.Content>
-                        <Dialog.Actions>
-                            <Button onPress={() => setShowBrandDialog(false)}>Abbrechen</Button>
-                        </Dialog.Actions>
-                    </Dialog>
-                </Portal>
+                <SelectionDialog
+                    visible={showModelDialog}
+                    onDismiss={() => setShowModelDialog(false)}
+                    title="Modell auswählen"
+                    searchQuery={modelSearchQuery}
+                    onSearchChange={(text) => {
+                        setModelSearchQuery(text);
+                        setIsNewModel(true); // Hier könnte man auch gegen existierende Modelle prüfen
+                    }}
+                    items={existingModels} // Hier könnten die verfügbaren Modelle eingefügt werden
+                    onSelect={handleModelSelect}
+                    onAddNew={async () => {
+                        handleModelSelect(modelSearchQuery);
+                        return Promise.resolve();
+                    }}
+                    isNewItem={isNewModel}
+                />
             </Modal>
         </Portal>
     );
@@ -190,22 +255,6 @@ const styles = StyleSheet.create({
     form: {
         gap: 10,
     },
-    input: {
-        marginBottom: 12,
-    },
-    searchInput: {
-        marginBottom: 8,
-    },
-    brandList: {
-        maxHeight: 300,
-    },
-    listItem: {
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#e0e0e0',
-    },
-    newBrandItem: {
-        backgroundColor: '#f0f0f0',
-    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -217,4 +266,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AddItemModal;
+export default AddPage;

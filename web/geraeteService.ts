@@ -15,6 +15,8 @@ const geraetService = {
         apiService.update<Geraet>("geraet", inv_nr, data),
 
     delete: (inv_nr: number) => apiService.delete("geraet", inv_nr),
+
+    getMaxId: () => apiService.getAll("geraet/max-id")
 };
 
 export default geraetService;

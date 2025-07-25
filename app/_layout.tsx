@@ -1,12 +1,13 @@
 import { Stack } from 'expo-router';
 import {DefaultTheme, PaperProvider} from "react-native-paper";
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 export default function RootLayout() {
   return (
       <PaperProvider theme={MyCustomTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ title: 'ChurchINV', headerShown: false }} />
-        </Stack>
+            <Stack>
+              <Stack.Screen name="index" options={{ title: 'ChurchINV', headerShown: false }} />
+            </Stack>
       </PaperProvider>
   );
 }
@@ -17,7 +18,9 @@ const MyCustomTheme = {
     flex:1,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#1976d2', // Beispiel für eine Hauptfarbe (violett)
+    primary: '#1976d2',
+      //surfaceVariant: '#000000',
+      // Beispiel für eine Hauptfarbe (violett)
    /* accent: '#03dac4',  // Beispiel für eine Akzentfarbe (cyan)
     background: '#ffffff', // Hintergrundfarbe
     surface: '#ffffff', // Farbe für die Oberfläche

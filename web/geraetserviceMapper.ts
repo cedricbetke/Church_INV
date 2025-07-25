@@ -25,6 +25,9 @@ const geraetServiceWithMapping = {
                 ""            // QR-Code leer lassen
             );
         });
+    },
+    createWhole: async (item: InventoryItem) => {
+
     }
 };
 
