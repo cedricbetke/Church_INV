@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Platform } from "react-native";
 import { Modal, Portal, Button, Title } from "react-native-paper";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { FormFields } from "./FormFields";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import SelectionDialog from "./SelectionDialog";
@@ -13,6 +14,36 @@ interface NamedItem {
 }
 
 const normalize = (value: string) => value.trim().toLowerCase();
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const PRICE_PATTERN = /^\d+(?:[.,]\d{1,2})?$/;
+
+const isValidIsoDate = (value: string) => {
+    if (!DATE_PATTERN.test(value)) {
+        return false;
+    }
+
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return (
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day
+    );
+};
+
+const parsePrice = (value: string) => Number.parseFloat(value.replace(",", "."));
+const formatDateForDb = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+const parseDbDate = (value: string) => {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+};
+const today = new Date();
 
 interface AddPageProps {
     visible: boolean;
@@ -53,6 +84,7 @@ const AddPage: React.FC<AddPageProps> = ({
     const [showBereichDialog, setShowBereichDialog] = useState(false);
     const [showKategorieDialog, setShowKategorieDialog] = useState(false);
     const [showVerantwortlicherDialog, setShowVerantwortlicherDialog] = useState(false);
+    const [showKaufdatumPicker, setShowKaufdatumPicker] = useState(false);
     const [statusSearchQuery, setStatusSearchQuery] = useState("");
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [modelSearchQuery, setModelSearchQuery] = useState("");
@@ -92,6 +124,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setShowBereichDialog(false);
         setShowKategorieDialog(false);
         setShowVerantwortlicherDialog(false);
+        setShowKaufdatumPicker(false);
         setStatusSearchQuery("");
         setBrandSearchQuery("");
         setModelSearchQuery("");
@@ -209,6 +242,11 @@ const AddPage: React.FC<AddPageProps> = ({
         setModelSearchQuery("");
     };
 
+    const handleKaufdatumConfirm = (date: Date) => {
+        handleChange("kaufdatum", formatDateForDb(date));
+        setShowKaufdatumPicker(false);
+    };
+
     const validateForm = () => {
         const nextErrors: Record<string, string> = {};
 
@@ -219,6 +257,15 @@ const AddPage: React.FC<AddPageProps> = ({
         if (!formData.bereich) nextErrors.bereich = "Bereich ist erforderlich";
         if (!formData.kategorie) nextErrors.kategorie = "Kategorie ist erforderlich";
         if (!formData.verantwortlicher) nextErrors.verantwortlicher = "Verantwortlicher ist erforderlich";
+        if (formData.kaufdatum && !isValidIsoDate(formData.kaufdatum)) {
+            nextErrors.kaufdatum = "Kaufdatum muss im Format YYYY-MM-DD sein";
+        }
+        if (formData.kaufdatum && isValidIsoDate(formData.kaufdatum) && parseDbDate(formData.kaufdatum) > today) {
+            nextErrors.kaufdatum = "Kaufdatum darf nicht in der Zukunft liegen";
+        }
+        if (formData.einkaufspreis && !PRICE_PATTERN.test(formData.einkaufspreis.trim())) {
+            nextErrors.einkaufspreis = "Einkaufspreis muss eine Zahl mit bis zu 2 Nachkommastellen sein";
+        }
 
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
@@ -263,7 +310,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 verantwortlicher_id: selectedVerantwortlicher.id,
                 serien_nr: formData.serien_nr || undefined,
                 kaufdatum: formData.kaufdatum || undefined,
-                einkaufspreis: formData.einkaufspreis ? Number(formData.einkaufspreis) : undefined,
+                einkaufspreis: formData.einkaufspreis ? parsePrice(formData.einkaufspreis.trim()) : undefined,
             };
 
             await onSubmit(payload);
@@ -295,6 +342,7 @@ const AddPage: React.FC<AddPageProps> = ({
                             setShowBereichDialog={setShowBereichDialog}
                             setShowKategorieDialog={setShowKategorieDialog}
                             setShowVerantwortlicherDialog={setShowVerantwortlicherDialog}
+                            setShowKaufdatumPicker={setShowKaufdatumPicker}
                         />
                         <View style={styles.buttonContainer}>
                             <Button mode="outlined" onPress={handleDismiss} style={styles.button}>
@@ -421,6 +469,17 @@ const AddPage: React.FC<AddPageProps> = ({
                     onAddNew={async () => Promise.resolve()}
                     isNewItem={false}
                 />
+
+                {Platform.OS !== "web" && (
+                    <DateTimePickerModal
+                        isVisible={showKaufdatumPicker}
+                        mode="date"
+                        date={formData.kaufdatum ? parseDbDate(formData.kaufdatum) : new Date()}
+                        maximumDate={today}
+                        onConfirm={handleKaufdatumConfirm}
+                        onCancel={() => setShowKaufdatumPicker(false)}
+                    />
+                )}
             </Modal>
         </Portal>
     );

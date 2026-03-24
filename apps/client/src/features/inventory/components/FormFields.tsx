@@ -1,10 +1,17 @@
 // FormFields.tsx
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 import { FormData } from '@/src/features/inventory/types/FormData';
 import UIGrid from './DetailGrid';
 
+const formatTodayForDateInput = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
 
 interface FormFieldsProps {
     formData: FormData;
@@ -19,6 +26,7 @@ interface FormFieldsProps {
     setShowBereichDialog: (show: boolean) => void;
     setShowKategorieDialog: (show: boolean) => void;
     setShowVerantwortlicherDialog: (show: boolean) => void;
+    setShowKaufdatumPicker: (show: boolean) => void;
 }
 
 export const FormFields: React.FC<FormFieldsProps> = ({
@@ -33,8 +41,32 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                                                           setShowStandortDialog,
                                                           setShowBereichDialog,
                                                           setShowKategorieDialog,
-                                                          setShowVerantwortlicherDialog
+                                                          setShowVerantwortlicherDialog,
+                                                          setShowKaufdatumPicker
                                                       }) => {
+    const renderWebDateField = () => (
+        <View>
+            <Text style={{ marginBottom: 8, color: '#49454f', fontSize: 12 }}>Kaufdatum</Text>
+            {React.createElement("input", {
+                type: "date",
+                value: formData.kaufdatum,
+                max: formatTodayForDateInput(),
+                onChange: (event: React.ChangeEvent<HTMLInputElement>) => handleChange("kaufdatum", event.target.value),
+                style: {
+                    width: "100%",
+                    height: 56,
+                    padding: "0 12px",
+                    borderRadius: 4,
+                    border: errors.kaufdatum ? "1px solid #b3261e" : "1px solid #79747e",
+                    backgroundColor: "#ffffff",
+                    fontSize: 16,
+                    boxSizing: "border-box",
+                },
+            })}
+            {errors.kaufdatum && <HelperText type="error">{errors.kaufdatum}</HelperText>}
+        </View>
+    );
+
     const renderField = (
         name: keyof FormData & string,
         label: string,
@@ -45,12 +77,14 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             onPressIn?: () => void;
             rightIcon?: string;
             selectionOnly?: boolean;
+            placeholder?: string;
         } = {}
     ) => (
         <View>
             <TextInput
                 mode="outlined"
                 label={label}
+                placeholder={options.placeholder}
                 value={formData[name]}
                 onChangeText={(value) => handleChange(name, value)}
                 error={!!errors[name]}
@@ -87,9 +121,18 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 selectionOnly: true
             })}
             {renderField('serien_nr', 'Seriennummer')}
-            {renderField('kaufdatum', 'Kaufdatum')}
+            {Platform.OS === 'web'
+                ? renderWebDateField()
+                : renderField('kaufdatum', 'Kaufdatum', {
+                    placeholder: 'YYYY-MM-DD',
+                    onFocus: () => setShowKaufdatumPicker(true),
+                    onPressIn: () => setShowKaufdatumPicker(true),
+                    rightIcon: 'calendar',
+                    selectionOnly: true
+                })}
             {renderField('einkaufspreis', 'Einkaufspreis', {
-                keyboardType: 'decimal-pad'
+                keyboardType: 'decimal-pad',
+                placeholder: '0,00'
             })}
             {renderField('standort', 'Standort', {
                 onFocus: () => setShowStandortDialog(true),
