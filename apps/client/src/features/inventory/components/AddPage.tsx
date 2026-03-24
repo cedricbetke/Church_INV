@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, Image } from "react-native";
-import { Modal, Portal, Button, Title } from "react-native-paper";
+import { Modal, Portal, Button, Title, Text } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import axios from "axios";
 import { FormFields } from "./FormFields";
@@ -434,13 +434,27 @@ const AddPage: React.FC<AddPageProps> = ({
                             setShowVerantwortlicherDialog={setShowVerantwortlicherDialog}
                             setShowKaufdatumPicker={setShowKaufdatumPicker}
                         />
-                        <View style={styles.photoSection}>
-                            <Button mode="outlined" onPress={handlePhotoPick}>
-                                Foto auswaehlen
-                            </Button>
-                            {selectedPhotoDataUrl && (
-                                <Image source={{ uri: selectedPhotoDataUrl }} style={styles.photoPreview} />
-                            )}
+                        <View style={styles.photoCard}>
+                            <View style={styles.photoHeader}>
+                                <Text variant="titleMedium">Geraetefoto</Text>
+                                <Text variant="bodySmall" style={styles.photoHint}>
+                                    Optional
+                                </Text>
+                            </View>
+                            <View style={styles.photoSection}>
+                                {selectedPhotoDataUrl ? (
+                                    <Image source={{ uri: selectedPhotoDataUrl }} style={styles.photoPreview} />
+                                ) : (
+                                    <View style={styles.photoPlaceholder}>
+                                        <Text style={styles.photoPlaceholderText}>Noch kein Foto ausgewaehlt</Text>
+                                    </View>
+                                )}
+                                <View style={styles.photoActions}>
+                                    <Button mode="outlined" onPress={handlePhotoPick}>
+                                        {selectedPhotoDataUrl ? "Foto aendern" : "Foto auswaehlen"}
+                                    </Button>
+                                </View>
+                            </View>
                         </View>
                         <View style={styles.buttonContainer}>
                             <Button mode="outlined" onPress={handleDismiss} style={styles.button}>
@@ -599,15 +613,52 @@ const styles = StyleSheet.create({
     form: {
         gap: 10,
     },
+    photoCard: {
+        marginTop: 8,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#e0e0e0",
+        borderRadius: 10,
+        backgroundColor: "#fafafa",
+        gap: 12,
+    },
+    photoHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    photoHint: {
+        color: "#666",
+    },
     photoSection: {
         gap: 10,
-        marginTop: 8,
+        alignItems: "center",
     },
     photoPreview: {
         width: 140,
         height: 140,
         borderRadius: 8,
         resizeMode: "cover",
+    },
+    photoPlaceholder: {
+        width: 140,
+        height: 140,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#d0d0d0",
+        borderStyle: "dashed",
+        backgroundColor: "#ffffff",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 12,
+    },
+    photoPlaceholderText: {
+        textAlign: "center",
+        color: "#666",
+    },
+    photoActions: {
+        width: "100%",
+        alignItems: "center",
     },
     buttonContainer: {
         flexDirection: "row",
