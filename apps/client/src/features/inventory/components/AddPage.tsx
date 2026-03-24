@@ -73,6 +73,10 @@ const getErrorMessage = (error: unknown) => {
         return backendMessage ?? "Die uebermittelten Daten sind ungueltig.";
     }
 
+    if (status === 403) {
+        return backendMessage ?? "Diese Aktion ist nur mit Admin-Rechten erlaubt.";
+    }
+
     if (status === 404) {
         return backendMessage ?? "Die API-Route wurde nicht gefunden.";
     }
@@ -83,6 +87,10 @@ const getErrorMessage = (error: unknown) => {
         }
 
         return backendMessage ?? "Der Datensatz steht in Konflikt mit vorhandenen Daten.";
+    }
+
+    if (status === 503) {
+        return backendMessage ?? "Die Admin-Freigabe ist auf dem Server nicht konfiguriert.";
     }
 
     if (status >= 500) {

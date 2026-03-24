@@ -43,6 +43,11 @@ const MyComponent = () => {
                             <Appbar.BackAction onPress={() => {
                             }}/>
                             <Appbar.Content title="ChurchINV"/>
+                            <View style={[styles.adminBadge, isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive]}>
+                                <Text style={[styles.adminBadgeText, isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive]}>
+                                    {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
+                                </Text>
+                            </View>
                             {isAdminLoginConfigured && (
                                 <Appbar.Action
                                     icon={isAdminSessionActive ? "lock-open-outline" : "lock-outline"}
@@ -127,6 +132,31 @@ const styles = StyleSheet.create({
     },
     adminText: {
         color: "#5f6368",
+    },
+    adminBadge: {
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        marginRight: 4,
+        borderWidth: 1,
+    },
+    adminBadgeActive: {
+        backgroundColor: "#e8f5e9",
+        borderColor: "#81c784",
+    },
+    adminBadgeInactive: {
+        backgroundColor: "#f5f5f5",
+        borderColor: "#d0d0d0",
+    },
+    adminBadgeText: {
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    adminBadgeTextActive: {
+        color: "#256029",
+    },
+    adminBadgeTextInactive: {
+        color: "#616161",
     },
     actionRow: {
         flexDirection: "row",

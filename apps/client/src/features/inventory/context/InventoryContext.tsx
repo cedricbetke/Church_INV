@@ -3,6 +3,7 @@ import { InventoryDataState, useInventoryData } from "@/src/features/inventory/h
 import { InventoryUiState, useInventoryUiState } from "@/src/features/inventory/hooks/useInventoryUiState";
 import { adminPassword as configuredAdminPassword, hasAdminBypass } from "@/src/shared/config/access";
 import apiClient from "@/src/shared/api/apiClient";
+import { readAdminSession, writeAdminSession } from "@/src/shared/utils/adminSessionStorage";
 
 interface InventoryContextType extends InventoryDataState, InventoryUiState {
     canManageInventory: boolean;
@@ -17,7 +18,9 @@ const InventoryContext = createContext<InventoryContextType | undefined>(undefin
 export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const dataState = useInventoryData();
     const uiState = useInventoryUiState();
-    const [isAdminSessionActive, setIsAdminSessionActive] = useState<boolean>(hasAdminBypass);
+    const [isAdminSessionActive, setIsAdminSessionActive] = useState<boolean>(
+        () => hasAdminBypass || readAdminSession(),
+    );
     const isAdminLoginConfigured = Boolean(configuredAdminPassword);
 
     const activateAdminSession = (password: string) => {
@@ -37,6 +40,10 @@ export const InventoryProvider: React.FC<{ children: ReactNode }> = ({ children 
         () => hasAdminBypass || isAdminSessionActive,
         [isAdminSessionActive],
     );
+
+    useEffect(() => {
+        writeAdminSession(isAdminSessionActive);
+    }, [isAdminSessionActive]);
 
     useEffect(() => {
         if (canManageInventory && configuredAdminPassword) {

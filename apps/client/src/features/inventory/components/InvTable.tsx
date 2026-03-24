@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { Snackbar } from "react-native-paper";
+import axios from "axios";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
@@ -16,6 +18,44 @@ const DEFAULT_COLUMNS: Column[] = [
     { title: "Standort", key: "standort", numeric: false, sortDirection: undefined },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined },
 ];
+
+const getMutationErrorMessage = (error: unknown) => {
+    if (!axios.isAxiosError(error)) {
+        return error instanceof Error ? error.message : "Aktion konnte nicht ausgefuehrt werden.";
+    }
+
+    if (!error.response) {
+        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL pruefen.";
+    }
+
+    const { status, data } = error.response;
+    const backendMessage =
+        typeof data === "string"
+            ? data
+            : typeof data?.message === "string"
+                ? data.message
+                : typeof data?.error === "string"
+                    ? data.error
+                    : null;
+
+    if (status === 403) {
+        return backendMessage ?? "Diese Aktion ist nur mit Admin-Rechten erlaubt.";
+    }
+
+    if (status === 503) {
+        return backendMessage ?? "Die Admin-Freigabe ist auf dem Server nicht konfiguriert.";
+    }
+
+    if (status === 404) {
+        return backendMessage ?? "Der Datensatz wurde nicht gefunden.";
+    }
+
+    if (status >= 500) {
+        return backendMessage ?? "Serverfehler beim Speichern.";
+    }
+
+    return backendMessage ?? "Aktion konnte nicht ausgefuehrt werden.";
+};
 
 const InvTable = () => {
     const {
@@ -37,6 +77,7 @@ const InvTable = () => {
     const [page, setPage] = useState<number>(0);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[1]);
     const [visibleModal, setVisibleModal] = useState(false);
+    const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
 
     const openDetailModal = (item: InventoryItem) => {
         setSelectedItem(item);
@@ -82,6 +123,7 @@ const InvTable = () => {
             await fetchItems();
         } catch (error) {
             console.error("Fehler beim Speichern des Geraets:", error);
+            setFeedbackMessage(getMutationErrorMessage(error));
             throw error;
         }
     };
@@ -100,6 +142,7 @@ const InvTable = () => {
             await fetchItems();
         } catch (error) {
             console.error("Fehler beim Loeschen des Geraets:", error);
+            setFeedbackMessage(getMutationErrorMessage(error));
             throw error;
         }
     };
@@ -141,6 +184,13 @@ const InvTable = () => {
                 onSubmit={handleSubmit}
                 editingItem={editingItem}
             />
+            <Snackbar
+                visible={Boolean(feedbackMessage)}
+                onDismiss={() => setFeedbackMessage(null)}
+                duration={3500}
+            >
+                {feedbackMessage ?? ""}
+            </Snackbar>
         </View>
     );
 };
