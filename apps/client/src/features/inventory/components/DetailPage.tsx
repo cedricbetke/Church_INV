@@ -1,12 +1,14 @@
 import React from 'react';
 import { Modal, Portal as PaperPortal, Button, List, Surface } from 'react-native-paper';
 import { Image, Text, ScrollView, View, StyleSheet } from 'react-native';
+import InventoryItem from '@/src/features/inventory/types/InventoryItem';
+import { Column } from './dataTable';
 
 interface DetailModalProps {
     visible: boolean;
     onDismiss: () => void;
-    selectedItem: any;
-    columns: Array<{ title: string; key: string; numeric: boolean }>;
+    selectedItem: InventoryItem | null;
+    columns: Column[];
 }
 
 const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedItem, columns }) => {

@@ -7,7 +7,7 @@ import {useInventory} from "@/src/features/inventory/context/InventoryContext";
 
 const MyComponent = () => {
         const [showModal, setShowModal] = useState<boolean>(false);
-        const {isAddPageVisible,setIsAddPageVisible} = useInventory();
+        const {setIsAddPageVisible} = useInventory();
         return (
             <View>
                     <Appbar.Header>

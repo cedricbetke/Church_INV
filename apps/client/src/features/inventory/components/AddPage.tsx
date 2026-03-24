@@ -1,154 +1,160 @@
-import React, { useState, useEffect } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { Modal, Portal, Button, Title } from 'react-native-paper';
-import { FormFields } from './FormFields';
-import { useInventory } from '@/src/features/inventory/context/InventoryContext';
-import SelectionDialog from './SelectionDialog';
-import { FormData } from '@/src/features/inventory/types/FormData';
+import React, { useEffect, useState } from "react";
+import { View, ScrollView, StyleSheet } from "react-native";
+import { Modal, Portal, Button, Title } from "react-native-paper";
+import { FormFields } from "./FormFields";
+import { useInventory } from "@/src/features/inventory/context/InventoryContext";
+import SelectionDialog from "./SelectionDialog";
+import { FormData } from "@/src/features/inventory/types/FormData";
 
 interface AddPageProps {
     visible: boolean;
     onDismiss: () => void;
-    existingBrands: Array<{ id: number; name: string }>;
-    existingModels: Array<{ id: number; name: string }>;
+    existingBrands: Hersteller[];
+    existingModels: Modell[];
     onAddBrand: (brandName: string) => Promise<void>;
-    onSubmit: (itemData: any) => Promise<void>;
+    onSubmit: (itemData: FormData) => Promise<void>;
 }
 
-const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, existingBrands, onAddBrand, onSubmit}) => {
+const emptyFormData: FormData = {
+    invNr: "",
+    modell: "",
+    hersteller: "",
+    serien_nr: "",
+    kaufdatum: "",
+    einkaufspreis: "",
+    standort: "",
+    bereich: "",
+    kategorie: "",
+    status: "",
+    verantwortlicher: "",
+};
+
+const AddPage: React.FC<AddPageProps> = ({
+    visible,
+    onDismiss,
+    existingModels,
+    existingBrands,
+    onAddBrand,
+    onSubmit,
+}) => {
     const { states, fetchMaxGeraeteId } = useInventory();
     const [showStatusDialog, setShowStatusDialog] = useState(false);
     const [showBrandDialog, setShowBrandDialog] = useState(false);
     const [showModelDialog, setShowModelDialog] = useState(false);
-    const [statusSearchQuery, setStatusSearchQuery] = useState('');
-    const [brandSearchQuery, setBrandSearchQuery] = useState('');
-    const [modelSearchQuery, setModelSearchQuery] = useState('');
+    const [statusSearchQuery, setStatusSearchQuery] = useState("");
+    const [brandSearchQuery, setBrandSearchQuery] = useState("");
+    const [modelSearchQuery, setModelSearchQuery] = useState("");
     const [isNewBrand, setIsNewBrand] = useState(false);
     const [isNewModel, setIsNewModel] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
-
-    const [formData, setFormData] = useState<FormData>({
-        invNr: '',
-        modell: '',
-        hersteller: '',
-        serien_nr: '',
-        kaufdatum: '',
-        einkaufspreis: '',
-        standort: '',
-        bereich: '',
-        kategorie: '',
-        status: '',
-        verantwortlicher: ''
-    });
-
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [formData, setFormData] = useState<FormData>(emptyFormData);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
-        if (visible) {
-            const loadMaxId = async () => {
-                try {
-                    setLoading(true);
-                    const maxId = await fetchMaxGeraeteId();
-                    setFormData(prev => ({
-                        ...prev,
-                        invNr: (maxId).toString()
-                    }));
-                } catch (err) {
-                    console.error('Fehler beim Laden der Max-ID:', err);
-                    setError('Fehler beim Laden der Max-ID');
-                } finally {
-                    setLoading(false);
-                }
-            };
-            loadMaxId();
+        if (!visible) {
+            return;
         }
+
+        const loadMaxId = async () => {
+            try {
+                setLoading(true);
+                const maxId = await fetchMaxGeraeteId();
+                setFormData((prev) => ({
+                    ...prev,
+                    invNr: String(maxId),
+                }));
+            } catch (loadError) {
+                console.error("Fehler beim Laden der Max-ID:", loadError);
+                setError("Fehler beim Laden der Max-ID");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadMaxId();
     }, [visible, fetchMaxGeraeteId]);
 
+    const resetForm = () => {
+        setFormData(emptyFormData);
+        setErrors({});
+        setError(null);
+        setPendingNewBrand(null);
+    };
+
     const handleChange = (name: string, value: string) => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
+
         if (errors[name]) {
-            setErrors(prev => ({
+            setErrors((prev) => ({
                 ...prev,
-                [name]: ''
+                [name]: "",
             }));
         }
     };
 
     const handleBrandSelect = (brandName: string) => {
-        handleChange('hersteller', brandName);
+        handleChange("hersteller", brandName);
         setShowBrandDialog(false);
-        setBrandSearchQuery('');
+        setBrandSearchQuery("");
     };
 
     const handleAddNewBrand = async () => {
-        if (brandSearchQuery.trim()) {
-            setPendingNewBrand(brandSearchQuery);
-            handleBrandSelect(brandSearchQuery);
-            setIsNewBrand(false);
+        if (!brandSearchQuery.trim()) {
+            return;
         }
+
+        setPendingNewBrand(brandSearchQuery);
+        handleBrandSelect(brandSearchQuery);
+        setIsNewBrand(false);
     };
 
     const handleModelSelect = (modelName: string) => {
-        handleChange('modell', modelName);
+        handleChange("modell", modelName);
         setShowModelDialog(false);
-        setModelSearchQuery('');
+        setModelSearchQuery("");
     };
 
     const validateForm = () => {
-        const newErrors: { [key: string]: string } = {};
+        const nextErrors: Record<string, string> = {};
 
-        if (!formData.invNr) newErrors.invNr = 'Inventarnummer ist erforderlich';
-        if (!formData.modell) newErrors.modell = 'Modell ist erforderlich';
-        if (!formData.status) newErrors.status = 'Status ist erforderlich';
-        if (!formData.hersteller) newErrors.hersteller = 'Hersteller ist erforderlich';
+        if (!formData.invNr) nextErrors.invNr = "Inventarnummer ist erforderlich";
+        if (!formData.modell) nextErrors.modell = "Modell ist erforderlich";
+        if (!formData.status) nextErrors.status = "Status ist erforderlich";
+        if (!formData.hersteller) nextErrors.hersteller = "Hersteller ist erforderlich";
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        setErrors(nextErrors);
+        return Object.keys(nextErrors).length === 0;
     };
 
     const handleSubmit = async () => {
-        if (validateForm()) {
-            try {
-                if (pendingNewBrand) {
-                    await onAddBrand(pendingNewBrand);
-                    setPendingNewBrand(null);
-                }
-                onSubmit(formData);
-                setFormData({
-                    invNr: '',
-                    modell: '',
-                    hersteller: '',
-                    serien_nr: '',
-                    kaufdatum: '',
-                    einkaufspreis: '',
-                    standort: '',
-                    bereich: '',
-                    kategorie: '',
-                    status: '',
-                    verantwortlicher: ''
-                });
-                onDismiss();
-            } catch (error) {
-                console.error('Fehler beim Speichern:', error);
-                setError('Fehler beim speichern des Items');
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            if (pendingNewBrand) {
+                await onAddBrand(pendingNewBrand);
             }
+
+            await onSubmit(formData);
+            resetForm();
+            onDismiss();
+        } catch (submitError) {
+            console.error("Fehler beim Speichern:", submitError);
+            setError("Fehler beim Speichern des Items");
         }
     };
 
     return (
         <Portal>
-            <Modal
-                visible={visible}
-                onDismiss={onDismiss}
-                contentContainerStyle={styles.modalContainer}
-            >
+            <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
                 <ScrollView>
-                    <Title style={styles.title}>Neuen Artikel hinzufügen</Title>
+                    <Title style={styles.title}>Neuen Artikel hinzufuegen</Title>
                     <View style={styles.form}>
                         <FormFields
                             formData={formData}
@@ -174,17 +180,17 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                 <SelectionDialog
                     visible={showStatusDialog}
                     onDismiss={() => setShowStatusDialog(false)}
-                    title="Status auswählen"
+                    title="Status auswaehlen"
                     searchQuery={statusSearchQuery}
                     onSearchChange={setStatusSearchQuery}
                     items={states}
                     onSelect={(statusName) => {
-                        handleChange('status', statusName);
+                        handleChange("status", statusName);
                         setShowStatusDialog(false);
-                        setStatusSearchQuery('');
+                        setStatusSearchQuery("");
                     }}
                     onAddNew={async () => {
-                        console.log('Neue Status können nur vom Administrator hinzugefügt werden');
+                        console.log("Neue Status koennen nur vom Administrator hinzugefuegt werden");
                     }}
                     isNewItem={false}
                 />
@@ -192,12 +198,12 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                 <SelectionDialog
                     visible={showBrandDialog}
                     onDismiss={() => setShowBrandDialog(false)}
-                    title="Hersteller auswählen"
+                    title="Hersteller auswaehlen"
                     searchQuery={brandSearchQuery}
                     onSearchChange={(text) => {
                         setBrandSearchQuery(text);
                         setIsNewBrand(!existingBrands.some(
-                            brand => brand.name.toLowerCase() === text.toLowerCase()
+                            (brand) => brand.name.toLowerCase() === text.toLowerCase(),
                         ));
                     }}
                     items={existingBrands}
@@ -209,7 +215,7 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                 <SelectionDialog
                     visible={showModelDialog}
                     onDismiss={() => setShowModelDialog(false)}
-                    title="Modell auswählen"
+                    title="Modell auswaehlen"
                     searchQuery={modelSearchQuery}
                     onSearchChange={(text) => {
                         setModelSearchQuery(text);
@@ -219,7 +225,6 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                     onSelect={handleModelSelect}
                     onAddNew={async () => {
                         handleModelSelect(modelSearchQuery);
-                        return Promise.resolve();
                     }}
                     isNewItem={isNewModel}
                 />
@@ -230,23 +235,23 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
 
 const styles = StyleSheet.create({
     modalContainer: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
         margin: 20,
         padding: 20,
         borderRadius: 10,
-        maxHeight: '90%',
+        maxHeight: "90%",
     },
     title: {
         fontSize: 24,
         marginBottom: 20,
-        textAlign: 'center',
+        textAlign: "center",
     },
     form: {
         gap: 10,
     },
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         marginTop: 20,
     },
     button: {
