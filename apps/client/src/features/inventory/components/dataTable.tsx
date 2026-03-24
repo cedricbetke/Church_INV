@@ -17,9 +17,11 @@ interface DataTableProps {
     columns: Column[];
     from: number;
     to: number;
+    items: InventoryItem[];
     openDetailModal: (item: InventoryItem) => void;
     page: number;
     setPage: (page: number) => void;
+    onSort: (key: Column["key"]) => void;
     itemsPerPage: number;
     onItemsPerPageChange: (itemsPerPage: number) => void;
     numberOfItemsPerPageList: number[];
@@ -29,9 +31,11 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     columns,
     from,
     to,
+    items,
     openDetailModal,
     page,
     setPage,
+    onSort,
     itemsPerPage,
     onItemsPerPageChange,
     numberOfItemsPerPageList,
@@ -39,7 +43,6 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const {
         searchQuery,
         setSearchQuery,
-        items,
         states,
         brands,
         models,
@@ -197,6 +200,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             key={column.key}
                             sortDirection={column.sortDirection}
                             numeric={column.numeric}
+                            onPress={() => onSort(column.key)}
                         >
                             {column.title}
                         </DataTable.Title>

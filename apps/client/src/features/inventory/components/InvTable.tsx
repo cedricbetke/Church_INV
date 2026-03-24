@@ -12,12 +12,31 @@ import AddPage from "./AddPage";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
 
 const DEFAULT_COLUMNS: Column[] = [
-    { title: "InvNr", key: "invNr", numeric: false, sortDirection: undefined },
+    { title: "InvNr", key: "invNr", numeric: false, sortDirection: "ascending" },
     { title: "Status", key: "status", numeric: false, sortDirection: undefined },
     { title: "Modell", key: "modell", numeric: false, sortDirection: undefined },
     { title: "Standort", key: "standort", numeric: false, sortDirection: undefined },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined },
 ];
+
+const compareValues = (
+    left: string | number | undefined,
+    right: string | number | undefined,
+    direction: "ascending" | "descending",
+) => {
+    const leftValue = left ?? "";
+    const rightValue = right ?? "";
+
+    let result = 0;
+
+    if (typeof leftValue === "number" && typeof rightValue === "number") {
+        result = leftValue - rightValue;
+    } else {
+        result = String(leftValue).localeCompare(String(rightValue), "de", { sensitivity: "base" });
+    }
+
+    return direction === "ascending" ? result : -result;
+};
 
 const getMutationErrorMessage = (error: unknown) => {
     if (!axios.isAxiosError(error)) {
@@ -78,6 +97,7 @@ const InvTable = () => {
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[1]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+    const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
 
     const openDetailModal = (item: InventoryItem) => {
         setSelectedItem(item);
@@ -101,6 +121,32 @@ const InvTable = () => {
     useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
+
+    const handleSort = (key: Column["key"]) => {
+        setColumns((currentColumns) =>
+            currentColumns.map((column) => {
+                if (column.key !== key) {
+                    return {
+                        ...column,
+                        sortDirection: undefined,
+                    };
+                }
+
+                const nextDirection =
+                    column.sortDirection === undefined
+                        ? "ascending"
+                        : column.sortDirection === "ascending"
+                            ? "descending"
+                            : undefined;
+
+                return {
+                    ...column,
+                    sortDirection: nextDirection,
+                };
+            }),
+        );
+        setPage(0);
+    };
 
     const handleAddBrand = async (brandName: string) => await addBrand(brandName);
 
@@ -147,18 +193,46 @@ const InvTable = () => {
         }
     };
 
+    const activeSortColumn = columns.find((column) => column.sortDirection);
+    const sortedItems = [...items].sort((left, right) => {
+        if (!activeSortColumn?.sortDirection) {
+            return 0;
+        }
+
+        switch (activeSortColumn.key) {
+            case "invNr":
+                return compareValues(left.invNr, right.invNr, activeSortColumn.sortDirection);
+            case "status":
+                return compareValues(left.status, right.status, activeSortColumn.sortDirection);
+            case "modell":
+                return compareValues(left.modell, right.modell, activeSortColumn.sortDirection);
+            case "standort":
+                return compareValues(left.standort, right.standort, activeSortColumn.sortDirection);
+            case "foto":
+                return compareValues(
+                    left.geraeteFoto ? 1 : 0,
+                    right.geraeteFoto ? 1 : 0,
+                    activeSortColumn.sortDirection,
+                );
+            default:
+                return 0;
+        }
+    });
+
     const from = page * itemsPerPage;
-    const to = Math.min((page + 1) * itemsPerPage, items.length);
+    const to = Math.min((page + 1) * itemsPerPage, sortedItems.length);
 
     return (
         <View style={styles.container}>
             <DataTableComponent
-                columns={DEFAULT_COLUMNS}
+                columns={columns}
                 from={from}
                 to={to}
+                items={sortedItems}
                 openDetailModal={openDetailModal}
                 page={page}
                 setPage={setPage}
+                onSort={handleSort}
                 itemsPerPage={itemsPerPage}
                 onItemsPerPageChange={onItemsPerPageChange}
                 numberOfItemsPerPageList={numberOfItemsPerPageList}
@@ -167,7 +241,7 @@ const InvTable = () => {
                 visible={visibleModal}
                 onDismiss={() => setVisibleModal(false)}
                 selectedItem={selectedItem}
-                columns={DEFAULT_COLUMNS}
+                columns={columns}
                 canManageInventory={canManageInventory}
                 onEdit={(item) => {
                     setVisibleModal(false);
