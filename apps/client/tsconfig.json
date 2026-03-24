@@ -10,15 +10,6 @@
       "@/app/*": [
         "./app/*"
       ],
-      "@/components/*": [
-        "./components/*"
-      ],
-      "@/constants/*": [
-        "./constants/*"
-      ],
-      "@/hooks/*": [
-        "./hooks/*"
-      ],
       "@/src/*": [
         "./src/*"
       ]
