@@ -1,14 +1,16 @@
-import React from 'react';
-import { Modal, Portal as PaperPortal, Button, Surface } from 'react-native-paper';
-import { Image, Text, ScrollView, View, StyleSheet, Platform } from 'react-native';
-import InventoryItem from '@/src/features/inventory/types/InventoryItem';
-import { Column } from './dataTable';
+import React from "react";
+import { Modal, Portal as PaperPortal, Button, Surface } from "react-native-paper";
+import { Image, Text, ScrollView, View, StyleSheet, Platform } from "react-native";
+import InventoryItem from "@/src/features/inventory/types/InventoryItem";
+import { Column } from "./dataTable";
 
 interface DetailModalProps {
     visible: boolean;
     onDismiss: () => void;
     selectedItem: InventoryItem | null;
     columns: Column[];
+    canManageInventory: boolean;
+    onEdit: (item: InventoryItem) => void;
 }
 
 const formatDate = (value?: Date) => {
@@ -42,7 +44,7 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
     </View>
 );
 
-const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedItem }) => {
+const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedItem, canManageInventory, onEdit }) => {
     return (
         <PaperPortal>
             <Modal
@@ -123,13 +125,24 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
                                 </View>
                             </View>
 
-                            <Button
-                                mode="contained"
-                                onPress={onDismiss}
-                                style={styles.button}
-                            >
-                                Schließen
-                            </Button>
+                            <View style={styles.buttonRow}>
+                                {canManageInventory && (
+                                    <Button
+                                        mode="outlined"
+                                        onPress={() => onEdit(selectedItem)}
+                                        style={styles.button}
+                                    >
+                                        Bearbeiten
+                                    </Button>
+                                )}
+                                <Button
+                                    mode="contained"
+                                    onPress={onDismiss}
+                                    style={styles.button}
+                                >
+                                    Schliessen
+                                </Button>
+                            </View>
                         </View>
                     )}
                 </ScrollView>
@@ -140,161 +153,167 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
 
 const styles = StyleSheet.create({
     modalContainer: {
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         padding: 22,
         borderRadius: 18,
         margin: 16,
-        maxHeight: '90%',
-        width: Platform.OS === 'web' ? '96%' : undefined,
-        maxWidth: Platform.OS === 'web' ? 1080 : undefined,
-        alignSelf: 'center',
+        maxHeight: "90%",
+        width: Platform.OS === "web" ? "96%" : undefined,
+        maxWidth: Platform.OS === "web" ? 1080 : undefined,
+        alignSelf: "center",
         borderWidth: 1,
-        borderColor: '#e8e8e8',
+        borderColor: "#e8e8e8",
     },
     title: {
         fontSize: 28,
-        fontWeight: 'bold',
+        fontWeight: "bold",
         marginBottom: 4,
-        color: '#151515',
+        color: "#151515",
     },
     subtitle: {
         fontSize: 14,
-        color: '#6a6a6a',
+        color: "#6a6a6a",
         marginBottom: 18,
     },
     heroCard: {
         padding: 20,
         borderRadius: 18,
         marginBottom: 20,
-        backgroundColor: '#f7f8fa',
+        backgroundColor: "#f7f8fa",
         borderWidth: 1,
-        borderColor: '#e5e7eb',
+        borderColor: "#e5e7eb",
     },
     heroContent: {
-        flexDirection: Platform.OS === 'web' ? 'row' : 'column',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        flexDirection: Platform.OS === "web" ? "row" : "column",
+        alignItems: "center",
+        justifyContent: "space-between",
         gap: 24,
     },
     imageFrame: {
         padding: 10,
         borderRadius: 18,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         borderWidth: 1,
-        borderColor: '#e4e6ea',
+        borderColor: "#e4e6ea",
     },
     image: {
         width: 220,
         height: 220,
         borderRadius: 14,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
     },
     imagePlaceholder: {
         width: 220,
         height: 220,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: '#d7dbe1',
-        borderStyle: 'dashed',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#ffffff',
+        borderColor: "#d7dbe1",
+        borderStyle: "dashed",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#ffffff",
     },
     imagePlaceholderText: {
-        color: '#737983',
+        color: "#737983",
     },
     heroMeta: {
         gap: 6,
         flex: 1,
-        width: Platform.OS === 'web' ? undefined : '100%',
+        width: Platform.OS === "web" ? undefined : "100%",
     },
     heroTitle: {
         fontSize: 30,
-        fontWeight: 'bold',
-        color: '#222222',
+        fontWeight: "bold",
+        color: "#222222",
     },
     heroSubtitle: {
         fontSize: 14,
-        color: '#61656d',
+        color: "#61656d",
         marginBottom: 8,
     },
     heroBadgeRow: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+        flexDirection: "row",
+        flexWrap: "wrap",
         gap: 12,
         marginTop: 10,
     },
     heroBadge: {
         paddingVertical: 12,
         paddingHorizontal: 14,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#e2e5ea',
+        borderColor: "#e2e5ea",
         minWidth: 140,
     },
     heroBadgeLabel: {
         fontSize: 12,
-        color: '#70757d',
+        color: "#70757d",
         marginBottom: 2,
     },
     heroBadgeValue: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#1f2328',
+        fontWeight: "600",
+        color: "#1f2328",
     },
     section: {
         marginBottom: 18,
     },
     sectionHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         gap: 12,
         marginBottom: 12,
     },
     sectionTitle: {
         fontSize: 17,
-        fontWeight: '600',
-        color: '#222222',
+        fontWeight: "600",
+        color: "#222222",
     },
     sectionLine: {
         flex: 1,
         height: 1,
-        backgroundColor: '#e5e7eb',
+        backgroundColor: "#e5e7eb",
     },
     detailGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
     },
     detailItem: {
-        width: Platform.OS === 'web' ? '49%' : '100%',
+        width: Platform.OS === "web" ? "49%" : "100%",
         marginBottom: 12,
     },
     detailCard: {
         padding: 14,
         borderRadius: 12,
-        backgroundColor: '#ffffff',
+        backgroundColor: "#ffffff",
         borderWidth: 1,
-        borderColor: '#e7e9ee',
+        borderColor: "#e7e9ee",
     },
     cardLabel: {
-        fontSize: 13,
-        color: '#727780',
-        marginBottom: 6,
+        fontSize: 12,
+        color: "#6f7680",
+        marginBottom: 4,
+        textTransform: "uppercase",
+        letterSpacing: 0.4,
     },
     cardValue: {
         fontSize: 16,
-        color: '#222222',
-        lineHeight: 22,
+        color: "#1d232a",
+        fontWeight: "600",
     },
     cardValueMuted: {
-        color: '#8a9099',
-        fontStyle: 'italic',
+        color: "#9096a0",
+        fontWeight: "400",
+    },
+    buttonRow: {
+        flexDirection: "row",
+        gap: 12,
     },
     button: {
-        marginTop: 6,
-        borderRadius: 10,
+        marginTop: 8,
+        flex: 1,
     },
 });
 

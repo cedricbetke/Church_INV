@@ -22,6 +22,9 @@ const InvTable = () => {
         numberOfItemsPerPageList,
         selectedItem,
         setSelectedItem,
+        editingItem,
+        setEditingItem,
+        canManageInventory,
         brands,
         addBrand,
         fetchItems,
@@ -40,6 +43,20 @@ const InvTable = () => {
         setVisibleModal(true);
     };
 
+    const openEditModal = (item: InventoryItem) => {
+        if (!canManageInventory) {
+            return;
+        }
+
+        setEditingItem(item);
+        setIsAddPageVisible(true);
+    };
+
+    const closeAddPage = () => {
+        setEditingItem(null);
+        setIsAddPageVisible(false);
+    };
+
     useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
@@ -47,11 +64,20 @@ const InvTable = () => {
     const handleAddBrand = async (brandName: string) => await addBrand(brandName);
 
     const handleSubmit = async (itemData: CreateGeraetPayload) => {
+        if (!canManageInventory) {
+            throw new Error("Nur Admins duerfen Geraete anlegen oder bearbeiten.");
+        }
+
         try {
-            await geraeteService.create(itemData);
+            if (editingItem) {
+                await geraeteService.update(editingItem.invNr, itemData);
+            } else {
+                await geraeteService.create(itemData);
+            }
+
             await fetchItems();
         } catch (error) {
-            console.error("Fehler beim Einfuegen eines neuen Geraets:", error);
+            console.error("Fehler beim Speichern des Geraets:", error);
             throw error;
         }
     };
@@ -77,14 +103,20 @@ const InvTable = () => {
                 onDismiss={() => setVisibleModal(false)}
                 selectedItem={selectedItem}
                 columns={DEFAULT_COLUMNS}
+                canManageInventory={canManageInventory}
+                onEdit={(item) => {
+                    setVisibleModal(false);
+                    openEditModal(item);
+                }}
             />
             <AddPage
                 visible={isAddPageVisible}
-                onDismiss={() => setIsAddPageVisible(false)}
+                onDismiss={closeAddPage}
                 existingBrands={brands}
                 existingModels={models}
                 onAddBrand={handleAddBrand}
                 onSubmit={handleSubmit}
+                editingItem={editingItem}
             />
         </View>
     );

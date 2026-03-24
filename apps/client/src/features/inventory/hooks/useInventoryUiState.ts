@@ -6,6 +6,8 @@ export interface InventoryUiState {
     setFilter: Dispatch<SetStateAction<string>>;
     selectedItem: InventoryItem | null;
     setSelectedItem: Dispatch<SetStateAction<InventoryItem | null>>;
+    editingItem: InventoryItem | null;
+    setEditingItem: Dispatch<SetStateAction<InventoryItem | null>>;
     searchQuery: string;
     setSearchQuery: Dispatch<SetStateAction<string>>;
     numberOfItemsPerPageList: number[];
@@ -16,6 +18,7 @@ export interface InventoryUiState {
 export const useInventoryUiState = (): InventoryUiState => {
     const [filter, setFilter] = useState<string>("");
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+    const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [numberOfItemsPerPageList] = useState([5, 10, 15, 20, 30, 50]);
     const [isAddPageVisible, setIsAddPageVisible] = useState<boolean>(false);
@@ -25,6 +28,8 @@ export const useInventoryUiState = (): InventoryUiState => {
         setFilter,
         selectedItem,
         setSelectedItem,
+        editingItem,
+        setEditingItem,
         searchQuery,
         setSearchQuery,
         numberOfItemsPerPageList,

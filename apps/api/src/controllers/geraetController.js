@@ -124,6 +124,7 @@ const updateGeraet = async (req, res) => {
             bereich_id,
             verantwortlicher_id,
             kategorie_id,
+            einkaufspreis = null,
             geraetefoto_url = null,
             kaufdatum = null,
             serien_nr = null
@@ -141,7 +142,7 @@ const updateGeraet = async (req, res) => {
             modell_id,
             bereich_id,
             kaufdatum,
-            null,
+            einkaufspreis,
             serien_nr ?? seriennummer,
             standort_id,
             verantwortlicher_id,

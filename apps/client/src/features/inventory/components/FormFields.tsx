@@ -19,6 +19,7 @@ interface FormFieldsProps {
     errors: { [key: string]: string };
     loading: boolean;
     error: string | null;
+    invNrDisabled?: boolean;
     setShowStatusDialog: (show: boolean) => void;
     setShowBrandDialog: (show: boolean) => void;
     setShowModelDialog: (show: boolean) => void;
@@ -35,6 +36,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                                                           errors,
                                                           loading,
                                                           error,
+                                                          invNrDisabled = false,
                                                           setShowStatusDialog,
                                                           setShowBrandDialog,
                                                           setShowModelDialog,
@@ -125,7 +127,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
 
     return (
         <UIGrid columns={2} xGap={16} yGap={8}>
-            {renderField('invNr', 'Inventarnummer', { disabled: loading })}
+            {renderField('invNr', 'Inventarnummer', { disabled: loading || invNrDisabled })}
             {renderField('hersteller', 'Hersteller', {
                 onFocus: () => setShowBrandDialog(true),
                 onPressIn: () => setShowBrandDialog(true),

@@ -8,6 +8,7 @@ import { useInventory } from "@/src/features/inventory/context/InventoryContext"
 import SelectionDialog from "./SelectionDialog";
 import { FormData } from "@/src/features/inventory/types/FormData";
 import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
+import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import apiClient from "@/src/shared/api/apiClient";
 import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
 
@@ -98,6 +99,7 @@ interface AddPageProps {
     existingModels: Modell[];
     onAddBrand: (brandName: string) => Promise<void>;
     onSubmit: (itemData: CreateGeraetPayload) => Promise<void>;
+    editingItem?: InventoryItem | null;
 }
 
 const emptyFormData: FormData = {
@@ -121,6 +123,7 @@ const AddPage: React.FC<AddPageProps> = ({
     existingBrands,
     onAddBrand,
     onSubmit,
+    editingItem = null,
 }) => {
     const { states, fetchMaxGeraeteId, bereiche, standorte, kategorien, personen } = useInventory();
     const [showStatusDialog, setShowStatusDialog] = useState(false);
@@ -147,6 +150,7 @@ const AddPage: React.FC<AddPageProps> = ({
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [selectedPhotoDataUrl, setSelectedPhotoDataUrl] = useState<string | null>(null);
     const [uploadedPhotoPath, setUploadedPhotoPath] = useState<string | null>(null);
+    const isEditMode = editingItem !== null;
 
     const selectedBrand = existingBrands.find(
         (brand) => normalize(brand.name) === normalize(formData.hersteller),
@@ -195,6 +199,34 @@ const AddPage: React.FC<AddPageProps> = ({
             return;
         }
 
+        if (isEditMode && editingItem) {
+            const model = existingModels.find((entry) => normalize(entry.name) === normalize(editingItem.modell));
+            const brand = model
+                ? existingBrands.find((entry) => entry.id === model.hersteller_id)
+                : existingBrands.find((entry) => normalize(entry.name) === normalize(editingItem.hersteller ?? ""));
+
+            setLoading(false);
+            setFormData({
+                invNr: String(editingItem.invNr),
+                modell: editingItem.modell ?? "",
+                hersteller: brand?.name ?? editingItem.hersteller ?? "",
+                serien_nr: editingItem.seriennummer ?? "",
+                kaufdatum: editingItem.kaufdatum ? formatDateForDb(editingItem.kaufdatum) : "",
+                einkaufspreis: editingItem.einkaufspreis != null ? String(editingItem.einkaufspreis).replace(".", ",") : "",
+                standort: editingItem.standort ?? "",
+                bereich: editingItem.bereich ?? "",
+                kategorie: editingItem.kategorie ?? "",
+                status: editingItem.status ?? "",
+                verantwortlicher: editingItem.verantwortlicher ?? "",
+            });
+            setErrors({});
+            setError(null);
+            setPendingNewBrand(null);
+            setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
+            setUploadedPhotoPath(editingItem.geraeteFoto ?? null);
+            return;
+        }
+
         const loadMaxId = async () => {
             try {
                 setLoading(true);
@@ -212,7 +244,7 @@ const AddPage: React.FC<AddPageProps> = ({
         };
 
         loadMaxId();
-    }, [visible, fetchMaxGeraeteId]);
+    }, [visible, isEditMode, editingItem, existingModels, existingBrands, fetchMaxGeraeteId]);
 
     const resetForm = () => {
         setFormData(emptyFormData);
@@ -417,7 +449,9 @@ const AddPage: React.FC<AddPageProps> = ({
         <Portal>
             <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={styles.modalContainer}>
                 <ScrollView>
-                    <Title style={styles.title}>Neuen Artikel hinzufuegen</Title>
+                    <Title style={styles.title}>
+                        {isEditMode ? `Geraet ${formData.invNr} bearbeiten` : "Neuen Artikel hinzufuegen"}
+                    </Title>
                     <View style={styles.form}>
                         <FormFields
                             formData={formData}
@@ -425,6 +459,7 @@ const AddPage: React.FC<AddPageProps> = ({
                             errors={errors}
                             loading={loading}
                             error={error}
+                            invNrDisabled={isEditMode}
                             setShowStatusDialog={setShowStatusDialog}
                             setShowBrandDialog={setShowBrandDialog}
                             setShowModelDialog={setShowModelDialog}
@@ -461,7 +496,7 @@ const AddPage: React.FC<AddPageProps> = ({
                                 Abbrechen
                             </Button>
                             <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-                                Speichern
+                                {isEditMode ? "Aenderungen speichern" : "Speichern"}
                             </Button>
                         </View>
                     </View>
