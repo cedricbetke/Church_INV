@@ -44,7 +44,11 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
                                     <Surface key={col.key} style={styles.surface}>
                                         <List.Item
                                             title={col.title}
-                                            description={selectedItem[col.key]?.toString() || 'N/A'}
+                                            description={
+                                                col.key === "foto"
+                                                    ? (selectedItem.geraeteFoto ? "Vorhanden" : "N/A")
+                                                    : (selectedItem[col.key]?.toString() || 'N/A')
+                                            }
                                             titleStyle={styles.itemTitle}
                                             descriptionStyle={styles.itemDescription}
                                             style={styles.listItem}

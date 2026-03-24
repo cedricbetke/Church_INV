@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
-import { FormData } from "@/src/features/inventory/types/FormData";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
+import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
 import { Column } from "./dataTable";
 import DetailModal from "./DetailPage";
 import DataTableComponent from "./dataTable";
 import AddPage from "./AddPage";
+import geraeteService from "@/src/features/inventory/services/geraeteService";
 
 const DEFAULT_COLUMNS: Column[] = [
     { title: "InvNr", key: "invNr", numeric: false, sortDirection: undefined },
-    { title: "Status", key: "statusid", numeric: false, sortDirection: undefined },
+    { title: "Status", key: "status", numeric: false, sortDirection: undefined },
     { title: "Modell", key: "modell", numeric: false, sortDirection: undefined },
     { title: "Standort", key: "standort", numeric: false, sortDirection: undefined },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined },
@@ -45,8 +46,9 @@ const InvTable = () => {
 
     const handleAddBrand = async (brandName: string) => await addBrand(brandName);
 
-    const handleSubmit = async (_itemData: FormData) => {
+    const handleSubmit = async (itemData: CreateGeraetPayload) => {
         try {
+            await geraeteService.create(itemData);
             await fetchItems();
         } catch (error) {
             console.error("Fehler beim Einfuegen eines neuen Geraets:", error);

@@ -2,7 +2,7 @@ import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 
 const testItem1: InventoryItem = {
     invNr: 1001,
-    statusid: 1,
+    status: "Aktiv",
     hersteller: "Dell",
     geraeteFoto: "https://example.com/images/dell-laptop.jpg",
     modell: "Latitude 7420",

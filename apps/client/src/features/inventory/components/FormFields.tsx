@@ -15,6 +15,10 @@ interface FormFieldsProps {
     setShowStatusDialog: (show: boolean) => void;
     setShowBrandDialog: (show: boolean) => void;
     setShowModelDialog: (show: boolean) => void;
+    setShowStandortDialog: (show: boolean) => void;
+    setShowBereichDialog: (show: boolean) => void;
+    setShowKategorieDialog: (show: boolean) => void;
+    setShowVerantwortlicherDialog: (show: boolean) => void;
 }
 
 export const FormFields: React.FC<FormFieldsProps> = ({
@@ -25,7 +29,11 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                                                           error,
                                                           setShowStatusDialog,
                                                           setShowBrandDialog,
-                                                          setShowModelDialog
+                                                          setShowModelDialog,
+                                                          setShowStandortDialog,
+                                                          setShowBereichDialog,
+                                                          setShowKategorieDialog,
+                                                          setShowVerantwortlicherDialog
                                                       }) => {
     const renderField = (
         name: keyof FormData & string,
@@ -34,11 +42,11 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             disabled?: boolean;
             keyboardType?: "default" | "decimal-pad";
             onFocus?: () => void;
+            onPressIn?: () => void;
             rightIcon?: string;
-            isDatePicker?: boolean;
+            selectionOnly?: boolean;
         } = {}
     ) => (
-        
         <View>
             <TextInput
                 mode="outlined"
@@ -49,6 +57,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 disabled={options.disabled}
                 keyboardType={options.keyboardType}
                 onFocus={options.onFocus}
+                onPressIn={options.onPressIn}
+                showSoftInputOnFocus={!options.selectionOnly}
                 right={options.rightIcon ? <TextInput.Icon icon={options.rightIcon} /> : undefined}
                 style={{ backgroundColor: 'white' }}
             />
@@ -67,25 +77,50 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             {renderField('invNr', 'Inventarnummer', { disabled: loading })}
             {renderField('hersteller', 'Hersteller', {
                 onFocus: () => setShowBrandDialog(true),
+                onPressIn: () => setShowBrandDialog(true),
                 rightIcon: 'chevron-down'
             })}
             {renderField('modell', 'Modell', {
                 onFocus: () => setShowModelDialog(true),
-                rightIcon: 'chevron-down'
+                onPressIn: () => setShowModelDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
             })}
             {renderField('serien_nr', 'Seriennummer')}
             {renderField('kaufdatum', 'Kaufdatum')}
             {renderField('einkaufspreis', 'Einkaufspreis', {
                 keyboardType: 'decimal-pad'
             })}
-            {renderField('standort', 'Standort')}
-            {renderField('bereich', 'Bereich')}
-            {renderField('kategorie', 'Kategorie')}
+            {renderField('standort', 'Standort', {
+                onFocus: () => setShowStandortDialog(true),
+                onPressIn: () => setShowStandortDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
+            })}
+            {renderField('bereich', 'Bereich', {
+                onFocus: () => setShowBereichDialog(true),
+                onPressIn: () => setShowBereichDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
+            })}
+            {renderField('kategorie', 'Kategorie', {
+                onFocus: () => setShowKategorieDialog(true),
+                onPressIn: () => setShowKategorieDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
+            })}
             {renderField('status', 'Status', {
                 onFocus: () => setShowStatusDialog(true),
-                rightIcon: 'chevron-down'
+                onPressIn: () => setShowStatusDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
             })}
-            {renderField('verantwortlicher', 'Verantwortlicher')}
+            {renderField('verantwortlicher', 'Verantwortlicher', {
+                onFocus: () => setShowVerantwortlicherDialog(true),
+                onPressIn: () => setShowVerantwortlicherDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
+            })}
         </UIGrid>
     );
 };

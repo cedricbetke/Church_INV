@@ -5,6 +5,10 @@ import geraeteService from "@/src/features/inventory/services/geraeteService";
 import statusService from "@/src/features/masterdata/services/statusService";
 import modellService from "@/src/features/masterdata/services/modellService";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
+import bereichService from "@/src/features/masterdata/services/bereichService";
+import standortService from "@/src/features/masterdata/services/standortService";
+import kategorieService from "@/src/features/masterdata/services/kategorieService";
+import personService from "@/src/features/masterdata/services/personService";
 
 export interface InventoryDataState {
     items: InventoryItem[];
@@ -15,6 +19,14 @@ export interface InventoryDataState {
     setModels: Dispatch<SetStateAction<Modell[]>>;
     brands: Hersteller[];
     setBrands: Dispatch<SetStateAction<Hersteller[]>>;
+    bereiche: Bereich[];
+    setBereiche: Dispatch<SetStateAction<Bereich[]>>;
+    standorte: Standort[];
+    setStandorte: Dispatch<SetStateAction<Standort[]>>;
+    kategorien: Kategorie[];
+    setKategorien: Dispatch<SetStateAction<Kategorie[]>>;
+    personen: Person[];
+    setPersonen: Dispatch<SetStateAction<Person[]>>;
     fetchItems: () => Promise<void>;
     fetchMaxGeraeteId: () => Promise<number>;
     addBrand: (brandName: string) => Promise<Hersteller>;
@@ -25,6 +37,10 @@ export const useInventoryData = (): InventoryDataState => {
     const [states, setStates] = useState<Status[]>([]);
     const [models, setModels] = useState<Modell[]>([]);
     const [brands, setBrands] = useState<Hersteller[]>([]);
+    const [bereiche, setBereiche] = useState<Bereich[]>([]);
+    const [standorte, setStandorte] = useState<Standort[]>([]);
+    const [kategorien, setKategorien] = useState<Kategorie[]>([]);
+    const [personen, setPersonen] = useState<Person[]>([]);
 
     const fetchItems = async () => {
         try {
@@ -62,6 +78,42 @@ export const useInventoryData = (): InventoryDataState => {
         }
     };
 
+    const fetchBereiche = async () => {
+        try {
+            const response = await bereichService.getAll();
+            setBereiche(response);
+        } catch (error) {
+            console.error("Fehler beim Laden der Bereiche:", error);
+        }
+    };
+
+    const fetchStandorte = async () => {
+        try {
+            const response = await standortService.getAll();
+            setStandorte(response);
+        } catch (error) {
+            console.error("Fehler beim Laden der Standorte:", error);
+        }
+    };
+
+    const fetchKategorien = async () => {
+        try {
+            const response = await kategorieService.getAll();
+            setKategorien(response);
+        } catch (error) {
+            console.error("Fehler beim Laden der Kategorien:", error);
+        }
+    };
+
+    const fetchPersonen = async () => {
+        try {
+            const response = await personService.getAll();
+            setPersonen(response);
+        } catch (error) {
+            console.error("Fehler beim Laden der Personen:", error);
+        }
+    };
+
     const fetchMaxGeraeteId = async (): Promise<number> => {
         try {
             const response = await geraeteService.getMaxId();
@@ -89,6 +141,10 @@ export const useInventoryData = (): InventoryDataState => {
         fetchStates();
         fetchModels();
         fetchBrands();
+        fetchBereiche();
+        fetchStandorte();
+        fetchKategorien();
+        fetchPersonen();
     }, []);
 
     return {
@@ -100,6 +156,14 @@ export const useInventoryData = (): InventoryDataState => {
         setModels,
         brands,
         setBrands,
+        bereiche,
+        setBereiche,
+        standorte,
+        setStandorte,
+        kategorien,
+        setKategorien,
+        personen,
+        setPersonen,
         fetchItems,
         fetchMaxGeraeteId,
         addBrand,

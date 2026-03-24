@@ -5,6 +5,12 @@ import { FormFields } from "./FormFields";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import SelectionDialog from "./SelectionDialog";
 import { FormData } from "@/src/features/inventory/types/FormData";
+import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
+
+interface NamedItem {
+    id: number;
+    name: string;
+}
 
 interface AddPageProps {
     visible: boolean;
@@ -12,7 +18,7 @@ interface AddPageProps {
     existingBrands: Hersteller[];
     existingModels: Modell[];
     onAddBrand: (brandName: string) => Promise<void>;
-    onSubmit: (itemData: FormData) => Promise<void>;
+    onSubmit: (itemData: CreateGeraetPayload) => Promise<void>;
 }
 
 const emptyFormData: FormData = {
@@ -37,13 +43,21 @@ const AddPage: React.FC<AddPageProps> = ({
     onAddBrand,
     onSubmit,
 }) => {
-    const { states, fetchMaxGeraeteId } = useInventory();
+    const { states, fetchMaxGeraeteId, bereiche, standorte, kategorien, personen } = useInventory();
     const [showStatusDialog, setShowStatusDialog] = useState(false);
     const [showBrandDialog, setShowBrandDialog] = useState(false);
     const [showModelDialog, setShowModelDialog] = useState(false);
+    const [showStandortDialog, setShowStandortDialog] = useState(false);
+    const [showBereichDialog, setShowBereichDialog] = useState(false);
+    const [showKategorieDialog, setShowKategorieDialog] = useState(false);
+    const [showVerantwortlicherDialog, setShowVerantwortlicherDialog] = useState(false);
     const [statusSearchQuery, setStatusSearchQuery] = useState("");
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [modelSearchQuery, setModelSearchQuery] = useState("");
+    const [standortSearchQuery, setStandortSearchQuery] = useState("");
+    const [bereichSearchQuery, setBereichSearchQuery] = useState("");
+    const [kategorieSearchQuery, setKategorieSearchQuery] = useState("");
+    const [verantwortlicherSearchQuery, setVerantwortlicherSearchQuery] = useState("");
     const [isNewBrand, setIsNewBrand] = useState(false);
     const [isNewModel, setIsNewModel] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -51,6 +65,31 @@ const AddPage: React.FC<AddPageProps> = ({
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>(emptyFormData);
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const resetDialogState = () => {
+        setShowStatusDialog(false);
+        setShowBrandDialog(false);
+        setShowModelDialog(false);
+        setShowStandortDialog(false);
+        setShowBereichDialog(false);
+        setShowKategorieDialog(false);
+        setShowVerantwortlicherDialog(false);
+        setStatusSearchQuery("");
+        setBrandSearchQuery("");
+        setModelSearchQuery("");
+        setStandortSearchQuery("");
+        setBereichSearchQuery("");
+        setKategorieSearchQuery("");
+        setVerantwortlicherSearchQuery("");
+        setIsNewBrand(false);
+        setIsNewModel(false);
+    };
+
+    const handleDismiss = () => {
+        resetForm();
+        resetDialogState();
+        onDismiss();
+    };
 
     useEffect(() => {
         if (!visible) {
@@ -125,11 +164,22 @@ const AddPage: React.FC<AddPageProps> = ({
         if (!formData.invNr) nextErrors.invNr = "Inventarnummer ist erforderlich";
         if (!formData.modell) nextErrors.modell = "Modell ist erforderlich";
         if (!formData.status) nextErrors.status = "Status ist erforderlich";
-        if (!formData.hersteller) nextErrors.hersteller = "Hersteller ist erforderlich";
+        if (!formData.standort) nextErrors.standort = "Standort ist erforderlich";
+        if (!formData.bereich) nextErrors.bereich = "Bereich ist erforderlich";
+        if (!formData.kategorie) nextErrors.kategorie = "Kategorie ist erforderlich";
+        if (!formData.verantwortlicher) nextErrors.verantwortlicher = "Verantwortlicher ist erforderlich";
 
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
     };
+
+    const findByName = <T extends NamedItem>(items: T[], name: string) =>
+        items.find((item) => item.name.toLowerCase() === name.toLowerCase());
+
+    const personItems: NamedItem[] = personen.map((person) => ({
+        id: person.id,
+        name: `${person.vorname} ${person.nachname}`.trim(),
+    }));
 
     const handleSubmit = async () => {
         if (!validateForm()) {
@@ -141,8 +191,33 @@ const AddPage: React.FC<AddPageProps> = ({
                 await onAddBrand(pendingNewBrand);
             }
 
-            await onSubmit(formData);
+            const selectedModel = findByName(existingModels, formData.modell);
+            const selectedStatus = findByName(states, formData.status);
+            const selectedStandort = findByName(standorte, formData.standort);
+            const selectedBereich = findByName(bereiche, formData.bereich);
+            const selectedKategorie = findByName(kategorien, formData.kategorie);
+            const selectedVerantwortlicher = findByName(personItems, formData.verantwortlicher);
+
+            if (!selectedModel || !selectedStatus || !selectedStandort || !selectedBereich || !selectedKategorie || !selectedVerantwortlicher) {
+                setError("Die ausgewaehlten Stammdaten konnten nicht aufgeloest werden.");
+                return;
+            }
+
+            const payload: CreateGeraetPayload = {
+                modell_id: selectedModel.id,
+                status_id: selectedStatus.id,
+                standort_id: selectedStandort.id,
+                bereich_id: selectedBereich.id,
+                kategorie_id: selectedKategorie.id,
+                verantwortlicher_id: selectedVerantwortlicher.id,
+                serien_nr: formData.serien_nr || undefined,
+                kaufdatum: formData.kaufdatum || undefined,
+                einkaufspreis: formData.einkaufspreis ? Number(formData.einkaufspreis) : undefined,
+            };
+
+            await onSubmit(payload);
             resetForm();
+            resetDialogState();
             onDismiss();
         } catch (submitError) {
             console.error("Fehler beim Speichern:", submitError);
@@ -152,7 +227,7 @@ const AddPage: React.FC<AddPageProps> = ({
 
     return (
         <Portal>
-            <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
+            <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={styles.modalContainer}>
                 <ScrollView>
                     <Title style={styles.title}>Neuen Artikel hinzufuegen</Title>
                     <View style={styles.form}>
@@ -165,9 +240,13 @@ const AddPage: React.FC<AddPageProps> = ({
                             setShowStatusDialog={setShowStatusDialog}
                             setShowBrandDialog={setShowBrandDialog}
                             setShowModelDialog={setShowModelDialog}
+                            setShowStandortDialog={setShowStandortDialog}
+                            setShowBereichDialog={setShowBereichDialog}
+                            setShowKategorieDialog={setShowKategorieDialog}
+                            setShowVerantwortlicherDialog={setShowVerantwortlicherDialog}
                         />
                         <View style={styles.buttonContainer}>
-                            <Button mode="outlined" onPress={onDismiss} style={styles.button}>
+                            <Button mode="outlined" onPress={handleDismiss} style={styles.button}>
                                 Abbrechen
                             </Button>
                             <Button mode="contained" onPress={handleSubmit} style={styles.button}>
@@ -227,6 +306,70 @@ const AddPage: React.FC<AddPageProps> = ({
                         handleModelSelect(modelSearchQuery);
                     }}
                     isNewItem={isNewModel}
+                />
+
+                <SelectionDialog
+                    visible={showStandortDialog}
+                    onDismiss={() => setShowStandortDialog(false)}
+                    title="Standort auswaehlen"
+                    searchQuery={standortSearchQuery}
+                    onSearchChange={setStandortSearchQuery}
+                    items={standorte}
+                    onSelect={(name) => {
+                        handleChange("standort", name);
+                        setShowStandortDialog(false);
+                        setStandortSearchQuery("");
+                    }}
+                    onAddNew={async () => Promise.resolve()}
+                    isNewItem={false}
+                />
+
+                <SelectionDialog
+                    visible={showBereichDialog}
+                    onDismiss={() => setShowBereichDialog(false)}
+                    title="Bereich auswaehlen"
+                    searchQuery={bereichSearchQuery}
+                    onSearchChange={setBereichSearchQuery}
+                    items={bereiche}
+                    onSelect={(name) => {
+                        handleChange("bereich", name);
+                        setShowBereichDialog(false);
+                        setBereichSearchQuery("");
+                    }}
+                    onAddNew={async () => Promise.resolve()}
+                    isNewItem={false}
+                />
+
+                <SelectionDialog
+                    visible={showKategorieDialog}
+                    onDismiss={() => setShowKategorieDialog(false)}
+                    title="Kategorie auswaehlen"
+                    searchQuery={kategorieSearchQuery}
+                    onSearchChange={setKategorieSearchQuery}
+                    items={kategorien}
+                    onSelect={(name) => {
+                        handleChange("kategorie", name);
+                        setShowKategorieDialog(false);
+                        setKategorieSearchQuery("");
+                    }}
+                    onAddNew={async () => Promise.resolve()}
+                    isNewItem={false}
+                />
+
+                <SelectionDialog
+                    visible={showVerantwortlicherDialog}
+                    onDismiss={() => setShowVerantwortlicherDialog(false)}
+                    title="Verantwortlichen auswaehlen"
+                    searchQuery={verantwortlicherSearchQuery}
+                    onSearchChange={setVerantwortlicherSearchQuery}
+                    items={personItems}
+                    onSelect={(name) => {
+                        handleChange("verantwortlicher", name);
+                        setShowVerantwortlicherDialog(false);
+                        setVerantwortlicherSearchQuery("");
+                    }}
+                    onAddNew={async () => Promise.resolve()}
+                    isNewItem={false}
                 />
             </Modal>
         </Portal>
