@@ -6,23 +6,23 @@ const inventoryMapper = {
 
     getAll: async () => {
         const response = await geraeteService.getAll();
-        return response.map((item: any) => new InventoryItem(
-            item.inv_nr,
-            item.Status,
-            "",
-            "",
-            item.Modell,
-            "",
-            "",
-            new Date(),
-            0,
-            item.standort_id,
-            "",
-            "",
-            "",
-            [],
-            "",
-        ));
+        return response.map((item: any): InventoryItem => ({
+            invNr: item.inv_nr,
+            statusid: Number(item.Status ?? 0),
+            hersteller: "",
+            geraeteFoto: "",
+            modell: item.Modell,
+            objekttyp: "",
+            seriennummer: "",
+            kaufdatum: new Date(),
+            einkaufspreis: 0,
+            standort: String(item.standort_id ?? ""),
+            verantwortlicher: "",
+            bereich: "",
+            kategorie: "",
+            attachments: [],
+            qrCode: "",
+        }));
     },
 
     createWhole: async (_item: InventoryItem) => {
