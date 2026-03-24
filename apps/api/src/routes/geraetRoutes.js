@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const geraetController = require('../controllers/geraetController');
+const requireAdmin = require('../middleware/requireAdmin');
 
 /**
  * @swagger
@@ -100,7 +101,7 @@ router.get('/:id', geraetController.getGeraetById);
  *       201:
  *         description: Gerät erfolgreich erstellt
  */
-router.post('/', geraetController.createGeraet);
+router.post('/', requireAdmin, geraetController.createGeraet);
 
 /**
  * @swagger
@@ -143,7 +144,7 @@ router.post('/', geraetController.createGeraet);
  *       200:
  *         description: Gerät erfolgreich aktualisiert
  */
-router.put('/:id', geraetController.updateGeraet);
+router.put('/:id', requireAdmin, geraetController.updateGeraet);
 
 /**
  * @swagger
@@ -153,6 +154,6 @@ router.put('/:id', geraetController.updateGeraet);
  *       - Gerät
  *     description: Gerät mit einer bestimmten ID löschen
  */
-router.delete('/:id', geraetController.deleteGeraet);
+router.delete('/:id', requireAdmin, geraetController.deleteGeraet);
 
 module.exports = router;

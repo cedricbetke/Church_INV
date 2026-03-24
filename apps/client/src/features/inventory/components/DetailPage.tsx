@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Portal as PaperPortal, Button, Surface } from "react-native-paper";
-import { Image, Text, ScrollView, View, StyleSheet, Platform } from "react-native";
+import { Alert, Image, Text, ScrollView, View, StyleSheet, Platform } from "react-native";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
 
@@ -11,6 +11,7 @@ interface DetailModalProps {
     columns: Column[];
     canManageInventory: boolean;
     onEdit: (item: InventoryItem) => void;
+    onDelete: (item: InventoryItem) => Promise<void>;
 }
 
 const formatDate = (value?: Date) => {
@@ -44,7 +45,38 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
     </View>
 );
 
-const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedItem, canManageInventory, onEdit }) => {
+const DetailModal: React.FC<DetailModalProps> = ({
+    visible,
+    onDismiss,
+    selectedItem,
+    canManageInventory,
+    onEdit,
+    onDelete,
+}) => {
+    const confirmDelete = async (item: InventoryItem) => {
+        if (Platform.OS === "web") {
+            if (globalThis.confirm(`Geraet ${item.invNr} wirklich loeschen?`)) {
+                await onDelete(item);
+            }
+            return;
+        }
+
+        Alert.alert(
+            "Geraet loeschen",
+            `Geraet ${item.invNr} wirklich loeschen?`,
+            [
+                { text: "Abbrechen", style: "cancel" },
+                {
+                    text: "Loeschen",
+                    style: "destructive",
+                    onPress: () => {
+                        void onDelete(item);
+                    },
+                },
+            ],
+        );
+    };
+
     return (
         <PaperPortal>
             <Modal
@@ -127,13 +159,23 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
 
                             <View style={styles.buttonRow}>
                                 {canManageInventory && (
-                                    <Button
-                                        mode="outlined"
-                                        onPress={() => onEdit(selectedItem)}
-                                        style={styles.button}
-                                    >
-                                        Bearbeiten
-                                    </Button>
+                                    <>
+                                        <Button
+                                            mode="outlined"
+                                            onPress={() => onEdit(selectedItem)}
+                                            style={styles.button}
+                                        >
+                                            Bearbeiten
+                                        </Button>
+                                        <Button
+                                            mode="outlined"
+                                            onPress={() => void confirmDelete(selectedItem)}
+                                            style={styles.deleteButton}
+                                            textColor="#b3261e"
+                                        >
+                                            Loeschen
+                                        </Button>
+                                    </>
                                 )}
                                 <Button
                                     mode="contained"
@@ -314,6 +356,11 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 8,
         flex: 1,
+    },
+    deleteButton: {
+        marginTop: 8,
+        flex: 1,
+        borderColor: "#b3261e",
     },
 });
 

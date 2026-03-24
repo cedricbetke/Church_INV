@@ -64,20 +64,42 @@ const InvTable = () => {
     const handleAddBrand = async (brandName: string) => await addBrand(brandName);
 
     const handleSubmit = async (itemData: CreateGeraetPayload) => {
-        if (!canManageInventory) {
-            throw new Error("Nur Admins duerfen Geraete anlegen oder bearbeiten.");
-        }
-
         try {
             if (editingItem) {
+                if (!canManageInventory) {
+                    throw new Error("Nur Admins duerfen Geraete bearbeiten.");
+                }
+
                 await geraeteService.update(editingItem.invNr, itemData);
             } else {
+                if (!canManageInventory) {
+                    throw new Error("Nur Admins duerfen Geraete anlegen.");
+                }
+
                 await geraeteService.create(itemData);
             }
 
             await fetchItems();
         } catch (error) {
             console.error("Fehler beim Speichern des Geraets:", error);
+            throw error;
+        }
+    };
+
+    const handleDelete = async (item: InventoryItem) => {
+        if (!canManageInventory) {
+            throw new Error("Nur Admins duerfen Geraete loeschen.");
+        }
+
+        try {
+            await geraeteService.delete(item.invNr);
+            setVisibleModal(false);
+            if (selectedItem?.invNr === item.invNr) {
+                setSelectedItem(null);
+            }
+            await fetchItems();
+        } catch (error) {
+            console.error("Fehler beim Loeschen des Geraets:", error);
             throw error;
         }
     };
@@ -108,6 +130,7 @@ const InvTable = () => {
                     setVisibleModal(false);
                     openEditModal(item);
                 }}
+                onDelete={handleDelete}
             />
             <AddPage
                 visible={isAddPageVisible}

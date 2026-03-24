@@ -17,6 +17,15 @@ const api: AxiosInstance = axios.create({
     headers: { "Content-Type": "application/json" },
 });
 
+const setAdminPasswordHeader = (password: string | null) => {
+    if (password) {
+        api.defaults.headers.common["x-admin-password"] = password;
+        return;
+    }
+
+    delete api.defaults.headers.common["x-admin-password"];
+};
+
 const apiClient = {
     getAll: async <T>(resource: string): Promise<T> => {
         const response = await api.get<T>(`/${resource}`);
@@ -41,6 +50,10 @@ const apiClient = {
     delete: async (resource: string, id: number): Promise<{ message: string }> => {
         const response = await api.delete<{ message: string }>(`/${resource}/${id}`);
         return response.data;
+    },
+
+    setAdminPassword: (password: string | null) => {
+        setAdminPasswordHeader(password);
     },
 
     resolveAssetUrl: (path: string): string => {
