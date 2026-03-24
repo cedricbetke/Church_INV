@@ -8,10 +8,10 @@ import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import * as ImagePicker from 'expo-image-picker';
 import geraetServiceWithMapping from "@/src/features/inventory/services/inventory.mapper";
 import {useInventory} from "@/src/features/inventory/context/InventoryContext";
-import UIGrid from "@/app/components/dataTable/DetailGrid";
-import DetailModal from "@/app/components/dataTable/DetailPage";
-import DataTableComponent from "@/app/components/dataTable/dataTable";
-import AddPage from "@/app/components/dataTable/AddPage";
+import UIGrid from "./DetailGrid";
+import DetailModal from "./DetailPage";
+import DataTableComponent from "./dataTable";
+import AddPage from "./AddPage";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
 
 const MyComponent = () => {

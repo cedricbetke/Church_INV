@@ -27,7 +27,7 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
     const [isNewModel, setIsNewModel] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null); // Neue Brand die erst beim Submit erstellt wird
+    const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
 
     const [formData, setFormData] = useState<FormData>({
         invNr: '',
@@ -85,11 +85,10 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
         setBrandSearchQuery('');
     };
 
-    const handleAddNewBrand = async () => { //Todo: Nur adden wenn form submitted wird. Vorher nicht. Stand jetzt: auswhlen von Brand bedeuted erstellen in DB
+    const handleAddNewBrand = async () => {
         if (brandSearchQuery.trim()) {
-            //speichere den neuen Brand-Namen für das spätere Erstellen beim submit
-            setPendingNewBrand(brandSearchQuery)
-            handleBrandSelect(brandSearchQuery)
+            setPendingNewBrand(brandSearchQuery);
+            handleBrandSelect(brandSearchQuery);
             setIsNewBrand(false);
         }
     };
@@ -118,7 +117,6 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                 if (pendingNewBrand) {
                     await onAddBrand(pendingNewBrand);
                     setPendingNewBrand(null);
-
                 }
                 onSubmit(formData);
                 setFormData({
@@ -135,11 +133,10 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                     verantwortlicher: ''
                 });
                 onDismiss();
-            }catch (error){
+            } catch (error) {
                 console.error('Fehler beim Speichern:', error);
                 setError('Fehler beim speichern des Items');
             }
-
         }
     };
 
@@ -164,18 +161,10 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                             setShowModelDialog={setShowModelDialog}
                         />
                         <View style={styles.buttonContainer}>
-                            <Button
-                                mode="outlined"
-                                onPress={onDismiss}
-                                style={styles.button}
-                            >
+                            <Button mode="outlined" onPress={onDismiss} style={styles.button}>
                                 Abbrechen
                             </Button>
-                            <Button
-                                mode="contained"
-                                onPress={handleSubmit}
-                                style={styles.button}
-                            >
+                            <Button mode="contained" onPress={handleSubmit} style={styles.button}>
                                 Speichern
                             </Button>
                         </View>
@@ -224,9 +213,9 @@ const AddPage: React.FC<AddPageProps> = ({visible, onDismiss, existingModels, ex
                     searchQuery={modelSearchQuery}
                     onSearchChange={(text) => {
                         setModelSearchQuery(text);
-                        setIsNewModel(true); // Hier könnte man auch gegen existierende Modelle prüfen
+                        setIsNewModel(true);
                     }}
-                    items={existingModels} // Hier könnten die verfügbaren Modelle eingefügt werden
+                    items={existingModels}
                     onSelect={handleModelSelect}
                     onAddNew={async () => {
                         handleModelSelect(modelSearchQuery);

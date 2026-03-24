@@ -3,7 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { TextInput, HelperText } from 'react-native-paper';
 import { FormData } from '@/src/features/inventory/types/FormData';
-import UIGrid from '@/app/components/dataTable/DetailGrid';
+import UIGrid from './DetailGrid';
 
 
 interface FormFieldsProps {
