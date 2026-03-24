@@ -3,5 +3,5 @@ interface Dokument {
     name: string;
     url: string;
     geraete_id: number;
-    hochgeladen_am: string; // oder Date, wenn du ein Date-Objekt nutzen möchtest
+    hochgeladen_am: string;
 }

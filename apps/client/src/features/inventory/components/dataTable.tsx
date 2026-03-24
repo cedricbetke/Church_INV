@@ -1,8 +1,8 @@
 import React from 'react';
 import { DataTable, Button, Searchbar } from 'react-native-paper';
 import { ScrollView, Text, View, Image , StyleSheet} from 'react-native';
-import { getValueOrFallback } from '@/app/utils/helpers';
-import { handleFileChange } from '@/app/utils/ImagePickerUtil';
+import { getValueOrFallback } from '@/src/shared/utils/helpers';
+import { handleFileChange } from '@/src/shared/utils/ImagePickerUtil';
 import {useInventory} from "@/src/features/inventory/context/InventoryContext";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 interface Column {

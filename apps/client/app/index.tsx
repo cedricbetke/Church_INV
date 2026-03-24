@@ -7,7 +7,7 @@ import {useTheme} from "react-native-paper";
 
 import { Text, View, /* @tutinfo Import <CODE>StyleSheet</CODE> to define styles. */ } from 'react-native';
 import InvTable from "@/src/features/inventory/components/InvTable";
-import TopBar from "@/app/navigation/TopBar";
+import TopBar from "@/src/shared/components/navigation/TopBar";
 import { InventoryProvider } from "@/src/features/inventory/context/InventoryContext";
 
 export default function Index() {
