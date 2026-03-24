@@ -15,9 +15,13 @@ const MyComponent = () => {
             canManageInventory,
             isAdminSessionActive,
             isAdminLoginConfigured,
+            filters,
+            isFilterVisible,
+            setIsFilterVisible,
             activateAdminSession,
             clearAdminSession,
         } = useInventory();
+        const hasActiveFilters = Boolean(filters.status || filters.bereich || filters.standort);
 
         const handleAdminLogin = () => {
             if (activateAdminSession(adminPassword)) {
@@ -60,7 +64,11 @@ const MyComponent = () => {
                             <Appbar.Action icon="magnify" onPress={() => {
                             }}/>
                             <Appbar.Action icon="qrcode-scan" onPress={() => setShowModal(true)}/>
-                            <Appbar.Action icon="filter" onPress={() => {}}/>
+                            <Appbar.Action
+                                icon="filter"
+                                color={isFilterVisible || hasActiveFilters ? "#1976d2" : undefined}
+                                onPress={() => setIsFilterVisible((prev) => !prev)}
+                            />
                     </Appbar.Header>
                 <Portal>
                         <Modal visible={showModal} onDismiss={() => setShowModal(false)}>

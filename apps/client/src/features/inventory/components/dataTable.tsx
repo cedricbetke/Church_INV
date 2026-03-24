@@ -1,6 +1,6 @@
 import React from "react";
-import { DataTable, Searchbar } from "react-native-paper";
-import { ScrollView, Text, View, Image, StyleSheet } from "react-native";
+import { Button, Chip, DataTable, Searchbar, Text } from "react-native-paper";
+import { ScrollView, View, Image, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getValueOrFallback } from "@/src/shared/utils/helpers";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
@@ -36,21 +36,160 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     onItemsPerPageChange,
     numberOfItemsPerPageList,
 }) => {
-    const { searchQuery, setSearchQuery, items } = useInventory();
+    const {
+        searchQuery,
+        setSearchQuery,
+        items,
+        states,
+        brands,
+        models,
+        bereiche,
+        standorte,
+        filters,
+        setFilters,
+        isFilterVisible,
+    } = useInventory();
+
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    const searchableValues = (item: InventoryItem) => [
+        item.invNr,
+        item.hersteller,
+        item.modell,
+        item.standort,
+        item.status,
+        item.bereich,
+        item.kategorie,
+        item.verantwortlicher,
+        item.seriennummer,
+    ]
+        .filter(Boolean)
+        .map((value) => String(value).toLowerCase());
 
     const filteredItems = items.filter((item) => (
-        String(item.invNr).toLowerCase().includes(searchQuery.toLowerCase()) ||
-        String(item.modell).toLowerCase().includes(searchQuery.toLowerCase()) ||
-        String(item.standort).toLowerCase().includes(searchQuery.toLowerCase())
+        (normalizedQuery === "" || searchableValues(item).some((value) => value.includes(normalizedQuery))) &&
+        (filters.status === "" || item.status === filters.status) &&
+        (filters.hersteller === "" || item.hersteller === filters.hersteller) &&
+        (filters.modell === "" || item.modell === filters.modell) &&
+        (filters.bereich === "" || item.bereich === filters.bereich) &&
+        (filters.standort === "" || item.standort === filters.standort)
     ));
+
+    const pagedItems = filteredItems.slice(from, to);
+    const hasActiveFilters = Boolean(
+        filters.status || filters.hersteller || filters.modell || filters.bereich || filters.standort,
+    );
+
+    const handleFilterChange = (key: keyof typeof filters, value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: prev[key] === value ? "" : value,
+        }));
+        setPage(0);
+    };
+
+    const clearFilters = () => {
+        setFilters({
+            status: "",
+            hersteller: "",
+            modell: "",
+            bereich: "",
+            standort: "",
+        });
+        setPage(0);
+    };
 
     return (
         <View style={styles.container}>
             <Searchbar
-                placeholder="Suche..."
+                placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
                 value={searchQuery}
-                onChangeText={setSearchQuery}
+                onChangeText={(value) => {
+                    setSearchQuery(value);
+                    setPage(0);
+                }}
             />
+            {isFilterVisible && (
+                <View style={styles.filterPanel}>
+                    <View style={styles.filterHeader}>
+                        <Text variant="titleSmall">Filter</Text>
+                        {hasActiveFilters && (
+                            <Button compact mode="text" onPress={clearFilters}>
+                                Zuruecksetzen
+                            </Button>
+                        )}
+                    </View>
+                    <View style={styles.filterGroup}>
+                        <Text variant="labelMedium">Status</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                            {states.map((state) => (
+                                <Chip
+                                    key={`status-${state.id}`}
+                                    selected={filters.status === state.name}
+                                    onPress={() => handleFilterChange("status", state.name)}
+                                >
+                                    {state.name}
+                                </Chip>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    <View style={styles.filterGroup}>
+                        <Text variant="labelMedium">Hersteller</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                            {brands.map((brand) => (
+                                <Chip
+                                    key={`hersteller-${brand.id}`}
+                                    selected={filters.hersteller === brand.name}
+                                    onPress={() => handleFilterChange("hersteller", brand.name)}
+                                >
+                                    {brand.name}
+                                </Chip>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    <View style={styles.filterGroup}>
+                        <Text variant="labelMedium">Modell</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                            {models.map((model) => (
+                                <Chip
+                                    key={`modell-${model.id}`}
+                                    selected={filters.modell === model.name}
+                                    onPress={() => handleFilterChange("modell", model.name)}
+                                >
+                                    {model.name}
+                                </Chip>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    <View style={styles.filterGroup}>
+                        <Text variant="labelMedium">Bereich</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                            {bereiche.map((bereich) => (
+                                <Chip
+                                    key={`bereich-${bereich.id}`}
+                                    selected={filters.bereich === bereich.name}
+                                    onPress={() => handleFilterChange("bereich", bereich.name)}
+                                >
+                                    {bereich.name}
+                                </Chip>
+                            ))}
+                        </ScrollView>
+                    </View>
+                    <View style={styles.filterGroup}>
+                        <Text variant="labelMedium">Standort</Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                            {standorte.map((standort) => (
+                                <Chip
+                                    key={`standort-${standort.id}`}
+                                    selected={filters.standort === standort.name}
+                                    onPress={() => handleFilterChange("standort", standort.name)}
+                                >
+                                    {standort.name}
+                                </Chip>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </View>
+            )}
             <DataTable style={styles.table}>
                 <DataTable.Header>
                     {columns.map((column) => (
@@ -64,7 +203,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     ))}
                 </DataTable.Header>
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                    {filteredItems.slice(from, to).map((item) => (
+                    {pagedItems.map((item) => (
                         <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
                             {columns.map((column) => (
                                 <DataTable.Cell key={column.key} numeric={column.numeric}>
@@ -84,14 +223,19 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             ))}
                         </DataTable.Row>
                     ))}
+                    {pagedItems.length === 0 && (
+                        <View style={styles.emptyState}>
+                            <Text>Keine Geraete fuer die aktuelle Suche oder Filter gefunden.</Text>
+                        </View>
+                    )}
                 </ScrollView>
             </DataTable>
             <View style={styles.pagination}>
                 <DataTable.Pagination
                     page={page}
-                    numberOfPages={Math.ceil(items.length / itemsPerPage)}
+                    numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
                     onPageChange={setPage}
-                    label={`${from + 1}-${to} of ${items.length}`}
+                    label={filteredItems.length === 0 ? "0-0 of 0" : `${from + 1}-${Math.min(to, filteredItems.length)} of ${filteredItems.length}`}
                     numberOfItemsPerPageList={numberOfItemsPerPageList}
                     numberOfItemsPerPage={itemsPerPage}
                     onItemsPerPageChange={onItemsPerPageChange}
@@ -113,6 +257,28 @@ const styles = StyleSheet.create({
     table: {
         flex: 1,
     },
+    filterPanel: {
+        marginTop: 10,
+        marginBottom: 12,
+        padding: 12,
+        borderRadius: 12,
+        backgroundColor: "#f8fafc",
+        borderWidth: 1,
+        borderColor: "#e2e8f0",
+        gap: 10,
+    },
+    filterHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    filterGroup: {
+        gap: 6,
+    },
+    chipRow: {
+        gap: 8,
+        paddingRight: 8,
+    },
     scrollView: {
         flex: 1,
     },
@@ -133,6 +299,10 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 5,
+    },
+    emptyState: {
+        paddingVertical: 24,
+        alignItems: "center",
     },
 });
 

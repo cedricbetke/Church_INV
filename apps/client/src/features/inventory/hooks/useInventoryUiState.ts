@@ -1,9 +1,19 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 
+export interface InventoryFilters {
+    status: string;
+    hersteller: string;
+    modell: string;
+    bereich: string;
+    standort: string;
+}
+
 export interface InventoryUiState {
-    filter: string;
-    setFilter: Dispatch<SetStateAction<string>>;
+    filters: InventoryFilters;
+    setFilters: Dispatch<SetStateAction<InventoryFilters>>;
+    isFilterVisible: boolean;
+    setIsFilterVisible: Dispatch<SetStateAction<boolean>>;
     selectedItem: InventoryItem | null;
     setSelectedItem: Dispatch<SetStateAction<InventoryItem | null>>;
     editingItem: InventoryItem | null;
@@ -16,7 +26,14 @@ export interface InventoryUiState {
 }
 
 export const useInventoryUiState = (): InventoryUiState => {
-    const [filter, setFilter] = useState<string>("");
+    const [filters, setFilters] = useState<InventoryFilters>({
+        status: "",
+        hersteller: "",
+        modell: "",
+        bereich: "",
+        standort: "",
+    });
+    const [isFilterVisible, setIsFilterVisible] = useState<boolean>(false);
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
     const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -24,8 +41,10 @@ export const useInventoryUiState = (): InventoryUiState => {
     const [isAddPageVisible, setIsAddPageVisible] = useState<boolean>(false);
 
     return {
-        filter,
-        setFilter,
+        filters,
+        setFilters,
+        isFilterVisible,
+        setIsFilterVisible,
         selectedItem,
         setSelectedItem,
         editingItem,

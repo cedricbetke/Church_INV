@@ -8,6 +8,7 @@ interface InventoryListItemDto {
     einkaufspreis: number | null;
     geraetefoto_url: string | null;
     Status: string;
+    Hersteller: string | null;
     Modell: string;
     Standort: string | null;
     Bereich: string;
@@ -23,6 +24,7 @@ const inventoryMapper = {
         return response.map((item): InventoryItem => ({
             invNr: item.inv_nr,
             status: item.Status,
+            hersteller: item.Hersteller ?? undefined,
             modell: item.Modell,
             kaufdatum: item.kaufdatum ? new Date(item.kaufdatum) : undefined,
             einkaufspreis: item.einkaufspreis ?? undefined,
