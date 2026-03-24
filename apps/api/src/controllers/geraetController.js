@@ -31,6 +31,7 @@ const getMaxId = async (req, res) => {
 const createGeraet = async (req, res) => {
     try {
         const {
+            inv_nr,
             modell_id,
             einkaufspreis = null, // Optionales Feld, Standardwert null
             status_id,
@@ -40,17 +41,21 @@ const createGeraet = async (req, res) => {
             kategorie_id,
             geraetefoto_url = null,  // Optionales Feld, Standardwert null
             kaufdatum = null,         // Optionales Feld, Standardwert null
-            serien_nr = null,         // Optionales Feld, Standardwert null
-            qrcode = null             // Optionales Feld, Standardwert null
+            serien_nr = null          // Optionales Feld, Standardwert null
         } = req.body;
 
         // Überprüfen, ob alle erforderlichen Felder vorhanden sind
-        if (!modell_id || !status_id || !standort_id || !bereich_id || !verantwortlicher_id || !kategorie_id) {
+        if (!inv_nr || !modell_id || !status_id || !bereich_id) {
             return res.status(400).json({ error: 'Alle Felder sind erforderlich' });
+        }
+
+        if (!Number.isInteger(Number(inv_nr)) || Number(inv_nr) <= 0) {
+            return res.status(400).json({ error: 'Inventarnummer muss eine positive ganze Zahl sein' });
         }
 
         // Erstellung des neuen Geräts
         const newGeraet = await Geraet.create(
+            inv_nr,
             status_id,          // Erster Parameter: status_id
             modell_id,          // Zweiter Parameter: modell_id
             bereich_id,         // Dritter Parameter: bereich_id
@@ -60,7 +65,6 @@ const createGeraet = async (req, res) => {
             standort_id,        // Optional: standort_id
             verantwortlicher_id,// Optional: verantwortlicher_id
             kategorie_id,       // Optional: kategorie_id
-            qrcode,             // Optional: qrcode
             geraetefoto_url     // Optional: geraetefoto_url
         );
 
@@ -68,6 +72,9 @@ const createGeraet = async (req, res) => {
         res.status(201).json(newGeraet);
     } catch (error) {
         console.log(req.body)
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ error: 'Die Inventarnummer ist bereits vergeben' });
+        }
         res.status(500).json({ error: error.message });
     }
 };
@@ -84,29 +91,27 @@ const updateGeraet = async (req, res) => {
             kategorie_id,
             geraetefoto_url = null,
             kaufdatum = null,
-            serien_nr = null,
-            qrcode = null
+            serien_nr = null
         } = req.body;
 
         // Überprüfen, ob alle erforderlichen Felder vorhanden sind
-        if (!modell_id || !status_id || !standort_id || !bereich_id || !verantwortlicher_id || !kategorie_id) {
+        if (!modell_id || !status_id || !bereich_id) {
             return res.status(400).json({ error: 'Alle Felder sind erforderlich' });
         }
 
         // Aktualisierung des Geräts
         const updatedGeraet = await Geraet.update(
             req.params.id,
-            modell_id,
-            seriennummer,
             status_id,
-            standort_id,
+            modell_id,
             bereich_id,
+            kaufdatum,
+            null,
+            serien_nr ?? seriennummer,
+            standort_id,
             verantwortlicher_id,
             kategorie_id,
-            geraetefoto_url,
-            kaufdatum,
-            serien_nr,
-            qrcode
+            geraetefoto_url
         );
 
         res.json(updatedGeraet);

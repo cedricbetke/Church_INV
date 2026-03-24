@@ -45,8 +45,21 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                                                           setShowKaufdatumPicker
                                                       }) => {
     const renderWebDateField = () => (
-        <View>
-            <Text style={{ marginBottom: 8, color: '#49454f', fontSize: 12 }}>Kaufdatum</Text>
+        <View style={{ position: 'relative', paddingTop: 4 }}>
+            <Text
+                style={{
+                    position: 'absolute',
+                    top: -4,
+                    left: 12,
+                    zIndex: 1,
+                    paddingHorizontal: 4,
+                    backgroundColor: '#ffffff',
+                    color: errors.kaufdatum ? '#b3261e' : '#6750a4',
+                    fontSize: 12,
+                }}
+            >
+                Kaufdatum
+            </Text>
             {React.createElement("input", {
                 type: "date",
                 value: formData.kaufdatum,
@@ -55,12 +68,16 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 style: {
                     width: "100%",
                     height: 56,
-                    padding: "0 12px",
+                    minHeight: 56,
+                    maxHeight: 56,
+                    padding: "16px 12px 12px 12px",
+                    margin: 0,
                     borderRadius: 4,
                     border: errors.kaufdatum ? "1px solid #b3261e" : "1px solid #79747e",
                     backgroundColor: "#ffffff",
                     fontSize: 16,
                     boxSizing: "border-box",
+                    outline: "none",
                 },
             })}
             {errors.kaufdatum && <HelperText type="error">{errors.kaufdatum}</HelperText>}

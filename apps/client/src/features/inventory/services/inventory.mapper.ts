@@ -5,10 +5,9 @@ interface InventoryListItemDto {
     inv_nr: number;
     kaufdatum: string | null;
     einkaufspreis: number | null;
-    qrcode: string | null;
     Status: string;
     Modell: string;
-    Standort: string;
+    Standort: string | null;
     Bereich: string;
     Kategorie: string | null;
     Verantwortlicher: string | null;
@@ -25,12 +24,11 @@ const inventoryMapper = {
             modell: item.Modell,
             kaufdatum: item.kaufdatum ? new Date(item.kaufdatum) : undefined,
             einkaufspreis: item.einkaufspreis ?? undefined,
-            standort: item.Standort,
+            standort: item.Standort ?? "",
             verantwortlicher: item.Verantwortlicher ?? undefined,
             bereich: item.Bereich,
             kategorie: item.Kategorie ?? undefined,
             attachments: [],
-            qrCode: item.qrcode ?? undefined,
         }));
     },
 

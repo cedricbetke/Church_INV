@@ -2,7 +2,25 @@ const db = require('../config/db'); // Import der DB-Verbindung
 
 const Geraet = {
     getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM geraete_View');
+        const [rows] = await db.query(`
+            SELECT
+                g.inv_nr AS inv_nr,
+                g.kaufdatum AS kaufdatum,
+                g.einkaufspreis AS einkaufspreis,
+                s.name AS Status,
+                m.name AS Modell,
+                stand.name AS Standort,
+                b.name AS Bereich,
+                k.name AS Kategorie,
+                CONCAT(p.vorname, ' ', p.nachname) AS Verantwortlicher
+            FROM geraet g
+            JOIN status s ON g.status_id = s.id
+            JOIN modell m ON g.modell_id = m.id
+            JOIN bereich b ON g.bereich_id = b.id
+            LEFT JOIN standort stand ON g.standort_id = stand.id
+            LEFT JOIN kategorie k ON g.kategorie_id = k.id
+            LEFT JOIN person p ON g.verantwortlicher_id = p.id
+        `);
         return rows;
     },
 
@@ -15,7 +33,7 @@ const Geraet = {
             return maxId[0].next_number;
     },
 
-    create: async (status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, qrcode, geraetefoto_url) => {
+    create: async (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, geraetefoto_url) => {
         // Falls der Wert nicht übergeben wird, dann als NULL speichern
         const _kaufdatum = kaufdatum || null;
         const _einkaufspreis = einkaufspreis || null;
@@ -23,16 +41,15 @@ const Geraet = {
         const _standort_id = standort_id || null;
         const _verantwortlicher_id = verantwortlicher_id || null;
         const _kategorie_id = kategorie_id || null;
-        const _qrcode = qrcode || null;
         const _geraetefoto_url = geraetefoto_url || null;
 
         const [result] = await db.query(
-            'INSERT INTO geraet (status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, qrcode, geraetefoto_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _qrcode, _geraetefoto_url]
+            'INSERT INTO geraet (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, geraetefoto_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [inv_nr, status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _geraetefoto_url]
         );
 
         return {
-            inv_nr: result.insertId,
+            inv_nr,
             status_id,
             modell_id,
             bereich_id,
@@ -42,12 +59,11 @@ const Geraet = {
             standort_id: _standort_id,
             verantwortlicher_id: _verantwortlicher_id,
             kategorie_id: _kategorie_id,
-            qrcode: _qrcode,
             geraetefoto_url: _geraetefoto_url
         };
     },
 
-    update: async (id, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, qrcode, geraetefoto_url) => {
+    update: async (id, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, geraetefoto_url) => {
         // Falls der Wert nicht übergeben wird, dann als NULL speichern
         const _kaufdatum = kaufdatum || null;
         const _einkaufspreis = einkaufspreis || null;
@@ -55,12 +71,11 @@ const Geraet = {
         const _standort_id = standort_id || null;
         const _verantwortlicher_id = verantwortlicher_id || null;
         const _kategorie_id = kategorie_id || null;
-        const _qrcode = qrcode || null;
         const _geraetefoto_url = geraetefoto_url || null;
 
         await db.query(
-            'UPDATE geraet SET status_id = ?, modell_id = ?, bereich_id = ?, kaufdatum = ?, einkaufspreis = ?, serien_nr = ?, standort_id = ?, verantwortlicher_id = ?, kategorie_id = ?, qrcode = ?, geraetefoto_url = ? WHERE inv_nr = ?',
-            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _qrcode, _geraetefoto_url, id]
+            'UPDATE geraet SET status_id = ?, modell_id = ?, bereich_id = ?, kaufdatum = ?, einkaufspreis = ?, serien_nr = ?, standort_id = ?, verantwortlicher_id = ?, kategorie_id = ?, geraetefoto_url = ? WHERE inv_nr = ?',
+            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _geraetefoto_url, id]
         );
 
         return {
@@ -74,7 +89,6 @@ const Geraet = {
             standort_id: _standort_id,
             verantwortlicher_id: _verantwortlicher_id,
             kategorie_id: _kategorie_id,
-            qrcode: _qrcode,
             geraetefoto_url: _geraetefoto_url
         };
     },

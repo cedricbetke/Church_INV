@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Platform } from "react-native";
 import { Modal, Portal, Button, Title } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import axios from "axios";
 import { FormFields } from "./FormFields";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import SelectionDialog from "./SelectionDialog";
@@ -44,6 +45,49 @@ const parseDbDate = (value: string) => {
     return new Date(year, month - 1, day);
 };
 const today = new Date();
+const INTEGER_PATTERN = /^\d+$/;
+
+const getErrorMessage = (error: unknown) => {
+    if (!axios.isAxiosError(error)) {
+        return "Fehler beim Speichern des Items";
+    }
+
+    if (!error.response) {
+        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL pruefen.";
+    }
+
+    const { status, data } = error.response;
+    const backendMessage =
+        typeof data === "string"
+            ? data
+            : typeof data?.message === "string"
+                ? data.message
+                : typeof data?.error === "string"
+                    ? data.error
+                    : null;
+
+    if (status === 400) {
+        return backendMessage ?? "Die uebermittelten Daten sind ungueltig.";
+    }
+
+    if (status === 404) {
+        return backendMessage ?? "Die API-Route wurde nicht gefunden.";
+    }
+
+    if (status === 409) {
+        if (backendMessage?.toLowerCase().includes("inventarnummer")) {
+            return backendMessage;
+        }
+
+        return backendMessage ?? "Der Datensatz steht in Konflikt mit vorhandenen Daten.";
+    }
+
+    if (status >= 500) {
+        return backendMessage ?? "Serverfehler beim Speichern des Items.";
+    }
+
+    return backendMessage ?? "Fehler beim Speichern des Items";
+};
 
 interface AddPageProps {
     visible: boolean;
@@ -251,12 +295,15 @@ const AddPage: React.FC<AddPageProps> = ({
         const nextErrors: Record<string, string> = {};
 
         if (!formData.invNr) nextErrors.invNr = "Inventarnummer ist erforderlich";
+        if (formData.invNr && !INTEGER_PATTERN.test(formData.invNr.trim())) {
+            nextErrors.invNr = "Inventarnummer muss eine positive ganze Zahl sein";
+        }
+        if (formData.invNr && INTEGER_PATTERN.test(formData.invNr.trim()) && Number(formData.invNr) <= 0) {
+            nextErrors.invNr = "Inventarnummer muss groesser als 0 sein";
+        }
         if (!formData.modell) nextErrors.modell = "Modell ist erforderlich";
         if (!formData.status) nextErrors.status = "Status ist erforderlich";
-        if (!formData.standort) nextErrors.standort = "Standort ist erforderlich";
         if (!formData.bereich) nextErrors.bereich = "Bereich ist erforderlich";
-        if (!formData.kategorie) nextErrors.kategorie = "Kategorie ist erforderlich";
-        if (!formData.verantwortlicher) nextErrors.verantwortlicher = "Verantwortlicher ist erforderlich";
         if (formData.kaufdatum && !isValidIsoDate(formData.kaufdatum)) {
             nextErrors.kaufdatum = "Kaufdatum muss im Format YYYY-MM-DD sein";
         }
@@ -291,23 +338,37 @@ const AddPage: React.FC<AddPageProps> = ({
 
             const selectedModel = findByName(filteredModels, formData.modell);
             const selectedStatus = findByName(states, formData.status);
-            const selectedStandort = findByName(standorte, formData.standort);
+            const selectedStandort = formData.standort
+                ? findByName(standorte, formData.standort)
+                : undefined;
             const selectedBereich = findByName(bereiche, formData.bereich);
-            const selectedKategorie = findByName(filteredKategorien, formData.kategorie);
-            const selectedVerantwortlicher = findByName(personItems, formData.verantwortlicher);
+            const selectedKategorie = formData.kategorie
+                ? findByName(filteredKategorien, formData.kategorie)
+                : undefined;
+            const selectedVerantwortlicher = formData.verantwortlicher
+                ? findByName(personItems, formData.verantwortlicher)
+                : undefined;
 
-            if (!selectedModel || !selectedStatus || !selectedStandort || !selectedBereich || !selectedKategorie || !selectedVerantwortlicher) {
+            if (
+                !selectedModel ||
+                !selectedStatus ||
+                !selectedBereich ||
+                (formData.standort && !selectedStandort) ||
+                (formData.kategorie && !selectedKategorie) ||
+                (formData.verantwortlicher && !selectedVerantwortlicher)
+            ) {
                 setError("Die ausgewaehlten Stammdaten konnten nicht aufgeloest werden.");
                 return;
             }
 
             const payload: CreateGeraetPayload = {
+                inv_nr: Number(formData.invNr),
                 modell_id: selectedModel.id,
                 status_id: selectedStatus.id,
-                standort_id: selectedStandort.id,
                 bereich_id: selectedBereich.id,
-                kategorie_id: selectedKategorie.id,
-                verantwortlicher_id: selectedVerantwortlicher.id,
+                standort_id: selectedStandort?.id,
+                kategorie_id: selectedKategorie?.id,
+                verantwortlicher_id: selectedVerantwortlicher?.id,
                 serien_nr: formData.serien_nr || undefined,
                 kaufdatum: formData.kaufdatum || undefined,
                 einkaufspreis: formData.einkaufspreis ? parsePrice(formData.einkaufspreis.trim()) : undefined,
@@ -319,7 +380,7 @@ const AddPage: React.FC<AddPageProps> = ({
             onDismiss();
         } catch (submitError) {
             console.error("Fehler beim Speichern:", submitError);
-            setError("Fehler beim Speichern des Items");
+            setError(getErrorMessage(submitError));
         }
     };
 
