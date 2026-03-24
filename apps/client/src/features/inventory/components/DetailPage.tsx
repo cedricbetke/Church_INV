@@ -31,12 +31,15 @@ const formatCurrency = (value?: number) => {
 };
 
 const getDisplayValue = (value?: string) => value?.trim() || "Nicht gesetzt";
+const isUnsetValue = (value: string) => value === "Nicht gesetzt";
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
-    <Surface style={styles.detailCard}>
-        <Text style={styles.cardLabel}>{label}</Text>
-        <Text style={styles.cardValue}>{value}</Text>
-    </Surface>
+    <View style={styles.detailItem}>
+        <Surface style={styles.detailCard}>
+            <Text style={styles.cardLabel}>{label}</Text>
+            <Text style={[styles.cardValue, isUnsetValue(value) && styles.cardValueMuted]}>{value}</Text>
+        </Surface>
+    </View>
 );
 
 const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedItem }) => {
@@ -53,20 +56,23 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
                             <Text style={styles.title}>
                                 Details zu {selectedItem.invNr}
                             </Text>
+                            <Text style={styles.subtitle}>Inventaruebersicht und aktuelle Zuordnung</Text>
 
                             <Surface style={styles.heroCard}>
                                 <View style={styles.heroContent}>
-                                    {selectedItem.geraeteFoto ? (
-                                        <Image
-                                            source={{ uri: selectedItem.geraeteFoto }}
-                                            style={styles.image}
-                                            resizeMode="contain"
-                                        />
-                                    ) : (
-                                        <View style={styles.imagePlaceholder}>
-                                            <Text style={styles.imagePlaceholderText}>Kein Foto hinterlegt</Text>
-                                        </View>
-                                    )}
+                                    <View style={styles.imageFrame}>
+                                        {selectedItem.geraeteFoto ? (
+                                            <Image
+                                                source={{ uri: selectedItem.geraeteFoto }}
+                                                style={styles.image}
+                                                resizeMode="contain"
+                                            />
+                                        ) : (
+                                            <View style={styles.imagePlaceholder}>
+                                                <Text style={styles.imagePlaceholderText}>Kein Foto hinterlegt</Text>
+                                            </View>
+                                        )}
+                                    </View>
                                     <View style={styles.heroMeta}>
                                         <Text style={styles.heroTitle}>{selectedItem.modell}</Text>
                                         <Text style={styles.heroSubtitle}>
@@ -87,7 +93,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
                             </Surface>
 
                             <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Stammdaten</Text>
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionTitle}>Stammdaten</Text>
+                                    <View style={styles.sectionLine} />
+                                </View>
                                 <View style={styles.detailGrid}>
                                     <DetailRow label="Status" value={getDisplayValue(selectedItem.status)} />
                                     <DetailRow label="Modell" value={getDisplayValue(selectedItem.modell)} />
@@ -99,7 +108,10 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
                             </View>
 
                             <View style={styles.section}>
-                                <Text style={styles.sectionTitle}>Zusatzdaten</Text>
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionTitle}>Zusatzdaten</Text>
+                                    <View style={styles.sectionLine} />
+                                </View>
                                 <View style={styles.detailGrid}>
                                     <DetailRow label="Kaufdatum" value={formatDate(selectedItem.kaufdatum)} />
                                     <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} />
@@ -128,129 +140,161 @@ const DetailModal: React.FC<DetailModalProps> = ({ visible, onDismiss, selectedI
 
 const styles = StyleSheet.create({
     modalContainer: {
-        backgroundColor: 'white',
-        padding: 20,
-        borderRadius: 10,
-        margin: 20,
+        backgroundColor: '#ffffff',
+        padding: 22,
+        borderRadius: 18,
+        margin: 16,
         maxHeight: '90%',
-        width: Platform.OS === 'web' ? 'min(1100px, 96vw)' : undefined,
+        width: Platform.OS === 'web' ? '96%' : undefined,
+        maxWidth: Platform.OS === 'web' ? 1080 : undefined,
         alignSelf: 'center',
+        borderWidth: 1,
+        borderColor: '#e8e8e8',
     },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
+        marginBottom: 4,
+        color: '#151515',
+    },
+    subtitle: {
+        fontSize: 14,
+        color: '#6a6a6a',
         marginBottom: 18,
     },
     heroCard: {
-        padding: 18,
-        borderRadius: 16,
-        marginBottom: 22,
-        backgroundColor: '#f6f3ee',
-        elevation: 1,
+        padding: 20,
+        borderRadius: 18,
+        marginBottom: 20,
+        backgroundColor: '#f7f8fa',
         borderWidth: 1,
-        borderColor: '#ebe3d6',
+        borderColor: '#e5e7eb',
     },
     heroContent: {
         flexDirection: Platform.OS === 'web' ? 'row' : 'column',
         alignItems: 'center',
-        gap: 20,
+        justifyContent: 'space-between',
+        gap: 24,
+    },
+    imageFrame: {
+        padding: 10,
+        borderRadius: 18,
+        backgroundColor: '#ffffff',
+        borderWidth: 1,
+        borderColor: '#e4e6ea',
     },
     image: {
         width: 220,
         height: 220,
-        borderRadius: 12,
+        borderRadius: 14,
         backgroundColor: '#ffffff',
     },
     imagePlaceholder: {
         width: 220,
         height: 220,
-        borderRadius: 12,
+        borderRadius: 14,
         borderWidth: 1,
-        borderColor: '#d8cdbb',
+        borderColor: '#d7dbe1',
         borderStyle: 'dashed',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#ffffff',
     },
     imagePlaceholderText: {
-        color: '#7a6f62',
+        color: '#737983',
     },
     heroMeta: {
-        gap: 4,
+        gap: 6,
         flex: 1,
         width: Platform.OS === 'web' ? undefined : '100%',
     },
     heroTitle: {
-        fontSize: 22,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#222222',
     },
     heroSubtitle: {
         fontSize: 14,
-        color: '#6b6258',
+        color: '#61656d',
         marginBottom: 8,
     },
     heroBadgeRow: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        gap: 10,
-        marginTop: 6,
+        gap: 12,
+        marginTop: 10,
     },
     heroBadge: {
-        paddingVertical: 10,
-        paddingHorizontal: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 14,
         backgroundColor: '#ffffff',
-        borderRadius: 10,
+        borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#eadfce',
+        borderColor: '#e2e5ea',
         minWidth: 140,
     },
     heroBadgeLabel: {
         fontSize: 12,
-        color: '#7b7064',
+        color: '#70757d',
         marginBottom: 2,
     },
     heroBadgeValue: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#2f2a24',
+        color: '#1f2328',
     },
     section: {
-        marginBottom: 22,
+        marginBottom: 18,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 12,
     },
     sectionTitle: {
         fontSize: 17,
         fontWeight: '600',
-        color: '#333333',
-        marginBottom: 12,
+        color: '#222222',
+    },
+    sectionLine: {
+        flex: 1,
+        height: 1,
+        backgroundColor: '#e5e7eb',
     },
     detailGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
     },
+    detailItem: {
+        width: Platform.OS === 'web' ? '49%' : '100%',
+        marginBottom: 12,
+    },
     detailCard: {
         padding: 14,
         borderRadius: 12,
         backgroundColor: '#ffffff',
-        elevation: 1,
-        width: Platform.OS === 'web' ? '49%' : '100%',
-        marginBottom: 12,
         borderWidth: 1,
-        borderColor: '#efefef',
+        borderColor: '#e7e9ee',
     },
     cardLabel: {
         fontSize: 13,
-        color: '#666666',
-        marginBottom: 4,
+        color: '#727780',
+        marginBottom: 6,
     },
     cardValue: {
         fontSize: 16,
         color: '#222222',
+        lineHeight: 22,
+    },
+    cardValueMuted: {
+        color: '#8a9099',
+        fontStyle: 'italic',
     },
     button: {
-        marginTop: 10,
-        borderRadius: 5,
+        marginTop: 6,
+        borderRadius: 10,
     },
 });
 
