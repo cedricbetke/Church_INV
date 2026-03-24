@@ -12,6 +12,8 @@ interface NamedItem {
     name: string;
 }
 
+const normalize = (value: string) => value.trim().toLowerCase();
+
 interface AddPageProps {
     visible: boolean;
     onDismiss: () => void;
@@ -65,6 +67,22 @@ const AddPage: React.FC<AddPageProps> = ({
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>(emptyFormData);
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const selectedBrand = existingBrands.find(
+        (brand) => normalize(brand.name) === normalize(formData.hersteller),
+    );
+
+    const filteredModels = selectedBrand?.id
+        ? existingModels.filter((model) => model.hersteller_id === selectedBrand.id)
+        : existingModels;
+
+    const selectedBereich = bereiche.find(
+        (bereich) => normalize(bereich.name) === normalize(formData.bereich),
+    );
+
+    const filteredKategorien = selectedBereich
+        ? kategorien.filter((kategorie) => kategorie.bereich_id === selectedBereich.id)
+        : kategorien;
 
     const resetDialogState = () => {
         setShowStatusDialog(false);
@@ -136,10 +154,43 @@ const AddPage: React.FC<AddPageProps> = ({
         }
     };
 
+    const handleDependentChange = (name: string, value: string) => {
+        if (name === "hersteller") {
+            setFormData((prev) => ({
+                ...prev,
+                hersteller: value,
+                modell: "",
+            }));
+            setErrors((prev) => ({
+                ...prev,
+                hersteller: "",
+                modell: "",
+            }));
+            return;
+        }
+
+        if (name === "bereich") {
+            setFormData((prev) => ({
+                ...prev,
+                bereich: value,
+                kategorie: "",
+            }));
+            setErrors((prev) => ({
+                ...prev,
+                bereich: "",
+                kategorie: "",
+            }));
+            return;
+        }
+
+        handleChange(name, value);
+    };
+
     const handleBrandSelect = (brandName: string) => {
-        handleChange("hersteller", brandName);
+        handleDependentChange("hersteller", brandName);
         setShowBrandDialog(false);
         setBrandSearchQuery("");
+        setModelSearchQuery("");
     };
 
     const handleAddNewBrand = async () => {
@@ -174,7 +225,7 @@ const AddPage: React.FC<AddPageProps> = ({
     };
 
     const findByName = <T extends NamedItem>(items: T[], name: string) =>
-        items.find((item) => item.name.toLowerCase() === name.toLowerCase());
+        items.find((item) => normalize(item.name) === normalize(name));
 
     const personItems: NamedItem[] = personen.map((person) => ({
         id: person.id,
@@ -191,11 +242,11 @@ const AddPage: React.FC<AddPageProps> = ({
                 await onAddBrand(pendingNewBrand);
             }
 
-            const selectedModel = findByName(existingModels, formData.modell);
+            const selectedModel = findByName(filteredModels, formData.modell);
             const selectedStatus = findByName(states, formData.status);
             const selectedStandort = findByName(standorte, formData.standort);
             const selectedBereich = findByName(bereiche, formData.bereich);
-            const selectedKategorie = findByName(kategorien, formData.kategorie);
+            const selectedKategorie = findByName(filteredKategorien, formData.kategorie);
             const selectedVerantwortlicher = findByName(personItems, formData.verantwortlicher);
 
             if (!selectedModel || !selectedStatus || !selectedStandort || !selectedBereich || !selectedKategorie || !selectedVerantwortlicher) {
@@ -282,7 +333,7 @@ const AddPage: React.FC<AddPageProps> = ({
                     onSearchChange={(text) => {
                         setBrandSearchQuery(text);
                         setIsNewBrand(!existingBrands.some(
-                            (brand) => brand.name.toLowerCase() === text.toLowerCase(),
+                            (brand) => normalize(brand.name) === normalize(text),
                         ));
                     }}
                     items={existingBrands}
@@ -298,13 +349,11 @@ const AddPage: React.FC<AddPageProps> = ({
                     searchQuery={modelSearchQuery}
                     onSearchChange={(text) => {
                         setModelSearchQuery(text);
-                        setIsNewModel(true);
+                        setIsNewModel(false);
                     }}
-                    items={existingModels}
+                    items={filteredModels}
                     onSelect={handleModelSelect}
-                    onAddNew={async () => {
-                        handleModelSelect(modelSearchQuery);
-                    }}
+                    onAddNew={async () => Promise.resolve()}
                     isNewItem={isNewModel}
                 />
 
@@ -332,9 +381,10 @@ const AddPage: React.FC<AddPageProps> = ({
                     onSearchChange={setBereichSearchQuery}
                     items={bereiche}
                     onSelect={(name) => {
-                        handleChange("bereich", name);
+                        handleDependentChange("bereich", name);
                         setShowBereichDialog(false);
                         setBereichSearchQuery("");
+                        setKategorieSearchQuery("");
                     }}
                     onAddNew={async () => Promise.resolve()}
                     isNewItem={false}
@@ -346,7 +396,7 @@ const AddPage: React.FC<AddPageProps> = ({
                     title="Kategorie auswaehlen"
                     searchQuery={kategorieSearchQuery}
                     onSearchChange={setKategorieSearchQuery}
-                    items={kategorien}
+                    items={filteredKategorien}
                     onSelect={(name) => {
                         handleChange("kategorie", name);
                         setShowKategorieDialog(false);
