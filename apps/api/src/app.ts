@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 // deine bisherigen requires kannst du erstmal so lassen
 const { swaggerUi, swaggerSpec, swaggerUiOptions } = require("./config/swaggerOptions");
@@ -18,7 +19,8 @@ const geraetRoutes = require("./routes/geraetRoutes");
 export const app = express();
 
 app.use(cors());
-app.use(express.json()); // body-parser brauchst du dann nicht mehr
+app.use(express.json({ limit: "15mb" })); // body-parser brauchst du dann nicht mehr
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 

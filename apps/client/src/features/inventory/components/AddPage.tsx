@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, Platform } from "react-native";
+import { View, ScrollView, StyleSheet, Platform, Image } from "react-native";
 import { Modal, Portal, Button, Title } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import axios from "axios";
@@ -8,6 +8,8 @@ import { useInventory } from "@/src/features/inventory/context/InventoryContext"
 import SelectionDialog from "./SelectionDialog";
 import { FormData } from "@/src/features/inventory/types/FormData";
 import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
+import apiClient from "@/src/shared/api/apiClient";
+import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
 
 interface NamedItem {
     id: number;
@@ -143,6 +145,8 @@ const AddPage: React.FC<AddPageProps> = ({
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
     const [formData, setFormData] = useState<FormData>(emptyFormData);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [selectedPhotoDataUrl, setSelectedPhotoDataUrl] = useState<string | null>(null);
+    const [uploadedPhotoPath, setUploadedPhotoPath] = useState<string | null>(null);
 
     const selectedBrand = existingBrands.find(
         (brand) => normalize(brand.name) === normalize(formData.hersteller),
@@ -215,6 +219,8 @@ const AddPage: React.FC<AddPageProps> = ({
         setErrors({});
         setError(null);
         setPendingNewBrand(null);
+        setSelectedPhotoDataUrl(null);
+        setUploadedPhotoPath(null);
     };
 
     const handleChange = (name: string, value: string) => {
@@ -289,6 +295,28 @@ const AddPage: React.FC<AddPageProps> = ({
     const handleKaufdatumConfirm = (date: Date) => {
         handleChange("kaufdatum", formatDateForDb(date));
         setShowKaufdatumPicker(false);
+    };
+
+    const handlePhotoPick = async () => {
+        try {
+            const pickedImage = await pickImageAsDataUrl();
+            if (!pickedImage) {
+                return;
+            }
+
+            setSelectedPhotoDataUrl(pickedImage.dataUrl);
+            setError(null);
+
+            const uploadResponse = await apiClient.create<{ path: string }>("geraet/upload-photo", {
+                fileName: pickedImage.fileName,
+                dataUrl: pickedImage.dataUrl,
+            });
+
+            setUploadedPhotoPath(uploadResponse.path);
+        } catch (photoError) {
+            console.error("Fehler beim Hochladen des Geraetefotos:", photoError);
+            setError(getErrorMessage(photoError));
+        }
     };
 
     const validateForm = () => {
@@ -372,6 +400,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 serien_nr: formData.serien_nr || undefined,
                 kaufdatum: formData.kaufdatum || undefined,
                 einkaufspreis: formData.einkaufspreis ? parsePrice(formData.einkaufspreis.trim()) : undefined,
+                geraetefoto_url: uploadedPhotoPath ?? undefined,
             };
 
             await onSubmit(payload);
@@ -405,6 +434,14 @@ const AddPage: React.FC<AddPageProps> = ({
                             setShowVerantwortlicherDialog={setShowVerantwortlicherDialog}
                             setShowKaufdatumPicker={setShowKaufdatumPicker}
                         />
+                        <View style={styles.photoSection}>
+                            <Button mode="outlined" onPress={handlePhotoPick}>
+                                Foto auswaehlen
+                            </Button>
+                            {selectedPhotoDataUrl && (
+                                <Image source={{ uri: selectedPhotoDataUrl }} style={styles.photoPreview} />
+                            )}
+                        </View>
                         <View style={styles.buttonContainer}>
                             <Button mode="outlined" onPress={handleDismiss} style={styles.button}>
                                 Abbrechen
@@ -561,6 +598,16 @@ const styles = StyleSheet.create({
     },
     form: {
         gap: 10,
+    },
+    photoSection: {
+        gap: 10,
+        marginTop: 8,
+    },
+    photoPreview: {
+        width: 140,
+        height: 140,
+        borderRadius: 8,
+        resizeMode: "cover",
     },
     buttonContainer: {
         flexDirection: "row",

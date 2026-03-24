@@ -42,6 +42,7 @@ const geraetController = require('../controllers/geraetController');
 router.get('/', geraetController.getAllGeraete);
 
 router.get('/max-id',geraetController.getMaxId);
+router.post('/upload-photo', geraetController.uploadGeraetFoto);
 /**
  * @swagger
  * /api/geraet/{id}:

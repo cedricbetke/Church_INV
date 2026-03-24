@@ -1,10 +1,12 @@
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
+import apiClient from "@/src/shared/api/apiClient";
 
 interface InventoryListItemDto {
     inv_nr: number;
     kaufdatum: string | null;
     einkaufspreis: number | null;
+    geraetefoto_url: string | null;
     Status: string;
     Modell: string;
     Standort: string | null;
@@ -28,6 +30,7 @@ const inventoryMapper = {
             verantwortlicher: item.Verantwortlicher ?? undefined,
             bereich: item.Bereich,
             kategorie: item.Kategorie ?? undefined,
+            geraeteFoto: item.geraetefoto_url ? apiClient.resolveAssetUrl(item.geraetefoto_url) : undefined,
             attachments: [],
         }));
     },

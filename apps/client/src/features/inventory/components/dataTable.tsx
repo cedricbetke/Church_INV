@@ -1,8 +1,8 @@
 import React from "react";
-import { DataTable, Button, Searchbar } from "react-native-paper";
+import { DataTable, Searchbar } from "react-native-paper";
 import { ScrollView, Text, View, Image, StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { getValueOrFallback } from "@/src/shared/utils/helpers";
-import { handleFileChange } from "@/src/shared/utils/ImagePickerUtil";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 
@@ -36,7 +36,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     onItemsPerPageChange,
     numberOfItemsPerPageList,
 }) => {
-    const { searchQuery, setSearchQuery, items, setItems } = useInventory();
+    const { searchQuery, setSearchQuery, items } = useInventory();
 
     const filteredItems = items.filter((item) => (
         String(item.invNr).toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -64,7 +64,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     ))}
                 </DataTable.Header>
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                    {filteredItems.slice(from, to).map((item, rowIndex) => (
+                    {filteredItems.slice(from, to).map((item) => (
                         <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
                             {columns.map((column) => (
                                 <DataTable.Cell key={column.key} numeric={column.numeric}>
@@ -75,9 +75,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                                 style={styles.image}
                                             />
                                         ) : (
-                                            <Button onPress={() => handleFileChange(rowIndex, items, setItems)}>
-                                                Upload Image
-                                            </Button>
+                                            <MaterialIcons name="image-not-supported" size={22} color="#888" />
                                         )
                                     ) : (
                                         <Text>{getValueOrFallback(item, column.key)}</Text>

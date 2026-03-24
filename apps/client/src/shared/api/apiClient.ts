@@ -10,6 +10,7 @@ const normalizedBaseUrl = configuredBaseUrl.replace(/\/+$/, "");
 const apiBaseUrl = normalizedBaseUrl.endsWith("/api")
     ? normalizedBaseUrl
     : `${normalizedBaseUrl}/api`;
+const publicBaseUrl = apiBaseUrl.replace(/\/api$/, "");
 
 const api: AxiosInstance = axios.create({
     baseURL: apiBaseUrl,
@@ -40,6 +41,14 @@ const apiClient = {
     delete: async (resource: string, id: number): Promise<{ message: string }> => {
         const response = await api.delete<{ message: string }>(`/${resource}/${id}`);
         return response.data;
+    },
+
+    resolveAssetUrl: (path: string): string => {
+        if (/^https?:\/\//i.test(path) || path.startsWith("data:")) {
+            return path;
+        }
+
+        return `${publicBaseUrl}${path.startsWith("/") ? path : `/${path}`}`;
     },
 };
 

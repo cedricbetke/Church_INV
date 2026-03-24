@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const Geraet = require('../models/geratModel');
 
 const getAllGeraete = async (req, res) => {
@@ -24,6 +26,39 @@ const getMaxId = async (req, res) => {
         res.json(id);
     }catch (error) {
         console.error('Fehler beim Abrufen der Inventarnummer:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const uploadGeraetFoto = async (req, res) => {
+    try {
+        const { dataUrl, fileName } = req.body;
+
+        if (!dataUrl || typeof dataUrl !== 'string') {
+            return res.status(400).json({ error: 'Bilddaten fehlen' });
+        }
+
+        const match = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+        if (!match) {
+            return res.status(400).json({ error: 'Ungueltiges Bildformat' });
+        }
+
+        const mimeType = match[1];
+        const base64Data = match[2];
+        const extension = mimeType.split('/')[1] || 'jpg';
+        const safeBaseName = (fileName || 'geraetefoto')
+            .replace(/\.[^.]+$/, '')
+            .replace(/[^a-zA-Z0-9_-]/g, '_');
+        const finalFileName = `${Date.now()}_${safeBaseName}.${extension}`;
+        const uploadDir = path.resolve(process.cwd(), 'uploads', 'geraete');
+
+        fs.mkdirSync(uploadDir, { recursive: true });
+        fs.writeFileSync(path.join(uploadDir, finalFileName), base64Data, 'base64');
+
+        res.status(201).json({
+            path: `/uploads/geraete/${finalFileName}`,
+        });
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
@@ -129,4 +164,4 @@ const deleteGeraet = async (req, res) => {
     }
 };
 
-module.exports = { getAllGeraete, getGeraetById, createGeraet, updateGeraet, deleteGeraet, getMaxId };
+module.exports = { getAllGeraete, getGeraetById, createGeraet, updateGeraet, deleteGeraet, getMaxId, uploadGeraetFoto };
