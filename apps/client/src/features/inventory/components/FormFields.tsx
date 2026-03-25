@@ -31,6 +31,19 @@ interface FormFieldsProps {
     setShowKaufdatumPicker: (show: boolean) => void;
 }
 
+const REQUIRED_FIELDS = new Set<keyof FormData>([
+    'invNr',
+    'hersteller',
+    'objekttyp',
+    'modell',
+    'bereich',
+    'status',
+]);
+
+const getFieldLabel = (name: keyof FormData, label: string) => (
+    REQUIRED_FIELDS.has(name) ? `${label} *` : label
+);
+
 export const FormFields: React.FC<FormFieldsProps> = ({
                                                           formData,
                                                           handleChange,
@@ -104,7 +117,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
         <View>
             <TextInput
                 mode="outlined"
-                label={label}
+                label={getFieldLabel(name, label)}
                 placeholder={options.placeholder}
                 value={formData[name]}
                 onChangeText={(value) => handleChange(name, value)}
