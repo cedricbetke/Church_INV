@@ -14,6 +14,7 @@ import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
 import { pickDocumentAsDataUrl } from "@/src/shared/utils/documentPicker";
 import {
     buildPersonItems,
+    buildMasterdataResolutionError,
     EditableAttachment,
     emptyFormData,
     findByName,
@@ -173,6 +174,10 @@ const AddPage: React.FC<AddPageProps> = ({
     };
 
     const handleChange = (name: string, value: string) => {
+        if (error) {
+            setError(null);
+        }
+
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -187,6 +192,10 @@ const AddPage: React.FC<AddPageProps> = ({
     };
 
     const handleDependentChange = (name: string, value: string) => {
+        if (error) {
+            setError(null);
+        }
+
         if (name === "hersteller") {
             setFormData((prev) => ({
                 ...prev,
@@ -433,6 +442,7 @@ const AddPage: React.FC<AddPageProps> = ({
         }
 
         try {
+            setError(null);
             let resolvedBrand = existingBrands.find(
                 (brand) => normalize(brand.name) === normalize(formData.hersteller),
             );
@@ -487,7 +497,19 @@ const AddPage: React.FC<AddPageProps> = ({
                 (formData.kategorie && !selectedKategorie) ||
                 (formData.verantwortlicher && !selectedVerantwortlicher)
             ) {
-                setError("Die ausgewaehlten Stammdaten konnten nicht aufgeloest werden.");
+                const resolutionError = buildMasterdataResolutionError({
+                    selectedModel,
+                    selectedStatus,
+                    selectedBereich,
+                    selectedStandort,
+                    selectedKategorie,
+                    selectedVerantwortlicher,
+                    formData,
+                });
+                setErrors((prev) => ({
+                    ...prev,
+                    [resolutionError.field]: resolutionError.message,
+                }));
                 return;
             }
 

@@ -121,77 +121,77 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             {name === 'invNr' && loading && (
                 <HelperText type="info">Lade Inventarnummer...</HelperText>
             )}
-            {name === 'invNr' && error && (
-                <HelperText type="error">{error}</HelperText>
-            )}
         </View>
     );
 
     return (
-        <UIGrid columns={2} xGap={16} yGap={8}>
-            {renderField('invNr', 'Inventarnummer', { disabled: loading || invNrDisabled })}
-            {renderField('hersteller', 'Hersteller', {
-                onFocus: () => setShowBrandDialog(true),
-                onPressIn: () => setShowBrandDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('objekttyp', 'Objekttyp', {
-                onFocus: () => setShowObjekttypDialog(true),
-                onPressIn: () => setShowObjekttypDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('modell', 'Modell', {
-                onFocus: () => setShowModelDialog(true),
-                onPressIn: () => setShowModelDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('serien_nr', 'Seriennummer')}
-            {Platform.OS === 'web'
-                ? renderWebDateField()
-                : renderField('kaufdatum', 'Kaufdatum', {
-                    placeholder: 'YYYY-MM-DD',
-                    onFocus: () => setShowKaufdatumPicker(true),
-                    onPressIn: () => setShowKaufdatumPicker(true),
-                    rightIcon: 'calendar',
+        <View style={{ gap: 8 }}>
+            {error && <HelperText type="error">{error}</HelperText>}
+            <UIGrid columns={2} xGap={16} yGap={8}>
+                {renderField('invNr', 'Inventarnummer', { disabled: loading || invNrDisabled })}
+                {renderField('hersteller', 'Hersteller', {
+                    onFocus: () => setShowBrandDialog(true),
+                    onPressIn: () => setShowBrandDialog(true),
+                    rightIcon: 'chevron-down',
                     selectionOnly: true
                 })}
-            {renderField('einkaufspreis', 'Einkaufspreis', {
-                keyboardType: 'decimal-pad',
-                placeholder: '0,00'
-            })}
-            {renderField('standort', 'Standort', {
-                onFocus: () => setShowStandortDialog(true),
-                onPressIn: () => setShowStandortDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('bereich', 'Bereich', {
-                onFocus: () => setShowBereichDialog(true),
-                onPressIn: () => setShowBereichDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('kategorie', 'Kategorie', {
-                onFocus: () => setShowKategorieDialog(true),
-                onPressIn: () => setShowKategorieDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('status', 'Status', {
-                onFocus: () => setShowStatusDialog(true),
-                onPressIn: () => setShowStatusDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-            {renderField('verantwortlicher', 'Verantwortlicher', {
-                onFocus: () => setShowVerantwortlicherDialog(true),
-                onPressIn: () => setShowVerantwortlicherDialog(true),
-                rightIcon: 'chevron-down',
-                selectionOnly: true
-            })}
-        </UIGrid>
+                {renderField('objekttyp', 'Objekttyp', {
+                    onFocus: () => setShowObjekttypDialog(true),
+                    onPressIn: () => setShowObjekttypDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+                {renderField('modell', 'Modell', {
+                    onFocus: () => setShowModelDialog(true),
+                    onPressIn: () => setShowModelDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+                {renderField('serien_nr', 'Seriennummer')}
+                {Platform.OS === 'web'
+                    ? renderWebDateField()
+                    : renderField('kaufdatum', 'Kaufdatum', {
+                        placeholder: 'YYYY-MM-DD',
+                        onFocus: () => setShowKaufdatumPicker(true),
+                        onPressIn: () => setShowKaufdatumPicker(true),
+                        rightIcon: 'calendar',
+                        selectionOnly: true
+                    })}
+                {renderField('einkaufspreis', 'Einkaufspreis', {
+                    keyboardType: 'decimal-pad',
+                    placeholder: '0,00'
+                })}
+                {renderField('standort', 'Standort', {
+                    onFocus: () => setShowStandortDialog(true),
+                    onPressIn: () => setShowStandortDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+                {renderField('bereich', 'Bereich', {
+                    onFocus: () => setShowBereichDialog(true),
+                    onPressIn: () => setShowBereichDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+                {renderField('kategorie', 'Kategorie', {
+                    onFocus: () => setShowKategorieDialog(true),
+                    onPressIn: () => setShowKategorieDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+                {renderField('status', 'Status', {
+                    onFocus: () => setShowStatusDialog(true),
+                    onPressIn: () => setShowStatusDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+                {renderField('verantwortlicher', 'Verantwortlicher', {
+                    onFocus: () => setShowVerantwortlicherDialog(true),
+                    onPressIn: () => setShowVerantwortlicherDialog(true),
+                    rightIcon: 'chevron-down',
+                    selectionOnly: true
+                })}
+            </UIGrid>
+        </View>
     );
 };

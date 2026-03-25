@@ -255,3 +255,68 @@ export const validateFormData = (formData: FormData) => {
 
     return nextErrors;
 };
+
+export const buildMasterdataResolutionError = ({
+    selectedModel,
+    selectedStatus,
+    selectedBereich,
+    selectedStandort,
+    selectedKategorie,
+    selectedVerantwortlicher,
+    formData,
+}: {
+    selectedModel?: Modell;
+    selectedStatus?: Status;
+    selectedBereich?: Bereich;
+    selectedStandort?: Standort;
+    selectedKategorie?: Kategorie;
+    selectedVerantwortlicher?: NamedItem;
+    formData: FormData;
+}): { field: keyof FormData; message: string } => {
+    if (!selectedModel) {
+        return {
+            field: "modell",
+            message: `Das Modell "${formData.modell}" konnte nicht aufgeloest werden.`,
+        };
+    }
+
+    if (!selectedStatus) {
+        return {
+            field: "status",
+            message: `Der Status "${formData.status}" konnte nicht aufgeloest werden.`,
+        };
+    }
+
+    if (!selectedBereich) {
+        return {
+            field: "bereich",
+            message: `Der Bereich "${formData.bereich}" konnte nicht aufgeloest werden.`,
+        };
+    }
+
+    if (formData.standort && !selectedStandort) {
+        return {
+            field: "standort",
+            message: `Der Standort "${formData.standort}" konnte nicht aufgeloest werden.`,
+        };
+    }
+
+    if (formData.kategorie && !selectedKategorie) {
+        return {
+            field: "kategorie",
+            message: `Die Kategorie "${formData.kategorie}" konnte nicht aufgeloest werden.`,
+        };
+    }
+
+    if (formData.verantwortlicher && !selectedVerantwortlicher) {
+        return {
+            field: "verantwortlicher",
+            message: `Der Verantwortliche "${formData.verantwortlicher}" konnte nicht aufgeloest werden.`,
+        };
+    }
+
+    return {
+        field: "modell",
+        message: "Die ausgewaehlten Stammdaten konnten nicht aufgeloest werden.",
+    };
+};
