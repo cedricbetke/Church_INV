@@ -103,14 +103,17 @@ const DataTableComponent: React.FC<DataTableProps> = ({
 
     return (
         <View style={styles.container}>
-            <Searchbar
-                placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
-                value={searchQuery}
-                onChangeText={(value) => {
-                    setSearchQuery(value);
-                    setPage(0);
-                }}
-            />
+            <View style={styles.searchbarWrapper}>
+                <Searchbar
+                    placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
+                    value={searchQuery}
+                    onChangeText={(value) => {
+                        setSearchQuery(value);
+                        setPage(0);
+                    }}
+                    style={styles.searchbar}
+                />
+            </View>
             {isFilterVisible && (
                 <View style={styles.filterPanel}>
                     <View style={styles.filterHeader}>
@@ -257,6 +260,16 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         height: "100%",
         overflow: "hidden",
+    },
+    searchbarWrapper: {
+        width: "100%",
+        alignItems: "center",
+        marginBottom: 4,
+    },
+    searchbar: {
+        width: Platform.OS === "web" ? "72%" : "100%",
+        maxWidth: 760,
+        alignSelf: "center",
     },
     table: {
         flex: 1,
