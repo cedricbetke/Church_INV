@@ -1,6 +1,6 @@
 import { createCrudService } from "@/src/shared/api/createCrudService";
 
-type Objekttyp = { id: number; name: string; beschreibung?: string };
+type Objekttyp = { id: number; name: string };
 
 const objekttypService = createCrudService<Objekttyp>("objekttyp");
 

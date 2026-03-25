@@ -11,14 +11,14 @@ const Objekttyp = {
         return rows[0];
     },
 
-    create: async (name, beschreibung) => {
-        const [result] = await db.query('INSERT INTO objekttyp (name, beschreibung) VALUES (?, ?)', [name, beschreibung]);
-        return { id: result.insertId, name, beschreibung };
+    create: async (name) => {
+        const [result] = await db.query('INSERT INTO objekttyp (name) VALUES (?)', [name]);
+        return { id: result.insertId, name };
     },
 
-    update: async (id, name, beschreibung) => {
-        await db.query('UPDATE objekttyp SET name = ?, beschreibung = ? WHERE id = ?', [name, beschreibung, id]);
-        return { id, name, beschreibung };
+    update: async (id, name) => {
+        await db.query('UPDATE objekttyp SET name = ? WHERE id = ?', [name, id]);
+        return { id, name };
     },
 
     delete: async (id) => {

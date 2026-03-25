@@ -10,6 +10,7 @@ const Geraet = {
                 g.geraetefoto_url AS geraetefoto_url,
                 s.name AS Status,
                 h.name AS Hersteller,
+                o.name AS Objekttyp,
                 m.name AS Modell,
                 stand.name AS Standort,
                 b.name AS Bereich,
@@ -19,6 +20,7 @@ const Geraet = {
             JOIN status s ON g.status_id = s.id
             JOIN modell m ON g.modell_id = m.id
             JOIN hersteller h ON m.hersteller_id = h.id
+            JOIN objekttyp o ON m.objekttyp_id = o.id
             JOIN bereich b ON g.bereich_id = b.id
             LEFT JOIN standort stand ON g.standort_id = stand.id
             LEFT JOIN kategorie k ON g.kategorie_id = k.id

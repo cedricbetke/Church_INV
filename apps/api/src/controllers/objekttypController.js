@@ -21,10 +21,10 @@ const getObjekttypById = async (req, res) => {
 
 const createObjekttyp = async (req, res) => {
     try {
-        const { name, beschreibung } = req.body;
+        const { name } = req.body;
         if (!name) return res.status(400).json({ error: 'Name ist erforderlich' });
 
-        const newObjekttyp = await Objekttyp.create(name, beschreibung);
+        const newObjekttyp = await Objekttyp.create(name);
         res.status(201).json(newObjekttyp);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -33,10 +33,10 @@ const createObjekttyp = async (req, res) => {
 
 const updateObjekttyp = async (req, res) => {
     try {
-        const { name, beschreibung } = req.body;
+        const { name } = req.body;
         if (!name) return res.status(400).json({ error: 'Name ist erforderlich' });
 
-        const updatedObjekttyp = await Objekttyp.update(req.params.id, name, beschreibung);
+        const updatedObjekttyp = await Objekttyp.update(req.params.id, name);
         res.json(updatedObjekttyp);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -21,6 +21,7 @@ interface FormFieldsProps {
     error: string | null;
     invNrDisabled?: boolean;
     setShowStatusDialog: (show: boolean) => void;
+    setShowObjekttypDialog: (show: boolean) => void;
     setShowBrandDialog: (show: boolean) => void;
     setShowModelDialog: (show: boolean) => void;
     setShowStandortDialog: (show: boolean) => void;
@@ -38,6 +39,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                                                           error,
                                                           invNrDisabled = false,
                                                           setShowStatusDialog,
+                                                          setShowObjekttypDialog,
                                                           setShowBrandDialog,
                                                           setShowModelDialog,
                                                           setShowStandortDialog,
@@ -131,6 +133,12 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             {renderField('hersteller', 'Hersteller', {
                 onFocus: () => setShowBrandDialog(true),
                 onPressIn: () => setShowBrandDialog(true),
+                rightIcon: 'chevron-down',
+                selectionOnly: true
+            })}
+            {renderField('objekttyp', 'Objekttyp', {
+                onFocus: () => setShowObjekttypDialog(true),
+                onPressIn: () => setShowObjekttypDialog(true),
                 rightIcon: 'chevron-down',
                 selectionOnly: true
             })}

@@ -28,12 +28,13 @@ export interface InventoryDataState {
     setKategorien: Dispatch<SetStateAction<Kategorie[]>>;
     personen: Person[];
     setPersonen: Dispatch<SetStateAction<Person[]>>;
-    objekttypen: Array<{ id: number; name: string; beschreibung?: string }>;
-    setObjekttypen: Dispatch<SetStateAction<Array<{ id: number; name: string; beschreibung?: string }>>>;
+    objekttypen: Array<{ id: number; name: string }>;
+    setObjekttypen: Dispatch<SetStateAction<Array<{ id: number; name: string }>>>;
     fetchItems: () => Promise<InventoryItem[]>;
     fetchMaxGeraeteId: () => Promise<number>;
     addBrand: (brandName: string) => Promise<Hersteller>;
-    addModel: (name: string, herstellerId: number) => Promise<Modell>;
+    addObjectType: (name: string) => Promise<{ id: number; name: string }>;
+    addModel: (name: string, herstellerId: number, objekttypId: number) => Promise<Modell>;
 }
 
 export const useInventoryData = (): InventoryDataState => {
@@ -45,7 +46,7 @@ export const useInventoryData = (): InventoryDataState => {
     const [standorte, setStandorte] = useState<Standort[]>([]);
     const [kategorien, setKategorien] = useState<Kategorie[]>([]);
     const [personen, setPersonen] = useState<Person[]>([]);
-    const [objekttypen, setObjekttypen] = useState<Array<{ id: number; name: string; beschreibung?: string }>>([]);
+    const [objekttypen, setObjekttypen] = useState<Array<{ id: number; name: string }>>([]);
 
     const fetchItems = async () => {
         try {
@@ -152,17 +153,23 @@ export const useInventoryData = (): InventoryDataState => {
         }
     };
 
-    const addModel = async (name: string, herstellerId: number) => {
+    const addObjectType = async (name: string) => {
         try {
-            const defaultObjekttypId = objekttypen[0]?.id;
-            if (!defaultObjekttypId) {
-                throw new Error("Es ist kein Objekttyp vorhanden. Bitte zuerst einen Objekttyp anlegen.");
-            }
+            const createdObjekttyp = await objekttypService.create({ name });
+            await fetchObjekttypen();
+            return createdObjekttyp;
+        } catch (error) {
+            console.error("Fehler beim Hinzufuegen des Objekttyps:", error);
+            throw error;
+        }
+    };
 
+    const addModel = async (name: string, herstellerId: number, objekttypId: number) => {
+        try {
             const createdModel = await modellService.create({
                 name,
                 hersteller_id: herstellerId,
-                objekttyp_id: defaultObjekttypId,
+                objekttyp_id: objekttypId,
             });
             await fetchModels();
             return createdModel;
@@ -206,6 +213,7 @@ export const useInventoryData = (): InventoryDataState => {
         fetchItems,
         fetchMaxGeraeteId,
         addBrand,
+        addObjectType,
         addModel,
     };
 };

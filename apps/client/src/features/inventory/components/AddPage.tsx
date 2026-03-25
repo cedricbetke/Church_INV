@@ -24,6 +24,7 @@ interface PendingModel {
     id: number;
     name: string;
     herstellerName: string;
+    objekttypName: string;
 }
 
 interface EditableAttachment extends Attachment {
@@ -127,6 +128,7 @@ interface AddPageProps {
 
 const emptyFormData: FormData = {
     invNr: "",
+    objekttyp: "",
     modell: "",
     hersteller: "",
     serien_nr: "",
@@ -148,8 +150,9 @@ const AddPage: React.FC<AddPageProps> = ({
     onSubmit,
     editingItem = null,
 }) => {
-    const { states, fetchMaxGeraeteId, fetchItems, addModel, bereiche, standorte, kategorien, personen } = useInventory();
+    const { states, fetchMaxGeraeteId, fetchItems, addObjectType, addModel, objekttypen, bereiche, standorte, kategorien, personen } = useInventory();
     const [showStatusDialog, setShowStatusDialog] = useState(false);
+    const [showObjekttypDialog, setShowObjekttypDialog] = useState(false);
     const [showBrandDialog, setShowBrandDialog] = useState(false);
     const [showModelDialog, setShowModelDialog] = useState(false);
     const [showStandortDialog, setShowStandortDialog] = useState(false);
@@ -158,6 +161,7 @@ const AddPage: React.FC<AddPageProps> = ({
     const [showVerantwortlicherDialog, setShowVerantwortlicherDialog] = useState(false);
     const [showKaufdatumPicker, setShowKaufdatumPicker] = useState(false);
     const [statusSearchQuery, setStatusSearchQuery] = useState("");
+    const [objekttypSearchQuery, setObjekttypSearchQuery] = useState("");
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [modelSearchQuery, setModelSearchQuery] = useState("");
     const [standortSearchQuery, setStandortSearchQuery] = useState("");
@@ -165,10 +169,12 @@ const AddPage: React.FC<AddPageProps> = ({
     const [kategorieSearchQuery, setKategorieSearchQuery] = useState("");
     const [verantwortlicherSearchQuery, setVerantwortlicherSearchQuery] = useState("");
     const [isNewBrand, setIsNewBrand] = useState(false);
+    const [isNewObjekttyp, setIsNewObjekttyp] = useState(false);
     const [isNewModel, setIsNewModel] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
+    const [pendingNewObjekttyp, setPendingNewObjekttyp] = useState<string | null>(null);
     const [pendingModel, setPendingModel] = useState<PendingModel | null>(null);
     const [formData, setFormData] = useState<FormData>(emptyFormData);
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -181,15 +187,25 @@ const AddPage: React.FC<AddPageProps> = ({
 
     const filteredModels = selectedBrand?.id
         ? [
-            ...existingModels.filter((model) => model.hersteller_id === selectedBrand.id),
-            ...(pendingModel && normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
+            ...existingModels.filter((model) =>
+                model.hersteller_id === selectedBrand.id &&
+                (formData.objekttyp
+                    ? objekttypen.find((objekttyp) => objekttyp.id === model.objekttyp_id)?.name &&
+                      normalize(objekttypen.find((objekttyp) => objekttyp.id === model.objekttyp_id)!.name) === normalize(formData.objekttyp)
+                    : true)
+            ),
+            ...(pendingModel &&
+            normalize(pendingModel.herstellerName) === normalize(formData.hersteller) &&
+            normalize(pendingModel.objekttypName) === normalize(formData.objekttyp)
                 ? [{ ...pendingModel, hersteller_id: selectedBrand.id, objekttyp_id: 0 } as Modell]
                 : []),
         ]
         : (
-            pendingModel && normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
+            pendingModel &&
+            normalize(pendingModel.herstellerName) === normalize(formData.hersteller) &&
+            normalize(pendingModel.objekttypName) === normalize(formData.objekttyp)
                 ? [{ ...pendingModel, hersteller_id: -1, objekttyp_id: 0 } as Modell]
-                : existingModels
+                : []
         );
 
     const selectedBereich = bereiche.find(
@@ -202,6 +218,7 @@ const AddPage: React.FC<AddPageProps> = ({
 
     const resetDialogState = () => {
         setShowStatusDialog(false);
+        setShowObjekttypDialog(false);
         setShowBrandDialog(false);
         setShowModelDialog(false);
         setShowStandortDialog(false);
@@ -210,6 +227,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setShowVerantwortlicherDialog(false);
         setShowKaufdatumPicker(false);
         setStatusSearchQuery("");
+        setObjekttypSearchQuery("");
         setBrandSearchQuery("");
         setModelSearchQuery("");
         setStandortSearchQuery("");
@@ -217,6 +235,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setKategorieSearchQuery("");
         setVerantwortlicherSearchQuery("");
         setIsNewBrand(false);
+        setIsNewObjekttyp(false);
         setIsNewModel(false);
     };
 
@@ -240,6 +259,7 @@ const AddPage: React.FC<AddPageProps> = ({
             setLoading(false);
             setFormData({
                 invNr: String(editingItem.invNr),
+                objekttyp: editingItem.objekttyp ?? "",
                 modell: editingItem.modell ?? "",
                 hersteller: brand?.name ?? editingItem.hersteller ?? "",
                 serien_nr: editingItem.seriennummer ?? "",
@@ -254,6 +274,7 @@ const AddPage: React.FC<AddPageProps> = ({
             setErrors({});
             setError(null);
             setPendingNewBrand(null);
+            setPendingNewObjekttyp(null);
             setPendingModel(null);
             setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
             setUploadedPhotoPath(editingItem.geraeteFoto ?? null);
@@ -285,6 +306,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setErrors({});
         setError(null);
         setPendingNewBrand(null);
+        setPendingNewObjekttyp(null);
         setPendingModel(null);
         setSelectedPhotoDataUrl(null);
         setUploadedPhotoPath(null);
@@ -320,6 +342,25 @@ const AddPage: React.FC<AddPageProps> = ({
             setErrors((prev) => ({
                 ...prev,
                 hersteller: "",
+                modell: "",
+            }));
+            return;
+        }
+
+        if (name === "objekttyp") {
+            setFormData((prev) => ({
+                ...prev,
+                objekttyp: value,
+                modell: "",
+            }));
+            setPendingModel((current) => (
+                current && normalize(current.objekttypName) !== normalize(value)
+                    ? null
+                    : current
+            ));
+            setErrors((prev) => ({
+                ...prev,
+                objekttyp: "",
                 modell: "",
             }));
             return;
@@ -361,9 +402,50 @@ const AddPage: React.FC<AddPageProps> = ({
     };
 
     const handleModelSelect = (modelName: string) => {
+        const selectedPendingModel =
+            pendingModel &&
+            normalize(pendingModel.name) === normalize(modelName) &&
+            normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
+                ? pendingModel
+                : null;
+
+        if (selectedPendingModel) {
+            handleChange("objekttyp", selectedPendingModel.objekttypName);
+            handleChange("modell", modelName);
+            setShowModelDialog(false);
+            setModelSearchQuery("");
+            return;
+        }
+
+        const selectedModel = existingModels.find((model) => normalize(model.name) === normalize(modelName));
+        const selectedObjekttyp = selectedModel
+            ? objekttypen.find((objekttyp) => objekttyp.id === selectedModel.objekttyp_id)
+            : null;
+
+        if (selectedObjekttyp) {
+            handleChange("objekttyp", selectedObjekttyp.name);
+        }
         handleChange("modell", modelName);
         setShowModelDialog(false);
         setModelSearchQuery("");
+    };
+
+    const handleObjekttypSelect = (objekttypName: string) => {
+        handleDependentChange("objekttyp", objekttypName);
+        setShowObjekttypDialog(false);
+        setObjekttypSearchQuery("");
+        setModelSearchQuery("");
+    };
+
+    const handleAddNewObjekttyp = async () => {
+        if (!objekttypSearchQuery.trim()) {
+            return;
+        }
+
+        const newObjekttypName = objekttypSearchQuery.trim();
+        setPendingNewObjekttyp(newObjekttypName);
+        handleObjekttypSelect(newObjekttypName);
+        setIsNewObjekttyp(false);
     };
 
     const handleAddNewModel = async () => {
@@ -377,10 +459,16 @@ const AddPage: React.FC<AddPageProps> = ({
             return;
         }
 
+        if (!formData.objekttyp.trim()) {
+            setError("Bitte zuerst einen Objekttyp auswaehlen, bevor ein Modell angelegt wird.");
+            return;
+        }
+
         setPendingModel({
             id: -1,
             name: modelName,
             herstellerName: formData.hersteller.trim(),
+            objekttypName: formData.objekttyp.trim(),
         });
         handleModelSelect(modelName);
         setIsNewModel(false);
@@ -483,6 +571,7 @@ const AddPage: React.FC<AddPageProps> = ({
             nextErrors.invNr = "Inventarnummer muss groesser als 0 sein";
         }
         if (!formData.modell) nextErrors.modell = "Modell ist erforderlich";
+        if (!formData.objekttyp) nextErrors.objekttyp = "Objekttyp ist erforderlich";
         if (!formData.status) nextErrors.status = "Status ist erforderlich";
         if (!formData.bereich) nextErrors.bereich = "Bereich ist erforderlich";
         if (formData.kaufdatum && !isValidIsoDate(formData.kaufdatum)) {
@@ -516,9 +605,16 @@ const AddPage: React.FC<AddPageProps> = ({
             let resolvedBrand = existingBrands.find(
                 (brand) => normalize(brand.name) === normalize(formData.hersteller),
             );
+            let resolvedObjekttyp = objekttypen.find(
+                (objekttyp) => normalize(objekttyp.name) === normalize(formData.objekttyp),
+            );
 
             if (!resolvedBrand && pendingNewBrand && normalize(pendingNewBrand) === normalize(formData.hersteller)) {
                 resolvedBrand = await onAddBrand(pendingNewBrand);
+            }
+
+            if (!resolvedObjekttyp && pendingNewObjekttyp && normalize(pendingNewObjekttyp) === normalize(formData.objekttyp)) {
+                resolvedObjekttyp = await addObjectType(pendingNewObjekttyp);
             }
 
             let selectedModel = findByName(existingModels, formData.modell);
@@ -532,8 +628,12 @@ const AddPage: React.FC<AddPageProps> = ({
                     setError("Der Hersteller fuer das neue Modell konnte nicht aufgeloest werden.");
                     return;
                 }
+                if (!resolvedObjekttyp?.id) {
+                    setError("Der Objekttyp fuer das neue Modell konnte nicht aufgeloest werden.");
+                    return;
+                }
 
-                selectedModel = await addModel(pendingModel.name, resolvedBrand.id);
+                selectedModel = await addModel(pendingModel.name, resolvedBrand.id, resolvedObjekttyp.id);
             }
 
             const selectedStatus = findByName(states, formData.status);
@@ -602,6 +702,7 @@ const AddPage: React.FC<AddPageProps> = ({
                             error={error}
                             invNrDisabled={isEditMode}
                             setShowStatusDialog={setShowStatusDialog}
+                            setShowObjekttypDialog={setShowObjekttypDialog}
                             setShowBrandDialog={setShowBrandDialog}
                             setShowModelDialog={setShowModelDialog}
                             setShowStandortDialog={setShowStandortDialog}
@@ -693,6 +794,23 @@ const AddPage: React.FC<AddPageProps> = ({
                         console.log("Neue Status koennen nur vom Administrator hinzugefuegt werden");
                     }}
                     isNewItem={false}
+                />
+
+                <SelectionDialog
+                    visible={showObjekttypDialog}
+                    onDismiss={() => setShowObjekttypDialog(false)}
+                    title="Objekttyp auswaehlen"
+                    searchQuery={objekttypSearchQuery}
+                    onSearchChange={(text) => {
+                        setObjekttypSearchQuery(text);
+                        setIsNewObjekttyp(!objekttypen.some(
+                            (objekttyp) => normalize(objekttyp.name) === normalize(text),
+                        ));
+                    }}
+                    items={objekttypen}
+                    onSelect={handleObjekttypSelect}
+                    onAddNew={handleAddNewObjekttyp}
+                    isNewItem={isNewObjekttyp}
                 />
 
                 <SelectionDialog
