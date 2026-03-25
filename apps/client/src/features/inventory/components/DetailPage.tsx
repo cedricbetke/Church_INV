@@ -51,7 +51,7 @@ const formatHistoryValue = (value: string | null) => value?.trim() || "Nicht ges
 
 const getHistoryDescription = (entry: HistoryEntry) => {
     if (entry.aktion === "create") {
-        return "Geraet angelegt";
+        return "Gerät angelegt";
     }
 
     const fieldLabel = entry.feld ?? "unbekanntes Feld";
@@ -64,10 +64,10 @@ const getHistoryGroupTitle = (aktion: string, entryCount: number) => {
     }
 
     if (entryCount === 1) {
-        return "Aenderung";
+        return "Änderung";
     }
 
-    return `${entryCount} Aenderungen`;
+    return `${entryCount} Änderungen`;
 };
 
 const groupHistoryEntries = (entries: HistoryEntry[]) => {
@@ -129,7 +129,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                 }
             })
             .catch((error) => {
-                console.error("Fehler beim Laden des Geraeteverlaufs:", error);
+                console.error("Fehler beim Laden des Geräteverlaufs:", error);
                 if (isActive) {
                     setHistoryEntries([]);
                 }
@@ -142,19 +142,19 @@ const DetailModal: React.FC<DetailModalProps> = ({
 
     const confirmDelete = async (item: InventoryItem) => {
         if (Platform.OS === "web") {
-            if (globalThis.confirm(`Geraet ${item.invNr} wirklich loeschen?`)) {
+            if (globalThis.confirm(`Gerät ${item.invNr} wirklich löschen?`)) {
                 await onDelete(item);
             }
             return;
         }
 
         Alert.alert(
-            "Geraet loeschen",
-            `Geraet ${item.invNr} wirklich loeschen?`,
+            "Gerät löschen",
+            `Gerät ${item.invNr} wirklich löschen?`,
             [
                 { text: "Abbrechen", style: "cancel" },
                 {
-                    text: "Loeschen",
+                    text: "Löschen",
                     style: "destructive",
                     onPress: () => {
                         void onDelete(item);
@@ -181,7 +181,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                             <Text style={styles.title}>
                                 Details zu {selectedItem.invNr}
                             </Text>
-                            <Text style={styles.subtitle}>Inventaruebersicht und aktuelle Zuordnung</Text>
+                            <Text style={styles.subtitle}>Inventarübersicht und aktuelle Zuordnung</Text>
 
                             <Surface style={styles.heroCard}>
                                 <View style={styles.heroContent}>
@@ -269,7 +269,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                                 </View>
                                                 <View style={styles.attachmentActions}>
                                                     <Button mode="text" onPress={() => void openAttachment(attachment.file)}>
-                                                        Oeffnen
+                                                        Öffnen
                                                     </Button>
                                                 </View>
                                             </View>
@@ -295,7 +295,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                 {isHistoryExpanded && (
                                     <Surface style={styles.attachmentCard}>
                                         {groupedHistoryEntries.length === 0 ? (
-                                            <Text style={styles.emptyAttachmentText}>Noch keine Verlaufseintraege vorhanden.</Text>
+                                            <Text style={styles.emptyAttachmentText}>Noch keine Verlaufseinträge vorhanden.</Text>
                                         ) : (
                                             groupedHistoryEntries.map((group) => (
                                                 <View key={group.key} style={styles.historyGroupCard}>
@@ -337,7 +337,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                             style={styles.deleteButton}
                                             textColor="#b3261e"
                                         >
-                                            Loeschen
+                                            Löschen
                                         </Button>
                                     </>
                                 )}
@@ -346,7 +346,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     onPress={onDismiss}
                                     style={styles.button}
                                 >
-                                    Schliessen
+                                    Schließen
                                 </Button>
                             </View>
                         </View>

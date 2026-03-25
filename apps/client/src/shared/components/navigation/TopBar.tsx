@@ -40,7 +40,7 @@ const MyComponent = () => {
                 return;
             }
 
-            setAdminError("Passwort ist ungueltig.");
+            setAdminError("Passwort ist ungültig.");
         };
 
         const handleAdminLogout = () => {
@@ -96,8 +96,8 @@ const MyComponent = () => {
                                         </Text>
                                         <Text variant="bodyMedium" style={styles.adminText}>
                                                 {isAdminSessionActive
-                                                    ? "Die Admin-Freigabe ist fuer diese Session aktiv."
-                                                    : "Mit dem Admin-Passwort schaltest du Aendern und Loeschen frei."}
+                                                    ? "Die Admin-Freigabe ist für diese Session aktiv."
+                                                    : "Mit dem Admin-Passwort schaltest du Ändern und Löschen frei."}
                                         </Text>
                                         {!isAdminSessionActive && (
                                             <>
@@ -118,7 +118,7 @@ const MyComponent = () => {
                                         )}
                                         <View style={styles.actionRow}>
                                                 <Button mode="outlined" onPress={() => setShowAdminModal(false)}>
-                                                        Schliessen
+                                                        Schließen
                                                 </Button>
                                                 {isAdminSessionActive ? (
                                                     <Button mode="contained" onPress={handleAdminLogout}>

@@ -8,7 +8,7 @@ export interface PickedDocument {
 
 export const pickDocumentAsDataUrl = async (): Promise<PickedDocument | null> => {
     if (Platform.OS !== "web") {
-        throw new Error("Dokument-Upload ist aktuell nur im Web verfuegbar.");
+        throw new Error("Dokument-Upload ist aktuell nur im Web verfügbar.");
     }
 
     return new Promise((resolve, reject) => {

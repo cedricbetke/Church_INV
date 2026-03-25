@@ -323,12 +323,12 @@ const AddPage: React.FC<AddPageProps> = ({
         }
 
         if (!formData.hersteller.trim()) {
-            setError("Bitte zuerst einen Hersteller auswaehlen, bevor ein Modell angelegt wird.");
+            setError("Bitte zuerst einen Hersteller auswählen, bevor ein Modell angelegt wird.");
             return;
         }
 
         if (!formData.objekttyp.trim()) {
-            setError("Bitte zuerst einen Objekttyp auswaehlen, bevor ein Modell angelegt wird.");
+            setError("Bitte zuerst einen Objekttyp auswählen, bevor ein Modell angelegt wird.");
             return;
         }
 
@@ -365,7 +365,7 @@ const AddPage: React.FC<AddPageProps> = ({
 
             setUploadedPhotoPath(uploadResponse.path);
         } catch (photoError) {
-            console.error("Fehler beim Hochladen des Geraetefotos:", photoError);
+            console.error("Fehler beim Hochladen des Gerätefotos:", photoError);
             setError(getErrorMessage(photoError));
         }
     };
@@ -393,7 +393,7 @@ const AddPage: React.FC<AddPageProps> = ({
             ]);
             setError(null);
         } catch (documentError) {
-            console.error("Fehler beim Auswaehlen des Dokuments:", documentError);
+            console.error("Fehler beim Auswählen des Dokuments:", documentError);
             setError(getErrorMessage(documentError));
         }
     };
@@ -466,11 +466,11 @@ const AddPage: React.FC<AddPageProps> = ({
                 normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
             ) {
                 if (!resolvedBrand?.id) {
-                    setError("Der Hersteller fuer das neue Modell konnte nicht aufgeloest werden.");
+                    setError("Der Hersteller für das neue Modell konnte nicht aufgelöst werden.");
                     return;
                 }
                 if (!resolvedObjekttyp?.id) {
-                    setError("Der Objekttyp fuer das neue Modell konnte nicht aufgeloest werden.");
+                    setError("Der Objekttyp für das neue Modell konnte nicht aufgelöst werden.");
                     return;
                 }
 
@@ -544,7 +544,7 @@ const AddPage: React.FC<AddPageProps> = ({
             <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={styles.modalContainer}>
                 <ScrollView>
                     <Title style={styles.title}>
-                        {isEditMode ? `Geraet ${formData.invNr} bearbeiten` : "Neuen Artikel hinzufuegen"}
+                        {isEditMode ? `Gerät ${formData.invNr} bearbeiten` : "Neuen Artikel hinzufügen"}
                     </Title>
                     <View style={styles.form}>
                         <FormFields
@@ -566,7 +566,7 @@ const AddPage: React.FC<AddPageProps> = ({
                         />
                         <View style={styles.photoCard}>
                             <View style={styles.photoHeader}>
-                                <Text variant="titleMedium">Geraetefoto</Text>
+                                <Text variant="titleMedium">Gerätefoto</Text>
                                 <Text variant="bodySmall" style={styles.photoHint}>
                                     Optional
                                 </Text>
@@ -576,12 +576,12 @@ const AddPage: React.FC<AddPageProps> = ({
                                     <Image source={{ uri: selectedPhotoDataUrl }} style={styles.photoPreview} />
                                 ) : (
                                     <View style={styles.photoPlaceholder}>
-                                        <Text style={styles.photoPlaceholderText}>Noch kein Foto ausgewaehlt</Text>
+                                        <Text style={styles.photoPlaceholderText}>Noch kein Foto ausgewählt</Text>
                                     </View>
                                 )}
                                 <View style={styles.photoActions}>
                                     <Button mode="outlined" onPress={handlePhotoPick}>
-                                        {selectedPhotoDataUrl ? "Foto aendern" : "Foto auswaehlen"}
+                                        {selectedPhotoDataUrl ? "Foto ändern" : "Foto auswählen"}
                                     </Button>
                                 </View>
                             </View>
@@ -596,7 +596,7 @@ const AddPage: React.FC<AddPageProps> = ({
                             <View style={styles.documentSection}>
                                 {visibleAttachments.length === 0 ? (
                                     <View style={styles.documentPlaceholder}>
-                                        <Text style={styles.photoPlaceholderText}>Noch keine Dokumente ausgewaehlt</Text>
+                                        <Text style={styles.photoPlaceholderText}>Noch keine Dokumente ausgewählt</Text>
                                     </View>
                                 ) : (
                                     visibleAttachments.map((attachment) => (
@@ -615,7 +615,7 @@ const AddPage: React.FC<AddPageProps> = ({
                                 )}
                                 <View style={styles.photoActions}>
                                     <Button mode="outlined" onPress={handleDocumentPick}>
-                                        Dokument auswaehlen
+                                        Dokument auswählen
                                     </Button>
                                 </View>
                             </View>
@@ -625,7 +625,7 @@ const AddPage: React.FC<AddPageProps> = ({
                                 Abbrechen
                             </Button>
                             <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-                                {isEditMode ? "Aenderungen speichern" : "Speichern"}
+                                {isEditMode ? "Änderungen speichern" : "Speichern"}
                             </Button>
                         </View>
                     </View>
@@ -634,7 +634,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showStatusDialog}
                     onDismiss={() => setShowStatusDialog(false)}
-                    title="Status auswaehlen"
+                    title="Status auswählen"
                     searchQuery={statusSearchQuery}
                     onSearchChange={setStatusSearchQuery}
                     items={states}
@@ -644,7 +644,7 @@ const AddPage: React.FC<AddPageProps> = ({
                         setStatusSearchQuery("");
                     }}
                     onAddNew={async () => {
-                        console.log("Neue Status koennen nur vom Administrator hinzugefuegt werden");
+                        console.log("Neue Status können nur vom Administrator hinzugefügt werden");
                     }}
                     isNewItem={false}
                 />
@@ -652,7 +652,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showObjekttypDialog}
                     onDismiss={() => setShowObjekttypDialog(false)}
-                    title="Objekttyp auswaehlen"
+                    title="Objekttyp auswählen"
                     searchQuery={objekttypSearchQuery}
                     onSearchChange={(text) => {
                         setObjekttypSearchQuery(text);
@@ -669,7 +669,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showBrandDialog}
                     onDismiss={() => setShowBrandDialog(false)}
-                    title="Hersteller auswaehlen"
+                    title="Hersteller auswählen"
                     searchQuery={brandSearchQuery}
                     onSearchChange={(text) => {
                         setBrandSearchQuery(text);
@@ -686,7 +686,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showModelDialog}
                     onDismiss={() => setShowModelDialog(false)}
-                    title="Modell auswaehlen"
+                    title="Modell auswählen"
                     searchQuery={modelSearchQuery}
                     onSearchChange={(text) => {
                         setModelSearchQuery(text);
@@ -703,7 +703,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showStandortDialog}
                     onDismiss={() => setShowStandortDialog(false)}
-                    title="Standort auswaehlen"
+                    title="Standort auswählen"
                     searchQuery={standortSearchQuery}
                     onSearchChange={setStandortSearchQuery}
                     items={standorte}
@@ -719,7 +719,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showBereichDialog}
                     onDismiss={() => setShowBereichDialog(false)}
-                    title="Bereich auswaehlen"
+                    title="Bereich auswählen"
                     searchQuery={bereichSearchQuery}
                     onSearchChange={setBereichSearchQuery}
                     items={bereiche}
@@ -736,7 +736,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showKategorieDialog}
                     onDismiss={() => setShowKategorieDialog(false)}
-                    title="Kategorie auswaehlen"
+                    title="Kategorie auswählen"
                     searchQuery={kategorieSearchQuery}
                     onSearchChange={setKategorieSearchQuery}
                     items={filteredKategorien}
@@ -752,7 +752,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 <SelectionDialog
                     visible={showVerantwortlicherDialog}
                     onDismiss={() => setShowVerantwortlicherDialog(false)}
-                    title="Verantwortlichen auswaehlen"
+                    title="Verantwortlichen auswählen"
                     searchQuery={verantwortlicherSearchQuery}
                     onSearchChange={setVerantwortlicherSearchQuery}
                     items={personItems}

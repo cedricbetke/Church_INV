@@ -39,13 +39,13 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
     if (!isSecureWebContext) {
         return (
             <View style={styles.stateContainer}>
-                <Text variant="titleMedium">Kamera im Browser nicht verfuegbar</Text>
+                <Text variant="titleMedium">Kamera im Browser nicht verfügbar</Text>
                 <Text style={styles.stateText}>
                     Auf mobilen Browsern funktioniert der Scanner meist nur in einem sicheren Kontext
-                    wie HTTPS oder localhost. Ueber eine normale LAN-HTTP-URL wird die Kamera oft blockiert.
+                    wie HTTPS oder localhost. Über eine normale LAN-HTTP-URL wird die Kamera oft blockiert.
                 </Text>
                 <Button mode="contained" onPress={() => setShowModal(false)}>
-                    Schliessen
+                    Schließen
                 </Button>
             </View>
         );
@@ -65,7 +65,7 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
             <View style={styles.stateContainer}>
                 <Text variant="titleMedium">Kamerazugriff erforderlich</Text>
                 <Text style={styles.stateText}>
-                    Fuer den QR-Scanner muss der Browser Zugriff auf die Kamera erhalten.
+                    Für den QR-Scanner muss der Browser Zugriff auf die Kamera erhalten.
                 </Text>
                 <View style={styles.actions}>
                     <Button mode="outlined" onPress={() => setShowModal(false)}>

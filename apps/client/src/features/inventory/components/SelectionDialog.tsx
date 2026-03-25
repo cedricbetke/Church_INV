@@ -1,7 +1,6 @@
-// SelectionDialog.tsx
-import React from 'react';
-import { ScrollView, StyleSheet, Platform } from 'react-native';
-import { Dialog, Portal, TextInput, List, Button } from 'react-native-paper';
+import React from "react";
+import { Platform, ScrollView, StyleSheet } from "react-native";
+import { Button, Dialog, List, Portal, TextInput } from "react-native-paper";
 
 interface SelectionDialogProps {
     visible: boolean;
@@ -24,11 +23,10 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
     items,
     onSelect,
     onAddNew,
-    isNewItem
+    isNewItem,
 }) => {
-    // Filtere die Items basierend auf der Suchanfrage
-    const filteredItems = items.filter(item =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredItems = items.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
     return (
@@ -57,7 +55,7 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                         {isNewItem && searchQuery.trim() && (
                             <List.Item
                                 title={`"${searchQuery}" als neu hinzufügen`}
-                                left={props => <List.Icon {...props} icon="plus" />}
+                                left={(props) => <List.Icon {...props} icon="plus" />}
                                 onPress={onAddNew}
                                 style={styles.newItem}
                             />
@@ -74,9 +72,9 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
 
 const styles = StyleSheet.create({
     dialog: {
-        backgroundColor: '#ffffff',
-        alignSelf: 'center',
-        width: Platform.OS === 'web' ? 'min(92vw, 560px)' : undefined,
+        backgroundColor: "#ffffff",
+        alignSelf: "center",
+        width: Platform.OS === "web" ? "92%" : undefined,
         maxWidth: 560,
     },
     searchInput: {
@@ -87,10 +85,10 @@ const styles = StyleSheet.create({
     },
     listItem: {
         borderBottomWidth: 0.5,
-        borderBottomColor: '#e0e0e0',
+        borderBottomColor: "#e0e0e0",
     },
     newItem: {
-        backgroundColor: '#f0f0f0',
+        backgroundColor: "#f0f0f0",
     },
 });
 

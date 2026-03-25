@@ -42,11 +42,11 @@ const compareValues = (
 
 const getMutationErrorMessage = (error: unknown) => {
     if (!axios.isAxiosError(error)) {
-        return error instanceof Error ? error.message : "Aktion konnte nicht ausgefuehrt werden.";
+        return error instanceof Error ? error.message : "Aktion konnte nicht ausgeführt werden.";
     }
 
     if (!error.response) {
-        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL pruefen.";
+        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL prüfen.";
     }
 
     const { status, data } = error.response;
@@ -75,7 +75,7 @@ const getMutationErrorMessage = (error: unknown) => {
         return backendMessage ?? "Serverfehler beim Speichern.";
     }
 
-    return backendMessage ?? "Aktion konnte nicht ausgefuehrt werden.";
+    return backendMessage ?? "Aktion konnte nicht ausgeführt werden.";
 };
 
 const InvTable = () => {
@@ -151,7 +151,7 @@ const InvTable = () => {
         if (matchedItem) {
             openDetailModal(matchedItem);
         } else {
-            setFeedbackMessage(`Kein Geraet zu QR-Code "${normalizedCode}" gefunden.`);
+            setFeedbackMessage(`Kein Gerät zu QR-Code "${normalizedCode}" gefunden.`);
         }
 
         setScannedCode(null);
@@ -199,13 +199,13 @@ const InvTable = () => {
         try {
             if (editingItem) {
                 if (!canManageInventory) {
-                    throw new Error("Nur Admins duerfen Geraete bearbeiten.");
+                    throw new Error("Nur Admins dürfen Geräte bearbeiten.");
                 }
 
                 await geraeteService.update(editingItem.invNr, itemData);
             } else {
                 if (!canManageInventory) {
-                    throw new Error("Nur Admins duerfen Geraete anlegen.");
+                    throw new Error("Nur Admins dürfen Geräte anlegen.");
                 }
 
                 await geraeteService.create(itemData);
@@ -213,7 +213,7 @@ const InvTable = () => {
 
             await refreshInventory(editingItem?.invNr);
         } catch (error) {
-            console.error("Fehler beim Speichern des Geraets:", error);
+            console.error("Fehler beim Speichern des Geräts:", error);
             setFeedbackMessage(getMutationErrorMessage(error));
             throw error;
         }
@@ -221,7 +221,7 @@ const InvTable = () => {
 
     const handleDelete = async (item: InventoryItem) => {
         if (!canManageInventory) {
-            throw new Error("Nur Admins duerfen Geraete loeschen.");
+            throw new Error("Nur Admins dürfen Geräte löschen.");
         }
 
         try {
@@ -232,7 +232,7 @@ const InvTable = () => {
             }
             await fetchItems();
         } catch (error) {
-            console.error("Fehler beim Loeschen des Geraets:", error);
+            console.error("Fehler beim Löschen des Geräts:", error);
             setFeedbackMessage(getMutationErrorMessage(error));
             throw error;
         }
