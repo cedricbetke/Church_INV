@@ -2,6 +2,9 @@ import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Divider, HelperText, Modal, Text, TextInput } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
+import herstellerService from "@/src/features/masterdata/services/herstellerService";
+import objekttypService from "@/src/features/masterdata/services/objekttypService";
+import modellService from "@/src/features/masterdata/services/modellService";
 
 interface MasterdataAdminModalProps {
     visible: boolean;
@@ -35,6 +38,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [showObjectTypeDialog, setShowObjectTypeDialog] = useState(false);
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [objectTypeSearchQuery, setObjectTypeSearchQuery] = useState("");
+    const [editingBrandId, setEditingBrandId] = useState<number | null>(null);
+    const [editingObjectTypeId, setEditingObjectTypeId] = useState<number | null>(null);
+    const [editingModelId, setEditingModelId] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -69,6 +75,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setShowObjectTypeDialog(false);
         setBrandSearchQuery("");
         setObjectTypeSearchQuery("");
+        setEditingBrandId(null);
+        setEditingObjectTypeId(null);
+        setEditingModelId(null);
         setError(null);
         setIsSaving(false);
     };
@@ -85,7 +94,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             return;
         }
 
-        if (brands.some((entry) => normalize(entry.name) === normalize(nextName))) {
+        if (brands.some((entry) => normalize(entry.name) === normalize(nextName) && entry.id !== editingBrandId)) {
             setError("Dieser Hersteller existiert bereits.");
             return;
         }
@@ -93,12 +102,15 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         try {
             setIsSaving(true);
             setError(null);
-            const createdBrand = await addBrand(nextName);
+            const createdBrand = editingBrandId
+                ? await herstellerService.update(editingBrandId, { name: nextName })
+                : await addBrand(nextName);
             setBrandName("");
             setSelectedBrandName(createdBrand.name);
+            setEditingBrandId(null);
         } catch (createError) {
             console.error("Fehler beim Anlegen des Herstellers:", createError);
-            setError("Hersteller konnte nicht angelegt werden.");
+            setError(editingBrandId ? "Hersteller konnte nicht aktualisiert werden." : "Hersteller konnte nicht angelegt werden.");
         } finally {
             setIsSaving(false);
         }
@@ -111,7 +123,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             return;
         }
 
-        if (objekttypen.some((entry) => normalize(entry.name) === normalize(nextName))) {
+        if (objekttypen.some((entry) => normalize(entry.name) === normalize(nextName) && entry.id !== editingObjectTypeId)) {
             setError("Dieser Objekttyp existiert bereits.");
             return;
         }
@@ -119,12 +131,15 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         try {
             setIsSaving(true);
             setError(null);
-            const createdObjectType = await addObjectType(nextName);
+            const createdObjectType = editingObjectTypeId
+                ? await objekttypService.update(editingObjectTypeId, { name: nextName })
+                : await addObjectType(nextName);
             setObjectTypeName("");
             setSelectedObjectTypeName(createdObjectType.name);
+            setEditingObjectTypeId(null);
         } catch (createError) {
             console.error("Fehler beim Anlegen des Objekttyps:", createError);
-            setError("Objekttyp konnte nicht angelegt werden.");
+            setError(editingObjectTypeId ? "Objekttyp konnte nicht aktualisiert werden." : "Objekttyp konnte nicht angelegt werden.");
         } finally {
             setIsSaving(false);
         }
@@ -155,7 +170,8 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 (entry) =>
                     normalize(entry.name) === normalize(nextName) &&
                     entry.hersteller_id === selectedBrand.id &&
-                    entry.objekttyp_id === selectedObjectType.id,
+                    entry.objekttyp_id === selectedObjectType.id &&
+                    entry.id !== editingModelId,
             )
         ) {
             setError("Dieses Modell existiert fuer den gewaehlten Hersteller und Objekttyp bereits.");
@@ -165,11 +181,22 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         try {
             setIsSaving(true);
             setError(null);
-            await addModel(nextName, selectedBrand.id, selectedObjectType.id);
+            await (
+                editingModelId
+                    ? modellService.update(editingModelId, {
+                        name: nextName,
+                        hersteller_id: selectedBrand.id,
+                        objekttyp_id: selectedObjectType.id,
+                    })
+                    : addModel(nextName, selectedBrand.id, selectedObjectType.id)
+            );
             setModelName("");
+            setSelectedBrandName("");
+            setSelectedObjectTypeName("");
+            setEditingModelId(null);
         } catch (createError) {
             console.error("Fehler beim Anlegen des Modells:", createError);
-            setError("Modell konnte nicht angelegt werden.");
+            setError(editingModelId ? "Modell konnte nicht aktualisiert werden." : "Modell konnte nicht angelegt werden.");
         } finally {
             setIsSaving(false);
         }
@@ -190,20 +217,32 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     <View style={styles.formRow}>
                         <TextInput
                             mode="outlined"
-                            label="Neuer Hersteller"
+                            label={editingBrandId ? "Hersteller bearbeiten" : "Neuer Hersteller"}
                             value={brandName}
                             onChangeText={setBrandName}
                             style={styles.input}
                         />
                         <Button mode="contained" onPress={handleCreateBrand} disabled={isSaving}>
-                            Anlegen
+                            {editingBrandId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
                     <View style={styles.list}>
                         {sortedBrands.map((brand) => (
-                            <Text key={brand.id} variant="bodyMedium">
-                                {brand.name}
-                            </Text>
+                            <View key={brand.id} style={styles.rowItem}>
+                                <Text variant="bodyMedium" style={styles.rowItemText}>
+                                    {brand.name}
+                                </Text>
+                                <Button
+                                    mode="text"
+                                    onPress={() => {
+                                        setBrandName(brand.name);
+                                        setEditingBrandId(brand.id);
+                                        setError(null);
+                                    }}
+                                >
+                                    Bearbeiten
+                                </Button>
+                            </View>
                         ))}
                     </View>
                 </View>
@@ -215,20 +254,32 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     <View style={styles.formRow}>
                         <TextInput
                             mode="outlined"
-                            label="Neuer Objekttyp"
+                            label={editingObjectTypeId ? "Objekttyp bearbeiten" : "Neuer Objekttyp"}
                             value={objectTypeName}
                             onChangeText={setObjectTypeName}
                             style={styles.input}
                         />
                         <Button mode="contained" onPress={handleCreateObjectType} disabled={isSaving}>
-                            Anlegen
+                            {editingObjectTypeId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
                     <View style={styles.list}>
                         {sortedObjectTypes.map((objectType) => (
-                            <Text key={objectType.id} variant="bodyMedium">
-                                {objectType.name}
-                            </Text>
+                            <View key={objectType.id} style={styles.rowItem}>
+                                <Text variant="bodyMedium" style={styles.rowItemText}>
+                                    {objectType.name}
+                                </Text>
+                                <Button
+                                    mode="text"
+                                    onPress={() => {
+                                        setObjectTypeName(objectType.name);
+                                        setEditingObjectTypeId(objectType.id);
+                                        setError(null);
+                                    }}
+                                >
+                                    Bearbeiten
+                                </Button>
+                            </View>
                         ))}
                     </View>
                 </View>
@@ -240,7 +291,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     <View style={styles.formColumn}>
                         <TextInput
                             mode="outlined"
-                            label="Modellname"
+                            label={editingModelId ? "Modell bearbeiten" : "Modellname"}
                             value={modelName}
                             onChangeText={setModelName}
                         />
@@ -263,7 +314,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             right={<TextInput.Icon icon="chevron-down" />}
                         />
                         <Button mode="contained" onPress={handleCreateModel} disabled={isSaving}>
-                            Modell anlegen
+                            {editingModelId ? "Speichern" : "Modell anlegen"}
                         </Button>
                     </View>
                     <Text variant="bodySmall" style={styles.subtleText}>
@@ -271,9 +322,31 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     </Text>
                     <View style={styles.list}>
                         {modelRows.map((model) => (
-                            <Text key={model.id} variant="bodyMedium">
-                                {model.label}
-                            </Text>
+                            <View key={model.id} style={styles.rowItem}>
+                                <Text variant="bodyMedium" style={styles.rowItemText}>
+                                    {model.label}
+                                </Text>
+                                <Button
+                                    mode="text"
+                                    onPress={() => {
+                                        const currentModel = models.find((entry) => entry.id === model.id);
+                                        if (!currentModel) {
+                                            return;
+                                        }
+
+                                        const currentBrand = brands.find((entry) => entry.id === currentModel.hersteller_id);
+                                        const currentObjectType = objekttypen.find((entry) => entry.id === currentModel.objekttyp_id);
+
+                                        setModelName(currentModel.name);
+                                        setSelectedBrandName(currentBrand?.name ?? "");
+                                        setSelectedObjectTypeName(currentObjectType?.name ?? "");
+                                        setEditingModelId(currentModel.id);
+                                        setError(null);
+                                    }}
+                                >
+                                    Bearbeiten
+                                </Button>
+                            </View>
                         ))}
                     </View>
                 </View>
@@ -359,6 +432,15 @@ const styles = StyleSheet.create({
     list: {
         gap: 6,
         paddingVertical: 4,
+    },
+    rowItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+    },
+    rowItemText: {
+        flex: 1,
     },
     subtleText: {
         color: "#5f6368",
