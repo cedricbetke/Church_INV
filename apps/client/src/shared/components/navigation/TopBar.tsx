@@ -72,8 +72,6 @@ const MyComponent = () => {
                             {canManageInventory && (
                                 <Appbar.Action icon="plus" onPress={() => setIsAddPageVisible(true)}/>
                             )}
-                            <Appbar.Action icon="magnify" onPress={() => {
-                            }}/>
                             <Appbar.Action icon="qrcode-scan" onPress={() => setShowModal(true)}/>
                             <Appbar.Action
                                 icon="filter"
