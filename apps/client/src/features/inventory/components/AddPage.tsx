@@ -787,6 +787,9 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 10,
         maxHeight: "90%",
+        alignSelf: "center",
+        width: Platform.OS === "web" ? "94%" : undefined,
+        maxWidth: Platform.OS === "web" ? 980 : undefined,
     },
     title: {
         fontSize: 24,

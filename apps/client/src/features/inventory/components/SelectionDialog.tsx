@@ -1,6 +1,6 @@
 // SelectionDialog.tsx
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Platform } from 'react-native';
 import { Dialog, Portal, TextInput, List, Button } from 'react-native-paper';
 
 interface SelectionDialogProps {
@@ -33,7 +33,7 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
 
     return (
         <Portal>
-            <Dialog visible={visible} onDismiss={onDismiss} style={{backgroundColor:'#ffffff'}}>
+            <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
                 <Dialog.Title>{title}</Dialog.Title>
                 <Dialog.Content>
                     <TextInput
@@ -73,11 +73,17 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
 };
 
 const styles = StyleSheet.create({
+    dialog: {
+        backgroundColor: '#ffffff',
+        alignSelf: 'center',
+        width: Platform.OS === 'web' ? 'min(92vw, 560px)' : undefined,
+        maxWidth: 560,
+    },
     searchInput: {
         marginBottom: 8,
     },
     list: {
-        maxHeight: 300,
+        maxHeight: 280,
     },
     listItem: {
         borderBottomWidth: 0.5,
