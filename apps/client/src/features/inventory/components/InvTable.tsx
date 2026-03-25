@@ -12,11 +12,13 @@ import AddPage from "./AddPage";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
 
 const DEFAULT_COLUMNS: Column[] = [
-    { title: "InvNr", key: "invNr", numeric: false, sortDirection: "ascending" },
-    { title: "Status", key: "status", numeric: false, sortDirection: undefined },
-    { title: "Modell", key: "modell", numeric: false, sortDirection: undefined },
-    { title: "Standort", key: "standort", numeric: false, sortDirection: undefined },
-    { title: "Foto", key: "foto", numeric: false, sortDirection: undefined },
+    { title: "InvNr", key: "invNr", numeric: false, sortDirection: "ascending", visible: true, locked: true },
+    { title: "Status", key: "status", numeric: false, sortDirection: undefined, visible: true },
+    { title: "Hersteller", key: "hersteller", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Modell", key: "modell", numeric: false, sortDirection: undefined, visible: true },
+    { title: "Standort", key: "standort", numeric: false, sortDirection: undefined, visible: true },
+    { title: "Bereich", key: "bereich", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Foto", key: "foto", numeric: false, sortDirection: undefined, visible: true },
 ];
 
 const compareValues = (
@@ -181,6 +183,16 @@ const InvTable = () => {
         setPage(0);
     };
 
+    const handleToggleColumnVisibility = (key: Column["key"]) => {
+        setColumns((currentColumns) =>
+            currentColumns.map((column) => (
+                column.key === key && !column.locked
+                    ? { ...column, visible: !column.visible }
+                    : column
+            )),
+        );
+    };
+
     const handleAddBrand = async (brandName: string) => await addBrand(brandName);
 
     const handleSubmit = async (itemData: CreateGeraetPayload) => {
@@ -237,10 +249,14 @@ const InvTable = () => {
                 return compareValues(left.invNr, right.invNr, activeSortColumn.sortDirection);
             case "status":
                 return compareValues(left.status, right.status, activeSortColumn.sortDirection);
+            case "hersteller":
+                return compareValues(left.hersteller, right.hersteller, activeSortColumn.sortDirection);
             case "modell":
                 return compareValues(left.modell, right.modell, activeSortColumn.sortDirection);
             case "standort":
                 return compareValues(left.standort, right.standort, activeSortColumn.sortDirection);
+            case "bereich":
+                return compareValues(left.bereich, right.bereich, activeSortColumn.sortDirection);
             case "foto":
                 return compareValues(
                     left.geraeteFoto ? 1 : 0,
@@ -266,6 +282,7 @@ const InvTable = () => {
                 page={page}
                 setPage={setPage}
                 onSort={handleSort}
+                onToggleColumnVisibility={handleToggleColumnVisibility}
                 itemsPerPage={itemsPerPage}
                 onItemsPerPageChange={onItemsPerPageChange}
                 numberOfItemsPerPageList={numberOfItemsPerPageList}

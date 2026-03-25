@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Chip, DataTable, Searchbar, Text } from "react-native-paper";
+import { Button, Chip, DataTable, Menu, Searchbar, Text } from "react-native-paper";
 import { ScrollView, View, Image, StyleSheet, Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getValueOrFallback } from "@/src/shared/utils/helpers";
@@ -11,6 +11,8 @@ export interface Column {
     title: string;
     key: keyof InventoryItem | "foto";
     numeric: boolean;
+    visible: boolean;
+    locked?: boolean;
 }
 
 interface DataTableProps {
@@ -22,6 +24,7 @@ interface DataTableProps {
     page: number;
     setPage: (page: number) => void;
     onSort: (key: Column["key"]) => void;
+    onToggleColumnVisibility: (key: Column["key"]) => void;
     itemsPerPage: number;
     onItemsPerPageChange: (itemsPerPage: number) => void;
     numberOfItemsPerPageList: number[];
@@ -36,6 +39,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     page,
     setPage,
     onSort,
+    onToggleColumnVisibility,
     itemsPerPage,
     onItemsPerPageChange,
     numberOfItemsPerPageList,
@@ -52,6 +56,8 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         setFilters,
         isFilterVisible,
     } = useInventory();
+    const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
+    const visibleColumns = columns.filter((column) => column.visible);
 
     const normalizedQuery = searchQuery.trim().toLowerCase();
     const searchableValues = (item: InventoryItem) => [
@@ -103,16 +109,53 @@ const DataTableComponent: React.FC<DataTableProps> = ({
 
     return (
         <View style={styles.container}>
-            <View style={styles.searchbarWrapper}>
-                <Searchbar
-                    placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
-                    value={searchQuery}
-                    onChangeText={(value) => {
-                        setSearchQuery(value);
-                        setPage(0);
-                    }}
-                    style={styles.searchbar}
-                />
+            <View style={styles.toolbarRow}>
+                <View style={styles.toolbarSpacer} />
+                <View style={styles.searchbarContainer}>
+                    <Searchbar
+                        placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
+                        value={searchQuery}
+                        onChangeText={(value) => {
+                            setSearchQuery(value);
+                            setPage(0);
+                        }}
+                        style={styles.searchbar}
+                    />
+                </View>
+                <View style={styles.toolbarAction}>
+                    <Menu
+                        visible={isColumnMenuVisible}
+                        onDismiss={() => setIsColumnMenuVisible(false)}
+                        anchor={(
+                            <Button
+                                mode="outlined"
+                                compact
+                                icon="table-column"
+                                onPress={() => setIsColumnMenuVisible(true)}
+                            >
+                                Spalten
+                            </Button>
+                        )}
+                        contentStyle={styles.columnMenu}
+                    >
+                        {columns.map((column) => (
+                            <Menu.Item
+                                key={column.key}
+                                title={column.title}
+                                leadingIcon={
+                                    column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"
+                                }
+                                trailingIcon={column.locked ? "lock-outline" : undefined}
+                                onPress={() => {
+                                    if (column.locked) {
+                                        return;
+                                    }
+                                    onToggleColumnVisibility(column.key);
+                                }}
+                            />
+                        ))}
+                    </Menu>
+                </View>
             </View>
             {isFilterVisible && (
                 <View style={styles.filterPanel}>
@@ -198,7 +241,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
             )}
             <DataTable style={styles.table}>
                 <DataTable.Header>
-                    {columns.map((column) => (
+                    {visibleColumns.map((column) => (
                         <DataTable.Title
                             key={column.key}
                             sortDirection={column.sortDirection}
@@ -212,7 +255,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                     {pagedItems.map((item) => (
                         <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
-                            {columns.map((column) => (
+                            {visibleColumns.map((column) => (
                                 <DataTable.Cell key={column.key} numeric={column.numeric}>
                                     {column.key === "foto" ? (
                                         item.geraeteFoto ? (
@@ -261,15 +304,31 @@ const styles = StyleSheet.create({
         height: "100%",
         overflow: "hidden",
     },
-    searchbarWrapper: {
-        width: "100%",
+    toolbarRow: {
+        flexDirection: "row",
         alignItems: "center",
-        marginBottom: 4,
+        marginBottom: 8,
+        width: "100%",
+    },
+    toolbarSpacer: {
+        width: Platform.OS === "web" ? 140 : 0,
+    },
+    searchbarContainer: {
+        flex: 1,
+        alignItems: "center",
     },
     searchbar: {
         width: Platform.OS === "web" ? "72%" : "100%",
         maxWidth: 760,
-        alignSelf: "center",
+        flexShrink: 1,
+    },
+    toolbarAction: {
+        width: Platform.OS === "web" ? 140 : "auto",
+        alignItems: Platform.OS === "web" ? "flex-end" : "center",
+        marginLeft: 12,
+    },
+    columnMenu: {
+        backgroundColor: "#ffffff",
     },
     table: {
         flex: 1,
