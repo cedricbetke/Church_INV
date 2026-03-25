@@ -4,10 +4,12 @@ import { StyleSheet, View } from "react-native";
 import {useState} from "react";
 import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
 import {useInventory} from "@/src/features/inventory/context/InventoryContext";
+import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
 
 const MyComponent = () => {
         const [showModal, setShowModal] = useState<boolean>(false);
         const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
+        const [showMasterdataModal, setShowMasterdataModal] = useState<boolean>(false);
         const [adminPassword, setAdminPassword] = useState("");
         const [adminError, setAdminError] = useState<string | null>(null);
         const {
@@ -15,6 +17,12 @@ const MyComponent = () => {
             canManageInventory,
             isAdminSessionActive,
             isAdminLoginConfigured,
+            brands,
+            objekttypen,
+            models,
+            addBrand,
+            addObjectType,
+            addModel,
             filters,
             isFilterVisible,
             setIsFilterVisible,
@@ -57,6 +65,9 @@ const MyComponent = () => {
                                     icon={isAdminSessionActive ? "lock-open-outline" : "lock-outline"}
                                     onPress={() => setShowAdminModal(true)}
                                 />
+                            )}
+                            {canManageInventory && (
+                                <Appbar.Action icon="database-cog-outline" onPress={() => setShowMasterdataModal(true)}/>
                             )}
                             {canManageInventory && (
                                 <Appbar.Action icon="plus" onPress={() => setIsAddPageVisible(true)}/>
@@ -119,6 +130,16 @@ const MyComponent = () => {
                                         </View>
                                 </View>
                         </Modal>
+                        <MasterdataAdminModal
+                            visible={showMasterdataModal}
+                            onDismiss={() => setShowMasterdataModal(false)}
+                            brands={brands}
+                            objekttypen={objekttypen}
+                            models={models}
+                            addBrand={addBrand}
+                            addObjectType={addObjectType}
+                            addModel={addModel}
+                        />
                 </Portal>
             </View>
 );
