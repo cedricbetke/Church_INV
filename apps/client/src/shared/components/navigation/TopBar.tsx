@@ -23,6 +23,7 @@ const MyComponent = () => {
             addBrand,
             addObjectType,
             addModel,
+            setScannedCode,
             filters,
             isFilterVisible,
             setIsFilterVisible,
@@ -82,7 +83,10 @@ const MyComponent = () => {
                 <Portal>
                         <Modal visible={showModal} onDismiss={() => setShowModal(false)}>
                                 <View style={styles.scannerModal}>
-                                        <QrCodeScanner setShowModal = {setShowModal}></QrCodeScanner>
+                                        <QrCodeScanner
+                                            setShowModal={setShowModal}
+                                            onScan={(value) => setScannedCode(value)}
+                                        />
                                 </View>
                         </Modal>
                         <Modal visible={showAdminModal} onDismiss={() => setShowAdminModal(false)} contentContainerStyle={styles.adminModal}>

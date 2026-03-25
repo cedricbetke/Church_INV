@@ -91,6 +91,8 @@ const InvTable = () => {
         setIsAddPageVisible,
         models,
         items,
+        scannedCode,
+        setScannedCode,
     } = useInventory();
 
     const [page, setPage] = useState<number>(0);
@@ -132,6 +134,26 @@ const InvTable = () => {
     useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
+
+    useEffect(() => {
+        if (!scannedCode) {
+            return;
+        }
+
+        const normalizedCode = scannedCode.trim();
+        const matchedItem = items.find((item) => {
+            const normalizedInvNr = String(item.invNr).trim();
+            return normalizedInvNr === normalizedCode || `INV-${normalizedInvNr}` === normalizedCode;
+        });
+
+        if (matchedItem) {
+            openDetailModal(matchedItem);
+        } else {
+            setFeedbackMessage(`Kein Geraet zu QR-Code "${normalizedCode}" gefunden.`);
+        }
+
+        setScannedCode(null);
+    }, [scannedCode, items]);
 
     const handleSort = (key: Column["key"]) => {
         setColumns((currentColumns) =>

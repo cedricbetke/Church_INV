@@ -5,9 +5,10 @@ import { Button, Text } from "react-native-paper";
 
 type CameraProps = {
     setShowModal: (value: boolean) => void;
+    onScan: (value: string) => void;
 };
 
-const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal }) => {
+const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
     const [scanned, setScanned] = useState(false);
     const [permission, requestPermission] = useCameraPermissions();
 
@@ -26,7 +27,7 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal }) => {
     const handleBarcodeScanned = ({ data }: { data: string }) => {
         if (!scanned) {
             setScanned(true);
-            console.log("data", data);
+            onScan(data);
 
             setTimeout(() => {
                 setShowModal(false);

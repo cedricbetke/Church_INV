@@ -23,6 +23,8 @@ export interface InventoryUiState {
     numberOfItemsPerPageList: number[];
     isAddPageVisible: boolean;
     setIsAddPageVisible: Dispatch<SetStateAction<boolean>>;
+    scannedCode: string | null;
+    setScannedCode: Dispatch<SetStateAction<string | null>>;
 }
 
 export const useInventoryUiState = (): InventoryUiState => {
@@ -39,6 +41,7 @@ export const useInventoryUiState = (): InventoryUiState => {
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [numberOfItemsPerPageList] = useState([5, 10, 15, 20, 30, 50]);
     const [isAddPageVisible, setIsAddPageVisible] = useState<boolean>(false);
+    const [scannedCode, setScannedCode] = useState<string | null>(null);
 
     return {
         filters,
@@ -54,5 +57,7 @@ export const useInventoryUiState = (): InventoryUiState => {
         numberOfItemsPerPageList,
         isAddPageVisible,
         setIsAddPageVisible,
+        scannedCode,
+        setScannedCode,
     };
 };
