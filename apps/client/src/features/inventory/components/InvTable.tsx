@@ -99,6 +99,17 @@ const InvTable = () => {
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
     const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
 
+    const refreshInventory = async (selectedInvNr?: number) => {
+        const refreshedItems = await fetchItems();
+        if (selectedInvNr == null) {
+            return refreshedItems;
+        }
+
+        const refreshedSelectedItem = refreshedItems.find((entry) => entry.invNr === selectedInvNr) ?? null;
+        setSelectedItem(refreshedSelectedItem);
+        return refreshedItems;
+    };
+
     const openDetailModal = (item: InventoryItem) => {
         setSelectedItem(item);
         setVisibleModal(true);
@@ -166,7 +177,7 @@ const InvTable = () => {
                 await geraeteService.create(itemData);
             }
 
-            await fetchItems();
+            await refreshInventory(editingItem?.invNr);
         } catch (error) {
             console.error("Fehler beim Speichern des Geraets:", error);
             setFeedbackMessage(getMutationErrorMessage(error));

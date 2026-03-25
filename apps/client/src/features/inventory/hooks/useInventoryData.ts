@@ -9,6 +9,7 @@ import bereichService from "@/src/features/masterdata/services/bereichService";
 import standortService from "@/src/features/masterdata/services/standortService";
 import kategorieService from "@/src/features/masterdata/services/kategorieService";
 import personService from "@/src/features/masterdata/services/personService";
+import objekttypService from "@/src/features/masterdata/services/objekttypService";
 
 export interface InventoryDataState {
     items: InventoryItem[];
@@ -27,9 +28,12 @@ export interface InventoryDataState {
     setKategorien: Dispatch<SetStateAction<Kategorie[]>>;
     personen: Person[];
     setPersonen: Dispatch<SetStateAction<Person[]>>;
-    fetchItems: () => Promise<void>;
+    objekttypen: Array<{ id: number; name: string; beschreibung?: string }>;
+    setObjekttypen: Dispatch<SetStateAction<Array<{ id: number; name: string; beschreibung?: string }>>>;
+    fetchItems: () => Promise<InventoryItem[]>;
     fetchMaxGeraeteId: () => Promise<number>;
     addBrand: (brandName: string) => Promise<Hersteller>;
+    addModel: (name: string, herstellerId: number) => Promise<Modell>;
 }
 
 export const useInventoryData = (): InventoryDataState => {
@@ -41,13 +45,16 @@ export const useInventoryData = (): InventoryDataState => {
     const [standorte, setStandorte] = useState<Standort[]>([]);
     const [kategorien, setKategorien] = useState<Kategorie[]>([]);
     const [personen, setPersonen] = useState<Person[]>([]);
+    const [objekttypen, setObjekttypen] = useState<Array<{ id: number; name: string; beschreibung?: string }>>([]);
 
     const fetchItems = async () => {
         try {
             const response = await inventoryMapper.getAll();
             setItems(response);
+            return response;
         } catch (error) {
             console.error("Fehler beim Laden der Geraete:", error);
+            return [];
         }
     };
 
@@ -114,6 +121,15 @@ export const useInventoryData = (): InventoryDataState => {
         }
     };
 
+    const fetchObjekttypen = async () => {
+        try {
+            const response = await objekttypService.getAll();
+            setObjekttypen(response);
+        } catch (error) {
+            console.error("Fehler beim Laden der Objekttypen:", error);
+        }
+    };
+
     const fetchMaxGeraeteId = async (): Promise<number> => {
         try {
             const response = await geraeteService.getMaxId();
@@ -136,6 +152,26 @@ export const useInventoryData = (): InventoryDataState => {
         }
     };
 
+    const addModel = async (name: string, herstellerId: number) => {
+        try {
+            const defaultObjekttypId = objekttypen[0]?.id;
+            if (!defaultObjekttypId) {
+                throw new Error("Es ist kein Objekttyp vorhanden. Bitte zuerst einen Objekttyp anlegen.");
+            }
+
+            const createdModel = await modellService.create({
+                name,
+                hersteller_id: herstellerId,
+                objekttyp_id: defaultObjekttypId,
+            });
+            await fetchModels();
+            return createdModel;
+        } catch (error) {
+            console.error("Fehler beim Hinzufuegen des Modells:", error);
+            throw error;
+        }
+    };
+
     useEffect(() => {
         fetchItems();
         fetchStates();
@@ -145,6 +181,7 @@ export const useInventoryData = (): InventoryDataState => {
         fetchStandorte();
         fetchKategorien();
         fetchPersonen();
+        fetchObjekttypen();
     }, []);
 
     return {
@@ -164,8 +201,11 @@ export const useInventoryData = (): InventoryDataState => {
         setKategorien,
         personen,
         setPersonen,
+        objekttypen,
+        setObjekttypen,
         fetchItems,
         fetchMaxGeraeteId,
         addBrand,
+        addModel,
     };
 };

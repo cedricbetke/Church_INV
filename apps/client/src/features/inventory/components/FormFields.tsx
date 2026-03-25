@@ -131,7 +131,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             {renderField('hersteller', 'Hersteller', {
                 onFocus: () => setShowBrandDialog(true),
                 onPressIn: () => setShowBrandDialog(true),
-                rightIcon: 'chevron-down'
+                rightIcon: 'chevron-down',
+                selectionOnly: true
             })}
             {renderField('modell', 'Modell', {
                 onFocus: () => setShowModelDialog(true),

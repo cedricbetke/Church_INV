@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal, Portal as PaperPortal, Button, Surface } from "react-native-paper";
-import { Alert, Image, Text, ScrollView, View, StyleSheet, Platform } from "react-native";
+import { Modal, Portal as PaperPortal, Button, Surface, Text } from "react-native-paper";
+import { Alert, Image, ScrollView, View, StyleSheet, Platform, Linking } from "react-native";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
 
@@ -75,6 +75,10 @@ const DetailModal: React.FC<DetailModalProps> = ({
                 },
             ],
         );
+    };
+
+    const openAttachment = async (url: string) => {
+        await Linking.openURL(url);
     };
 
     return (
@@ -155,6 +159,34 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                         value={selectedItem.geraeteFoto ? "Vorhanden" : "Nicht gesetzt"}
                                     />
                                 </View>
+                            </View>
+
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionTitle}>Dokumente</Text>
+                                    <View style={styles.sectionLine} />
+                                </View>
+                                <Surface style={styles.attachmentCard}>
+                                    {selectedItem.attachments.length === 0 ? (
+                                        <Text style={styles.emptyAttachmentText}>Noch keine Dokumente hinterlegt.</Text>
+                                    ) : (
+                                        selectedItem.attachments.map((attachment) => (
+                                            <View key={attachment.id} style={styles.attachmentRow}>
+                                                <View style={styles.attachmentMeta}>
+                                                    <Text style={styles.attachmentName}>{attachment.name}</Text>
+                                                    <Text style={styles.attachmentInfo}>
+                                                        Hochgeladen am {attachment.uploadedAt.toLocaleDateString("de-DE")}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.attachmentActions}>
+                                                    <Button mode="text" onPress={() => void openAttachment(attachment.file)}>
+                                                        Oeffnen
+                                                    </Button>
+                                                </View>
+                                            </View>
+                                        ))
+                                    )}
+                                </Surface>
                             </View>
 
                             <View style={styles.buttonRow}>
@@ -348,6 +380,43 @@ const styles = StyleSheet.create({
     cardValueMuted: {
         color: "#9096a0",
         fontWeight: "400",
+    },
+    attachmentCard: {
+        padding: 16,
+        borderRadius: 12,
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "#e7e9ee",
+        gap: 12,
+    },
+    emptyAttachmentText: {
+        color: "#6f7680",
+    },
+    attachmentRow: {
+        flexDirection: Platform.OS === "web" ? "row" : "column",
+        justifyContent: "space-between",
+        alignItems: Platform.OS === "web" ? "center" : "flex-start",
+        gap: 10,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#f0f2f5",
+    },
+    attachmentMeta: {
+        flex: 1,
+        gap: 4,
+    },
+    attachmentName: {
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#1d232a",
+    },
+    attachmentInfo: {
+        color: "#6f7680",
+        fontSize: 13,
+    },
+    attachmentActions: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     buttonRow: {
         flexDirection: "row",

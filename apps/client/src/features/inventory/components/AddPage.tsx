@@ -8,13 +8,28 @@ import { useInventory } from "@/src/features/inventory/context/InventoryContext"
 import SelectionDialog from "./SelectionDialog";
 import { FormData } from "@/src/features/inventory/types/FormData";
 import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
+import Attachment from "@/src/features/inventory/types/Attachment";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
+import dokumenteService from "@/src/features/masterdata/services/dokumenteService";
 import apiClient from "@/src/shared/api/apiClient";
 import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
+import { pickDocumentAsDataUrl } from "@/src/shared/utils/documentPicker";
 
 interface NamedItem {
     id: number;
     name: string;
+}
+
+interface PendingModel {
+    id: number;
+    name: string;
+    hersteller_id: number;
+}
+
+interface EditableAttachment extends Attachment {
+    isPending?: boolean;
+    markedForDeletion?: boolean;
+    dataUrl?: string;
 }
 
 const normalize = (value: string) => value.trim().toLowerCase();
@@ -105,7 +120,7 @@ interface AddPageProps {
     onDismiss: () => void;
     existingBrands: Hersteller[];
     existingModels: Modell[];
-    onAddBrand: (brandName: string) => Promise<void>;
+    onAddBrand: (brandName: string) => Promise<Hersteller>;
     onSubmit: (itemData: CreateGeraetPayload) => Promise<void>;
     editingItem?: InventoryItem | null;
 }
@@ -133,7 +148,7 @@ const AddPage: React.FC<AddPageProps> = ({
     onSubmit,
     editingItem = null,
 }) => {
-    const { states, fetchMaxGeraeteId, bereiche, standorte, kategorien, personen } = useInventory();
+    const { states, fetchMaxGeraeteId, fetchItems, addModel, bereiche, standorte, kategorien, personen } = useInventory();
     const [showStatusDialog, setShowStatusDialog] = useState(false);
     const [showBrandDialog, setShowBrandDialog] = useState(false);
     const [showModelDialog, setShowModelDialog] = useState(false);
@@ -154,18 +169,26 @@ const AddPage: React.FC<AddPageProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
+    const [pendingCreatedBrand, setPendingCreatedBrand] = useState<Hersteller | null>(null);
+    const [pendingCreatedModel, setPendingCreatedModel] = useState<PendingModel | null>(null);
     const [formData, setFormData] = useState<FormData>(emptyFormData);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [selectedPhotoDataUrl, setSelectedPhotoDataUrl] = useState<string | null>(null);
     const [uploadedPhotoPath, setUploadedPhotoPath] = useState<string | null>(null);
+    const [attachments, setAttachments] = useState<EditableAttachment[]>([]);
     const isEditMode = editingItem !== null;
 
-    const selectedBrand = existingBrands.find(
-        (brand) => normalize(brand.name) === normalize(formData.hersteller),
-    );
+    const selectedBrand =
+        existingBrands.find((brand) => normalize(brand.name) === normalize(formData.hersteller)) ??
+        (pendingCreatedBrand && normalize(pendingCreatedBrand.name) === normalize(formData.hersteller)
+            ? pendingCreatedBrand
+            : undefined);
 
     const filteredModels = selectedBrand?.id
-        ? existingModels.filter((model) => model.hersteller_id === selectedBrand.id)
+        ? [
+            ...existingModels.filter((model) => model.hersteller_id === selectedBrand.id),
+            ...(pendingCreatedModel && pendingCreatedModel.hersteller_id === selectedBrand.id ? [pendingCreatedModel as Modell] : []),
+        ]
         : existingModels;
 
     const selectedBereich = bereiche.find(
@@ -230,8 +253,11 @@ const AddPage: React.FC<AddPageProps> = ({
             setErrors({});
             setError(null);
             setPendingNewBrand(null);
+            setPendingCreatedBrand(null);
+            setPendingCreatedModel(null);
             setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
             setUploadedPhotoPath(editingItem.geraeteFoto ?? null);
+            setAttachments(editingItem.attachments.map((attachment) => ({ ...attachment })));
             return;
         }
 
@@ -259,8 +285,11 @@ const AddPage: React.FC<AddPageProps> = ({
         setErrors({});
         setError(null);
         setPendingNewBrand(null);
+        setPendingCreatedBrand(null);
+        setPendingCreatedModel(null);
         setSelectedPhotoDataUrl(null);
         setUploadedPhotoPath(null);
+        setAttachments([]);
     };
 
     const handleChange = (name: string, value: string) => {
@@ -284,6 +313,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 hersteller: value,
                 modell: "",
             }));
+            setPendingCreatedModel(null);
             setErrors((prev) => ({
                 ...prev,
                 hersteller: "",
@@ -321,6 +351,7 @@ const AddPage: React.FC<AddPageProps> = ({
             return;
         }
 
+        setPendingCreatedBrand(null);
         setPendingNewBrand(brandSearchQuery);
         handleBrandSelect(brandSearchQuery);
         setIsNewBrand(false);
@@ -330,6 +361,42 @@ const AddPage: React.FC<AddPageProps> = ({
         handleChange("modell", modelName);
         setShowModelDialog(false);
         setModelSearchQuery("");
+    };
+
+    const handleAddNewModel = async () => {
+        const modelName = modelSearchQuery.trim();
+        if (!modelName) {
+            return;
+        }
+
+        try {
+            let brandId = selectedBrand?.id;
+
+            if (!brandId && pendingNewBrand && normalize(pendingNewBrand) === normalize(formData.hersteller)) {
+                const createdBrand = await onAddBrand(pendingNewBrand);
+                setPendingCreatedBrand(createdBrand);
+                setPendingNewBrand(null);
+                brandId = createdBrand.id;
+            }
+
+            if (!brandId) {
+                setError("Bitte zuerst einen Hersteller auswaehlen, bevor ein Modell angelegt wird.");
+                return;
+            }
+
+            const createdModel = await addModel(modelName, brandId);
+            setPendingCreatedModel({
+                id: createdModel.id,
+                name: createdModel.name,
+                hersteller_id: createdModel.hersteller_id,
+            });
+            handleModelSelect(modelName);
+            setIsNewModel(false);
+            setError(null);
+        } catch (modelError) {
+            console.error("Fehler beim Hinzufuegen des Modells:", modelError);
+            setError(getErrorMessage(modelError));
+        }
     };
 
     const handleKaufdatumConfirm = (date: Date) => {
@@ -356,6 +423,64 @@ const AddPage: React.FC<AddPageProps> = ({
         } catch (photoError) {
             console.error("Fehler beim Hochladen des Geraetefotos:", photoError);
             setError(getErrorMessage(photoError));
+        }
+    };
+
+    const visibleAttachments = attachments.filter((attachment) => !attachment.markedForDeletion);
+
+    const handleDocumentPick = async () => {
+        try {
+            const pickedDocument = await pickDocumentAsDataUrl();
+            if (!pickedDocument) {
+                return;
+            }
+
+            setAttachments((current) => [
+                {
+                    id: `pending-${Date.now()}`,
+                    name: pickedDocument.fileName,
+                    type: pickedDocument.mimeType,
+                    file: pickedDocument.fileName,
+                    uploadedAt: new Date(),
+                    isPending: true,
+                    dataUrl: pickedDocument.dataUrl,
+                },
+                ...current,
+            ]);
+            setError(null);
+        } catch (documentError) {
+            console.error("Fehler beim Auswaehlen des Dokuments:", documentError);
+            setError(getErrorMessage(documentError));
+        }
+    };
+
+    const handleAttachmentRemove = (attachmentId: string) => {
+        setAttachments((current) =>
+            current
+                .map((attachment) => (
+                    attachment.id === attachmentId && !attachment.isPending
+                        ? { ...attachment, markedForDeletion: true }
+                        : attachment
+                ))
+                .filter((attachment) => !(attachment.id === attachmentId && attachment.isPending)),
+        );
+    };
+
+    const persistAttachmentChanges = async (invNr: number) => {
+        const attachmentsToDelete = attachments.filter((attachment) => attachment.markedForDeletion && !attachment.isPending);
+        const attachmentsToCreate = attachments.filter((attachment) => attachment.isPending && attachment.dataUrl);
+
+        for (const attachment of attachmentsToDelete) {
+            await dokumenteService.delete(Number(attachment.id));
+        }
+
+        for (const attachment of attachmentsToCreate) {
+            const uploadResponse = await dokumenteService.upload(attachment.name, attachment.dataUrl!);
+            await dokumenteService.create({
+                name: attachment.name,
+                url: uploadResponse.path,
+                geraete_id: invNr,
+            });
         }
     };
 
@@ -401,17 +526,23 @@ const AddPage: React.FC<AddPageProps> = ({
 
         try {
             if (pendingNewBrand) {
-                await onAddBrand(pendingNewBrand);
+                const createdBrand = await onAddBrand(pendingNewBrand);
+                setPendingCreatedBrand(createdBrand);
+                setPendingNewBrand(null);
             }
 
-            const selectedModel = findByName(filteredModels, formData.modell);
+            const availableModels = pendingCreatedModel
+                ? [...existingModels, pendingCreatedModel as Modell]
+                : existingModels;
+
+            const selectedModel = findByName(availableModels, formData.modell);
             const selectedStatus = findByName(states, formData.status);
             const selectedStandort = formData.standort
                 ? findByName(standorte, formData.standort)
                 : undefined;
             const selectedBereich = findByName(bereiche, formData.bereich);
             const selectedKategorie = formData.kategorie
-                ? findByName(filteredKategorien, formData.kategorie)
+                ? findByName(kategorien, formData.kategorie)
                 : undefined;
             const selectedVerantwortlicher = formData.verantwortlicher
                 ? findByName(personItems, formData.verantwortlicher)
@@ -444,6 +575,8 @@ const AddPage: React.FC<AddPageProps> = ({
             };
 
             await onSubmit(payload);
+            await persistAttachmentChanges(payload.inv_nr);
+            await fetchItems();
             resetForm();
             resetDialogState();
             onDismiss();
@@ -495,6 +628,40 @@ const AddPage: React.FC<AddPageProps> = ({
                                 <View style={styles.photoActions}>
                                     <Button mode="outlined" onPress={handlePhotoPick}>
                                         {selectedPhotoDataUrl ? "Foto aendern" : "Foto auswaehlen"}
+                                    </Button>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={styles.photoCard}>
+                            <View style={styles.photoHeader}>
+                                <Text variant="titleMedium">Dokumente</Text>
+                                <Text variant="bodySmall" style={styles.photoHint}>
+                                    {isEditMode ? "Im Bearbeitungsflow" : "Wird mit dem Speichern angelegt"}
+                                </Text>
+                            </View>
+                            <View style={styles.documentSection}>
+                                {visibleAttachments.length === 0 ? (
+                                    <View style={styles.documentPlaceholder}>
+                                        <Text style={styles.photoPlaceholderText}>Noch keine Dokumente ausgewaehlt</Text>
+                                    </View>
+                                ) : (
+                                    visibleAttachments.map((attachment) => (
+                                        <View key={attachment.id} style={styles.documentRow}>
+                                            <View style={styles.documentMeta}>
+                                                <Text variant="bodyMedium">{attachment.name}</Text>
+                                                <Text variant="bodySmall" style={styles.photoHint}>
+                                                    {attachment.isPending ? "Wird beim Speichern hochgeladen" : "Bereits hinterlegt"}
+                                                </Text>
+                                            </View>
+                                            <Button mode="text" textColor="#b3261e" onPress={() => handleAttachmentRemove(attachment.id)}>
+                                                Entfernen
+                                            </Button>
+                                        </View>
+                                    ))
+                                )}
+                                <View style={styles.photoActions}>
+                                    <Button mode="outlined" onPress={handleDocumentPick}>
+                                        Dokument auswaehlen
                                     </Button>
                                 </View>
                             </View>
@@ -552,11 +719,13 @@ const AddPage: React.FC<AddPageProps> = ({
                     searchQuery={modelSearchQuery}
                     onSearchChange={(text) => {
                         setModelSearchQuery(text);
-                        setIsNewModel(false);
+                        setIsNewModel(!filteredModels.some(
+                            (model) => normalize(model.name) === normalize(text),
+                        ));
                     }}
                     items={filteredModels}
                     onSelect={handleModelSelect}
-                    onAddNew={async () => Promise.resolve()}
+                    onAddNew={handleAddNewModel}
                     isNewItem={isNewModel}
                 />
 
@@ -702,6 +871,33 @@ const styles = StyleSheet.create({
     photoActions: {
         width: "100%",
         alignItems: "center",
+    },
+    documentSection: {
+        gap: 10,
+    },
+    documentPlaceholder: {
+        minHeight: 90,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#d0d0d0",
+        borderStyle: "dashed",
+        backgroundColor: "#ffffff",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 12,
+    },
+    documentRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 10,
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ececec",
+    },
+    documentMeta: {
+        flex: 1,
+        gap: 2,
     },
     buttonContainer: {
         flexDirection: "row",

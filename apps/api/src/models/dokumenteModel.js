@@ -1,14 +1,21 @@
-const db = require('../config/db'); // Import der DB-Verbindung
+const db = require('../config/db');
+const fs = require('fs');
+const path = require('path');
 
 const Dokumente = {
-    getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM dokumente');
+    getAll: async (geraete_id = null) => {
+        if (geraete_id) {
+            const [rows] = await db.query('SELECT * FROM dokumente WHERE geraete_id = ? ORDER BY id DESC', [geraete_id]);
+            return rows;
+        }
+
+        const [rows] = await db.query('SELECT * FROM dokumente ORDER BY id DESC');
         return rows;
     },
 
     getById: async (id) => {
         const [rows] = await db.query('SELECT * FROM dokumente WHERE id = ?', [id]);
-        return rows[0];  // Nur das erste Ergebnis zurückgeben (falls vorhanden)
+        return rows[0];
     },
 
     create: async (name, url, geraete_id) => {
@@ -22,8 +29,17 @@ const Dokumente = {
     },
 
     delete: async (id) => {
+        const dokument = await Dokumente.getById(id);
         await db.query('DELETE FROM dokumente WHERE id = ?', [id]);
-        return { message: `Dokument mit ID ${id} gelöscht` };
+
+        if (dokument?.url && typeof dokument.url === 'string' && dokument.url.startsWith('/uploads/')) {
+            const filePath = path.resolve(process.cwd(), dokument.url.replace(/^\//, ''));
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+        return { message: `Dokument mit ID ${id} geloescht` };
     }
 };
 
