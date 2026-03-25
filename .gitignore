@@ -3,6 +3,8 @@ node_modules/
 dist/
 .env
 .env.*
+uploads/
+apps/api/uploads/
 npm-debug.*
 *.jks
 *.p8
