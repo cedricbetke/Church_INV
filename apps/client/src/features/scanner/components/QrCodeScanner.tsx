@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { useMemo, useState } from "react";
 import { Button, Text } from "react-native-paper";
 
@@ -12,6 +12,10 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal }) => {
     const [permission, requestPermission] = useCameraPermissions();
 
     const isSecureWebContext = useMemo(() => {
+        if (Platform.OS !== "web") {
+            return true;
+        }
+
         if (typeof window === "undefined") {
             return true;
         }
