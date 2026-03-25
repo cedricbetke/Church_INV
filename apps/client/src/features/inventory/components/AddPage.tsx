@@ -23,7 +23,7 @@ interface NamedItem {
 interface PendingModel {
     id: number;
     name: string;
-    hersteller_id: number;
+    herstellerName: string;
 }
 
 interface EditableAttachment extends Attachment {
@@ -169,8 +169,7 @@ const AddPage: React.FC<AddPageProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
-    const [pendingCreatedBrand, setPendingCreatedBrand] = useState<Hersteller | null>(null);
-    const [pendingCreatedModel, setPendingCreatedModel] = useState<PendingModel | null>(null);
+    const [pendingModel, setPendingModel] = useState<PendingModel | null>(null);
     const [formData, setFormData] = useState<FormData>(emptyFormData);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [selectedPhotoDataUrl, setSelectedPhotoDataUrl] = useState<string | null>(null);
@@ -178,18 +177,20 @@ const AddPage: React.FC<AddPageProps> = ({
     const [attachments, setAttachments] = useState<EditableAttachment[]>([]);
     const isEditMode = editingItem !== null;
 
-    const selectedBrand =
-        existingBrands.find((brand) => normalize(brand.name) === normalize(formData.hersteller)) ??
-        (pendingCreatedBrand && normalize(pendingCreatedBrand.name) === normalize(formData.hersteller)
-            ? pendingCreatedBrand
-            : undefined);
+    const selectedBrand = existingBrands.find((brand) => normalize(brand.name) === normalize(formData.hersteller));
 
     const filteredModels = selectedBrand?.id
         ? [
             ...existingModels.filter((model) => model.hersteller_id === selectedBrand.id),
-            ...(pendingCreatedModel && pendingCreatedModel.hersteller_id === selectedBrand.id ? [pendingCreatedModel as Modell] : []),
+            ...(pendingModel && normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
+                ? [{ ...pendingModel, hersteller_id: selectedBrand.id, objekttyp_id: 0 } as Modell]
+                : []),
         ]
-        : existingModels;
+        : (
+            pendingModel && normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
+                ? [{ ...pendingModel, hersteller_id: -1, objekttyp_id: 0 } as Modell]
+                : existingModels
+        );
 
     const selectedBereich = bereiche.find(
         (bereich) => normalize(bereich.name) === normalize(formData.bereich),
@@ -253,8 +254,7 @@ const AddPage: React.FC<AddPageProps> = ({
             setErrors({});
             setError(null);
             setPendingNewBrand(null);
-            setPendingCreatedBrand(null);
-            setPendingCreatedModel(null);
+            setPendingModel(null);
             setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
             setUploadedPhotoPath(editingItem.geraeteFoto ?? null);
             setAttachments(editingItem.attachments.map((attachment) => ({ ...attachment })));
@@ -285,8 +285,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setErrors({});
         setError(null);
         setPendingNewBrand(null);
-        setPendingCreatedBrand(null);
-        setPendingCreatedModel(null);
+        setPendingModel(null);
         setSelectedPhotoDataUrl(null);
         setUploadedPhotoPath(null);
         setAttachments([]);
@@ -313,7 +312,11 @@ const AddPage: React.FC<AddPageProps> = ({
                 hersteller: value,
                 modell: "",
             }));
-            setPendingCreatedModel(null);
+            setPendingModel((current) => (
+                current && normalize(current.herstellerName) !== normalize(value)
+                    ? null
+                    : current
+            ));
             setErrors((prev) => ({
                 ...prev,
                 hersteller: "",
@@ -351,9 +354,9 @@ const AddPage: React.FC<AddPageProps> = ({
             return;
         }
 
-        setPendingCreatedBrand(null);
-        setPendingNewBrand(brandSearchQuery);
-        handleBrandSelect(brandSearchQuery);
+        const newBrandName = brandSearchQuery.trim();
+        setPendingNewBrand(newBrandName);
+        handleBrandSelect(newBrandName);
         setIsNewBrand(false);
     };
 
@@ -369,34 +372,19 @@ const AddPage: React.FC<AddPageProps> = ({
             return;
         }
 
-        try {
-            let brandId = selectedBrand?.id;
-
-            if (!brandId && pendingNewBrand && normalize(pendingNewBrand) === normalize(formData.hersteller)) {
-                const createdBrand = await onAddBrand(pendingNewBrand);
-                setPendingCreatedBrand(createdBrand);
-                setPendingNewBrand(null);
-                brandId = createdBrand.id;
-            }
-
-            if (!brandId) {
-                setError("Bitte zuerst einen Hersteller auswaehlen, bevor ein Modell angelegt wird.");
-                return;
-            }
-
-            const createdModel = await addModel(modelName, brandId);
-            setPendingCreatedModel({
-                id: createdModel.id,
-                name: createdModel.name,
-                hersteller_id: createdModel.hersteller_id,
-            });
-            handleModelSelect(modelName);
-            setIsNewModel(false);
-            setError(null);
-        } catch (modelError) {
-            console.error("Fehler beim Hinzufuegen des Modells:", modelError);
-            setError(getErrorMessage(modelError));
+        if (!formData.hersteller.trim()) {
+            setError("Bitte zuerst einen Hersteller auswaehlen, bevor ein Modell angelegt wird.");
+            return;
         }
+
+        setPendingModel({
+            id: -1,
+            name: modelName,
+            herstellerName: formData.hersteller.trim(),
+        });
+        handleModelSelect(modelName);
+        setIsNewModel(false);
+        setError(null);
     };
 
     const handleKaufdatumConfirm = (date: Date) => {
@@ -525,17 +513,29 @@ const AddPage: React.FC<AddPageProps> = ({
         }
 
         try {
-            if (pendingNewBrand) {
-                const createdBrand = await onAddBrand(pendingNewBrand);
-                setPendingCreatedBrand(createdBrand);
-                setPendingNewBrand(null);
+            let resolvedBrand = existingBrands.find(
+                (brand) => normalize(brand.name) === normalize(formData.hersteller),
+            );
+
+            if (!resolvedBrand && pendingNewBrand && normalize(pendingNewBrand) === normalize(formData.hersteller)) {
+                resolvedBrand = await onAddBrand(pendingNewBrand);
             }
 
-            const availableModels = pendingCreatedModel
-                ? [...existingModels, pendingCreatedModel as Modell]
-                : existingModels;
+            let selectedModel = findByName(existingModels, formData.modell);
+            if (
+                !selectedModel &&
+                pendingModel &&
+                normalize(pendingModel.name) === normalize(formData.modell) &&
+                normalize(pendingModel.herstellerName) === normalize(formData.hersteller)
+            ) {
+                if (!resolvedBrand?.id) {
+                    setError("Der Hersteller fuer das neue Modell konnte nicht aufgeloest werden.");
+                    return;
+                }
 
-            const selectedModel = findByName(availableModels, formData.modell);
+                selectedModel = await addModel(pendingModel.name, resolvedBrand.id);
+            }
+
             const selectedStatus = findByName(states, formData.status);
             const selectedStandort = formData.standort
                 ? findByName(standorte, formData.standort)
