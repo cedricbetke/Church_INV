@@ -58,6 +58,14 @@ export const parseDbDate = (value: string) => {
     return new Date(year, month - 1, day);
 };
 
+export const isFutureDbDate = (value: string) => {
+    if (!isValidIsoDate(value)) {
+        return false;
+    }
+
+    return value > formatDateForDb(new Date());
+};
+
 export const toStoredAssetPath = (value?: string | null) => {
     if (!value) {
         return null;
@@ -246,7 +254,7 @@ export const validateFormData = (formData: FormData) => {
     if (formData.kaufdatum && !isValidIsoDate(formData.kaufdatum)) {
         nextErrors.kaufdatum = "Kaufdatum muss im Format YYYY-MM-DD sein";
     }
-    if (formData.kaufdatum && isValidIsoDate(formData.kaufdatum) && parseDbDate(formData.kaufdatum) > today) {
+    if (formData.kaufdatum && isFutureDbDate(formData.kaufdatum)) {
         nextErrors.kaufdatum = "Kaufdatum darf nicht in der Zukunft liegen";
     }
     if (formData.einkaufspreis && !PRICE_PATTERN.test(formData.einkaufspreis.trim())) {
