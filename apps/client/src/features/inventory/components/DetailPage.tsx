@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     cardValue: {
         fontSize: 16,
         color: "#1d232a",
-        fontWeight: "600",
+        fontWeight: "500",
     },
     cardValueMuted: {
         color: "#9096a0",
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     },
     attachmentName: {
         fontSize: 15,
-        fontWeight: "600",
+        fontWeight: "500",
         color: "#1d232a",
     },
     attachmentInfo: {
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     },
     historyGroupTitle: {
         fontSize: 15,
-        fontWeight: "700",
+        fontWeight: "600",
         color: "#1d232a",
     },
     historyGroupTimestamp: {
