@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Modal, Portal as PaperPortal, Button, Surface, Text } from "react-native-paper";
 import { Alert, Image, ScrollView, View, StyleSheet, Platform, Linking } from "react-native";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
+import geraeteService from "@/src/features/inventory/services/geraeteService";
+import { HistoryEntry } from "@/src/features/inventory/types/HistoryEntry";
 
 interface DetailModalProps {
     visible: boolean;
@@ -45,6 +47,57 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
     </View>
 );
 
+const formatHistoryValue = (value: string | null) => value?.trim() || "Nicht gesetzt";
+
+const getHistoryDescription = (entry: HistoryEntry) => {
+    if (entry.aktion === "create") {
+        return "Geraet angelegt";
+    }
+
+    const fieldLabel = entry.feld ?? "unbekanntes Feld";
+    return `${fieldLabel}: ${formatHistoryValue(entry.alter_wert)} -> ${formatHistoryValue(entry.neuer_wert)}`;
+};
+
+const getHistoryGroupTitle = (aktion: string, entryCount: number) => {
+    if (aktion === "create") {
+        return "Angelegt";
+    }
+
+    if (entryCount === 1) {
+        return "Aenderung";
+    }
+
+    return `${entryCount} Aenderungen`;
+};
+
+const groupHistoryEntries = (entries: HistoryEntry[]) => {
+    const groupedEntries: Array<{
+        key: string;
+        aktion: string;
+        erstellt_am: string;
+        entries: HistoryEntry[];
+    }> = [];
+
+    for (const entry of entries) {
+        const lastGroup = groupedEntries[groupedEntries.length - 1];
+        const groupKey = `${entry.aktion}-${entry.erstellt_am}`;
+
+        if (lastGroup && lastGroup.key === groupKey) {
+            lastGroup.entries.push(entry);
+            continue;
+        }
+
+        groupedEntries.push({
+            key: groupKey,
+            aktion: entry.aktion,
+            erstellt_am: entry.erstellt_am,
+            entries: [entry],
+        });
+    }
+
+    return groupedEntries;
+};
+
 const DetailModal: React.FC<DetailModalProps> = ({
     visible,
     onDismiss,
@@ -53,6 +106,40 @@ const DetailModal: React.FC<DetailModalProps> = ({
     onEdit,
     onDelete,
 }) => {
+    const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+    const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+    const groupedHistoryEntries = useMemo(
+        () => groupHistoryEntries(historyEntries),
+        [historyEntries],
+    );
+
+    useEffect(() => {
+        if (!visible || !selectedItem) {
+            setHistoryEntries([]);
+            setIsHistoryExpanded(false);
+            return;
+        }
+
+        let isActive = true;
+
+        void geraeteService.getHistory(selectedItem.invNr)
+            .then((entries) => {
+                if (isActive) {
+                    setHistoryEntries(entries);
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden des Geraeteverlaufs:", error);
+                if (isActive) {
+                    setHistoryEntries([]);
+                }
+            });
+
+        return () => {
+            isActive = false;
+        };
+    }, [visible, selectedItem]);
+
     const confirmDelete = async (item: InventoryItem) => {
         if (Platform.OS === "web") {
             if (globalThis.confirm(`Geraet ${item.invNr} wirklich loeschen?`)) {
@@ -189,6 +276,49 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                         ))
                                     )}
                                 </Surface>
+                            </View>
+
+                            <View style={styles.section}>
+                                <View style={styles.sectionHeader}>
+                                    <Text style={styles.sectionTitle}>Verlauf</Text>
+                                    <View style={styles.sectionLine} />
+                                    <Button
+                                        mode="text"
+                                        compact
+                                        onPress={() => setIsHistoryExpanded((current) => !current)}
+                                        contentStyle={styles.historyToggleContent}
+                                        labelStyle={styles.historyToggleLabel}
+                                    >
+                                        {isHistoryExpanded ? "Ausblenden" : "Anzeigen"}
+                                    </Button>
+                                </View>
+                                {isHistoryExpanded && (
+                                    <Surface style={styles.attachmentCard}>
+                                        {groupedHistoryEntries.length === 0 ? (
+                                            <Text style={styles.emptyAttachmentText}>Noch keine Verlaufseintraege vorhanden.</Text>
+                                        ) : (
+                                            groupedHistoryEntries.map((group) => (
+                                                <View key={group.key} style={styles.historyGroupCard}>
+                                                    <View style={styles.historyGroupHeader}>
+                                                        <Text style={styles.historyGroupTitle}>
+                                                            {getHistoryGroupTitle(group.aktion, group.entries.length)}
+                                                        </Text>
+                                                        <Text style={styles.historyGroupTimestamp}>
+                                                            {new Date(group.erstellt_am).toLocaleString("de-DE")}
+                                                        </Text>
+                                                    </View>
+                                                    <View style={styles.historyEntryList}>
+                                                        {group.entries.map((entry) => (
+                                                            <Text key={entry.id} style={styles.historyEntryText}>
+                                                                {getHistoryDescription(entry)}
+                                                            </Text>
+                                                        ))}
+                                                    </View>
+                                                </View>
+                                            ))
+                                        )}
+                                    </Surface>
+                                )}
                             </View>
 
                             <View style={styles.buttonRow}>
@@ -419,6 +549,43 @@ const styles = StyleSheet.create({
     attachmentActions: {
         flexDirection: "row",
         alignItems: "center",
+    },
+    historyToggleContent: {
+        minHeight: 32,
+    },
+    historyToggleLabel: {
+        fontSize: 13,
+    },
+    historyGroupCard: {
+        borderWidth: 1,
+        borderColor: "#edf0f4",
+        borderRadius: 12,
+        backgroundColor: "#f8fafc",
+        padding: 14,
+        gap: 10,
+    },
+    historyGroupHeader: {
+        flexDirection: Platform.OS === "web" ? "row" : "column",
+        justifyContent: "space-between",
+        alignItems: Platform.OS === "web" ? "center" : "flex-start",
+        gap: 6,
+    },
+    historyGroupTitle: {
+        fontSize: 15,
+        fontWeight: "700",
+        color: "#1d232a",
+    },
+    historyGroupTimestamp: {
+        color: "#6f7680",
+        fontSize: 13,
+    },
+    historyEntryList: {
+        gap: 6,
+    },
+    historyEntryText: {
+        fontSize: 14,
+        color: "#2a3138",
+        lineHeight: 20,
     },
     buttonRow: {
         flexDirection: "row",

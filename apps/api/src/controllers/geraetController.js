@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Geraet = require('../models/geratModel');
+const GeraetVerlauf = require('../models/geraetVerlaufModel');
 const geraeteUploadDir = path.resolve(__dirname, '..', '..', 'uploads', 'geraete');
 
 const getAllGeraete = async (req, res) => {
@@ -27,6 +28,15 @@ const getMaxId = async (req, res) => {
         res.json(id);
     }catch (error) {
         console.error('Fehler beim Abrufen der Inventarnummer:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getGeraetVerlauf = async (req, res) => {
+    try {
+        const verlauf = await GeraetVerlauf.getAllByGeraetId(req.params.id);
+        res.json(verlauf);
+    } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
@@ -103,6 +113,7 @@ const createGeraet = async (req, res) => {
         );
 
         // Erfolgreiche Antwort mit dem neu erstellten Gerät
+        await GeraetVerlauf.logCreate(inv_nr);
         res.status(201).json(newGeraet);
     } catch (error) {
         console.log(req.body)
@@ -115,6 +126,11 @@ const createGeraet = async (req, res) => {
 
 const updateGeraet = async (req, res) => {
     try {
+        const beforeSnapshot = await GeraetVerlauf.getGeraetSnapshot(req.params.id);
+        if (!beforeSnapshot) {
+            return res.status(404).json({ error: 'Geraet nicht gefunden' });
+        }
+
         const {
             modell_id,
             seriennummer = null,
@@ -149,6 +165,11 @@ const updateGeraet = async (req, res) => {
             geraetefoto_url
         );
 
+        const afterSnapshot = await GeraetVerlauf.getGeraetSnapshot(req.params.id);
+        if (afterSnapshot) {
+            await GeraetVerlauf.logUpdateChanges(Number(req.params.id), beforeSnapshot, afterSnapshot);
+        }
+
         res.json(updatedGeraet);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -164,4 +185,4 @@ const deleteGeraet = async (req, res) => {
     }
 };
 
-module.exports = { getAllGeraete, getGeraetById, createGeraet, updateGeraet, deleteGeraet, getMaxId, uploadGeraetFoto };
+module.exports = { getAllGeraete, getGeraetById, createGeraet, updateGeraet, deleteGeraet, getMaxId, uploadGeraetFoto, getGeraetVerlauf };

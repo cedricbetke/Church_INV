@@ -44,6 +44,7 @@ router.get('/', geraetController.getAllGeraete);
 
 router.get('/max-id',geraetController.getMaxId);
 router.post('/upload-photo', geraetController.uploadGeraetFoto);
+router.get('/:id/verlauf', geraetController.getGeraetVerlauf);
 /**
  * @swagger
  * /api/geraet/{id}:
