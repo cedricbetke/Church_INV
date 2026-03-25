@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Divider, HelperText, Modal, Text, TextInput } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
@@ -18,6 +18,30 @@ interface MasterdataAdminModalProps {
 }
 
 const normalize = (value: string) => value.trim().toLowerCase();
+
+const HoverRow = ({
+    children,
+    onPress,
+    active = false,
+}: {
+    children: React.ReactNode;
+    onPress: () => void;
+    active?: boolean;
+}) => (
+    <Pressable onPress={onPress}>
+        {({ hovered, pressed }) => (
+            <View
+                style={[
+                    styles.rowItem,
+                    (hovered || pressed) && styles.rowItemHover,
+                    active && styles.rowItemActive,
+                ]}
+            >
+                {children}
+            </View>
+        )}
+    </Pressable>
+);
 
 const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     visible,
@@ -226,9 +250,17 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             {editingBrandId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
-                    <View style={styles.list}>
+                    <ScrollView style={styles.listPanel} contentContainerStyle={styles.list}>
                         {sortedBrands.map((brand) => (
-                            <View key={brand.id} style={styles.rowItem}>
+                            <HoverRow
+                                key={brand.id}
+                                active={editingBrandId === brand.id}
+                                onPress={() => {
+                                    setBrandName(brand.name);
+                                    setEditingBrandId(brand.id);
+                                    setError(null);
+                                }}
+                            >
                                 <Text variant="bodyMedium" style={styles.rowItemText}>
                                     {brand.name}
                                 </Text>
@@ -242,9 +274,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 >
                                     Bearbeiten
                                 </Button>
-                            </View>
+                            </HoverRow>
                         ))}
-                    </View>
+                    </ScrollView>
                 </View>
 
                 <Divider />
@@ -263,9 +295,17 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             {editingObjectTypeId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
-                    <View style={styles.list}>
+                    <ScrollView style={styles.listPanel} contentContainerStyle={styles.list}>
                         {sortedObjectTypes.map((objectType) => (
-                            <View key={objectType.id} style={styles.rowItem}>
+                            <HoverRow
+                                key={objectType.id}
+                                active={editingObjectTypeId === objectType.id}
+                                onPress={() => {
+                                    setObjectTypeName(objectType.name);
+                                    setEditingObjectTypeId(objectType.id);
+                                    setError(null);
+                                }}
+                            >
                                 <Text variant="bodyMedium" style={styles.rowItemText}>
                                     {objectType.name}
                                 </Text>
@@ -279,9 +319,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 >
                                     Bearbeiten
                                 </Button>
-                            </View>
+                            </HoverRow>
                         ))}
-                    </View>
+                    </ScrollView>
                 </View>
 
                 <Divider />
@@ -320,9 +360,27 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     <Text variant="bodySmall" style={styles.subtleText}>
                         Hersteller und Objekttyp werden jetzt ueber die vorhandenen Stammdaten ausgewaehlt.
                     </Text>
-                    <View style={styles.list}>
+                    <ScrollView style={styles.largeListPanel} contentContainerStyle={styles.list}>
                         {modelRows.map((model) => (
-                            <View key={model.id} style={styles.rowItem}>
+                            <HoverRow
+                                key={model.id}
+                                active={editingModelId === model.id}
+                                onPress={() => {
+                                    const currentModel = models.find((entry) => entry.id === model.id);
+                                    if (!currentModel) {
+                                        return;
+                                    }
+
+                                    const currentBrand = brands.find((entry) => entry.id === currentModel.hersteller_id);
+                                    const currentObjectType = objekttypen.find((entry) => entry.id === currentModel.objekttyp_id);
+
+                                    setModelName(currentModel.name);
+                                    setSelectedBrandName(currentBrand?.name ?? "");
+                                    setSelectedObjectTypeName(currentObjectType?.name ?? "");
+                                    setEditingModelId(currentModel.id);
+                                    setError(null);
+                                }}
+                            >
                                 <Text variant="bodyMedium" style={styles.rowItemText}>
                                     {model.label}
                                 </Text>
@@ -346,9 +404,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 >
                                     Bearbeiten
                                 </Button>
-                            </View>
+                            </HoverRow>
                         ))}
-                    </View>
+                    </ScrollView>
                 </View>
 
                 {error && <HelperText type="error">{error}</HelperText>}
@@ -431,13 +489,41 @@ const styles = StyleSheet.create({
     },
     list: {
         gap: 6,
-        paddingVertical: 4,
+        padding: 8,
+    },
+    listPanel: {
+        maxHeight: 180,
+        borderWidth: 1,
+        borderColor: "#e3e7ee",
+        borderRadius: 12,
+        backgroundColor: "#fafbfc",
+    },
+    largeListPanel: {
+        maxHeight: 220,
+        borderWidth: 1,
+        borderColor: "#e3e7ee",
+        borderRadius: 12,
+        backgroundColor: "#fafbfc",
     },
     rowItem: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "transparent",
+        backgroundColor: "#ffffff",
+    },
+    rowItemHover: {
+        backgroundColor: "#f3f7ff",
+        borderColor: "#c7dafc",
+    },
+    rowItemActive: {
+        backgroundColor: "#e8f0fe",
+        borderColor: "#8fb4ff",
     },
     rowItemText: {
         flex: 1,

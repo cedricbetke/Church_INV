@@ -137,6 +137,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                 </View>
                                 <View style={styles.detailGrid}>
                                     <DetailRow label="Status" value={getDisplayValue(selectedItem.status)} />
+                                    <DetailRow label="Hersteller" value={getDisplayValue(selectedItem.hersteller)} />
                                     <DetailRow label="Objekttyp" value={getDisplayValue(selectedItem.objekttyp)} />
                                     <DetailRow label="Modell" value={getDisplayValue(selectedItem.modell)} />
                                     <DetailRow label="Bereich" value={getDisplayValue(selectedItem.bereich)} />
