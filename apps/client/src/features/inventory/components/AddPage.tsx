@@ -2,119 +2,33 @@ import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, Image } from "react-native";
 import { Modal, Portal, Button, Title, Text } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import axios from "axios";
 import { FormFields } from "./FormFields";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import SelectionDialog from "./SelectionDialog";
 import { FormData } from "@/src/features/inventory/types/FormData";
 import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
-import Attachment from "@/src/features/inventory/types/Attachment";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import dokumenteService from "@/src/features/masterdata/services/dokumenteService";
 import apiClient from "@/src/shared/api/apiClient";
 import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
 import { pickDocumentAsDataUrl } from "@/src/shared/utils/documentPicker";
-
-interface NamedItem {
-    id: number;
-    name: string;
-}
-
-interface PendingModel {
-    id: number;
-    name: string;
-    herstellerName: string;
-    objekttypName: string;
-}
-
-interface EditableAttachment extends Attachment {
-    isPending?: boolean;
-    markedForDeletion?: boolean;
-    dataUrl?: string;
-}
-
-const normalize = (value: string) => value.trim().toLowerCase();
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-const PRICE_PATTERN = /^\d+(?:[.,]\d{1,2})?$/;
-
-const isValidIsoDate = (value: string) => {
-    if (!DATE_PATTERN.test(value)) {
-        return false;
-    }
-
-    const [year, month, day] = value.split("-").map(Number);
-    const date = new Date(Date.UTC(year, month - 1, day));
-
-    return (
-        date.getUTCFullYear() === year &&
-        date.getUTCMonth() === month - 1 &&
-        date.getUTCDate() === day
-    );
-};
-
-const parsePrice = (value: string) => Number.parseFloat(value.replace(",", "."));
-const formatDateForDb = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
-const parseDbDate = (value: string) => {
-    const [year, month, day] = value.split("-").map(Number);
-    return new Date(year, month - 1, day);
-};
-const today = new Date();
-const INTEGER_PATTERN = /^\d+$/;
-
-const getErrorMessage = (error: unknown) => {
-    if (!axios.isAxiosError(error)) {
-        return "Fehler beim Speichern des Items";
-    }
-
-    if (!error.response) {
-        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL pruefen.";
-    }
-
-    const { status, data } = error.response;
-    const backendMessage =
-        typeof data === "string"
-            ? data
-            : typeof data?.message === "string"
-                ? data.message
-                : typeof data?.error === "string"
-                    ? data.error
-                    : null;
-
-    if (status === 400) {
-        return backendMessage ?? "Die uebermittelten Daten sind ungueltig.";
-    }
-
-    if (status === 403) {
-        return backendMessage ?? "Diese Aktion ist nur mit Admin-Rechten erlaubt.";
-    }
-
-    if (status === 404) {
-        return backendMessage ?? "Die API-Route wurde nicht gefunden.";
-    }
-
-    if (status === 409) {
-        if (backendMessage?.toLowerCase().includes("inventarnummer")) {
-            return backendMessage;
-        }
-
-        return backendMessage ?? "Der Datensatz steht in Konflikt mit vorhandenen Daten.";
-    }
-
-    if (status === 503) {
-        return backendMessage ?? "Die Admin-Freigabe ist auf dem Server nicht konfiguriert.";
-    }
-
-    if (status >= 500) {
-        return backendMessage ?? "Serverfehler beim Speichern des Items.";
-    }
-
-    return backendMessage ?? "Fehler beim Speichern des Items";
-};
+import {
+    buildPersonItems,
+    EditableAttachment,
+    emptyFormData,
+    findByName,
+    formatDateForDb,
+    getErrorMessage,
+    getFilteredKategorien,
+    getFilteredModels,
+    mapEditingItemToFormData,
+    normalize,
+    parseDbDate,
+    parsePrice,
+    PendingModel,
+    today,
+    validateFormData,
+} from "./addPage.helpers";
 
 interface AddPageProps {
     visible: boolean;
@@ -125,21 +39,6 @@ interface AddPageProps {
     onSubmit: (itemData: CreateGeraetPayload) => Promise<void>;
     editingItem?: InventoryItem | null;
 }
-
-const emptyFormData: FormData = {
-    invNr: "",
-    objekttyp: "",
-    modell: "",
-    hersteller: "",
-    serien_nr: "",
-    kaufdatum: "",
-    einkaufspreis: "",
-    standort: "",
-    bereich: "",
-    kategorie: "",
-    status: "",
-    verantwortlicher: "",
-};
 
 const AddPage: React.FC<AddPageProps> = ({
     visible,
@@ -183,38 +82,15 @@ const AddPage: React.FC<AddPageProps> = ({
     const [attachments, setAttachments] = useState<EditableAttachment[]>([]);
     const isEditMode = editingItem !== null;
 
-    const selectedBrand = existingBrands.find((brand) => normalize(brand.name) === normalize(formData.hersteller));
+    const filteredModels = getFilteredModels({
+        existingModels,
+        existingBrands,
+        objekttypen,
+        pendingModel,
+        formData,
+    });
 
-    const filteredModels = selectedBrand?.id
-        ? [
-            ...existingModels.filter((model) =>
-                model.hersteller_id === selectedBrand.id &&
-                (formData.objekttyp
-                    ? objekttypen.find((objekttyp) => objekttyp.id === model.objekttyp_id)?.name &&
-                      normalize(objekttypen.find((objekttyp) => objekttyp.id === model.objekttyp_id)!.name) === normalize(formData.objekttyp)
-                    : true)
-            ),
-            ...(pendingModel &&
-            normalize(pendingModel.herstellerName) === normalize(formData.hersteller) &&
-            normalize(pendingModel.objekttypName) === normalize(formData.objekttyp)
-                ? [{ ...pendingModel, hersteller_id: selectedBrand.id, objekttyp_id: 0 } as Modell]
-                : []),
-        ]
-        : (
-            pendingModel &&
-            normalize(pendingModel.herstellerName) === normalize(formData.hersteller) &&
-            normalize(pendingModel.objekttypName) === normalize(formData.objekttyp)
-                ? [{ ...pendingModel, hersteller_id: -1, objekttyp_id: 0 } as Modell]
-                : []
-        );
-
-    const selectedBereich = bereiche.find(
-        (bereich) => normalize(bereich.name) === normalize(formData.bereich),
-    );
-
-    const filteredKategorien = selectedBereich
-        ? kategorien.filter((kategorie) => kategorie.bereich_id === selectedBereich.id)
-        : kategorien;
+    const filteredKategorien = getFilteredKategorien(formData, bereiche, kategorien);
 
     const resetDialogState = () => {
         setShowStatusDialog(false);
@@ -251,26 +127,8 @@ const AddPage: React.FC<AddPageProps> = ({
         }
 
         if (isEditMode && editingItem) {
-            const model = existingModels.find((entry) => normalize(entry.name) === normalize(editingItem.modell));
-            const brand = model
-                ? existingBrands.find((entry) => entry.id === model.hersteller_id)
-                : existingBrands.find((entry) => normalize(entry.name) === normalize(editingItem.hersteller ?? ""));
-
             setLoading(false);
-            setFormData({
-                invNr: String(editingItem.invNr),
-                objekttyp: editingItem.objekttyp ?? "",
-                modell: editingItem.modell ?? "",
-                hersteller: brand?.name ?? editingItem.hersteller ?? "",
-                serien_nr: editingItem.seriennummer ?? "",
-                kaufdatum: editingItem.kaufdatum ? formatDateForDb(editingItem.kaufdatum) : "",
-                einkaufspreis: editingItem.einkaufspreis != null ? String(editingItem.einkaufspreis).replace(".", ",") : "",
-                standort: editingItem.standort ?? "",
-                bereich: editingItem.bereich ?? "",
-                kategorie: editingItem.kategorie ?? "",
-                status: editingItem.status ?? "",
-                verantwortlicher: editingItem.verantwortlicher ?? "",
-            });
+            setFormData(mapEditingItemToFormData(editingItem, existingModels, existingBrands));
             setErrors({});
             setError(null);
             setPendingNewBrand(null);
@@ -561,40 +419,12 @@ const AddPage: React.FC<AddPageProps> = ({
     };
 
     const validateForm = () => {
-        const nextErrors: Record<string, string> = {};
-
-        if (!formData.invNr) nextErrors.invNr = "Inventarnummer ist erforderlich";
-        if (formData.invNr && !INTEGER_PATTERN.test(formData.invNr.trim())) {
-            nextErrors.invNr = "Inventarnummer muss eine positive ganze Zahl sein";
-        }
-        if (formData.invNr && INTEGER_PATTERN.test(formData.invNr.trim()) && Number(formData.invNr) <= 0) {
-            nextErrors.invNr = "Inventarnummer muss groesser als 0 sein";
-        }
-        if (!formData.modell) nextErrors.modell = "Modell ist erforderlich";
-        if (!formData.objekttyp) nextErrors.objekttyp = "Objekttyp ist erforderlich";
-        if (!formData.status) nextErrors.status = "Status ist erforderlich";
-        if (!formData.bereich) nextErrors.bereich = "Bereich ist erforderlich";
-        if (formData.kaufdatum && !isValidIsoDate(formData.kaufdatum)) {
-            nextErrors.kaufdatum = "Kaufdatum muss im Format YYYY-MM-DD sein";
-        }
-        if (formData.kaufdatum && isValidIsoDate(formData.kaufdatum) && parseDbDate(formData.kaufdatum) > today) {
-            nextErrors.kaufdatum = "Kaufdatum darf nicht in der Zukunft liegen";
-        }
-        if (formData.einkaufspreis && !PRICE_PATTERN.test(formData.einkaufspreis.trim())) {
-            nextErrors.einkaufspreis = "Einkaufspreis muss eine Zahl mit bis zu 2 Nachkommastellen sein";
-        }
-
+        const nextErrors = validateFormData(formData);
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
     };
 
-    const findByName = <T extends NamedItem>(items: T[], name: string) =>
-        items.find((item) => normalize(item.name) === normalize(name));
-
-    const personItems: NamedItem[] = personen.map((person) => ({
-        id: person.id,
-        name: `${person.vorname} ${person.nachname}`.trim(),
-    }));
+    const personItems = buildPersonItems(personen);
 
     const handleSubmit = async () => {
         if (!validateForm()) {
