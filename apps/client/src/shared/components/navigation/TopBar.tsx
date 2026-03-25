@@ -1,153 +1,178 @@
-import * as React from 'react';
-import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from 'react-native-paper';
+import * as React from "react";
+import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import {useState} from "react";
+import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
-import {useInventory} from "@/src/features/inventory/context/InventoryContext";
+import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
 
-const MyComponent = () => {
-        const [showModal, setShowModal] = useState<boolean>(false);
-        const [showAdminModal, setShowAdminModal] = useState<boolean>(false);
-        const [showMasterdataModal, setShowMasterdataModal] = useState<boolean>(false);
-        const [adminPassword, setAdminPassword] = useState("");
-        const [adminError, setAdminError] = useState<string | null>(null);
-        const {
-            setIsAddPageVisible,
-            canManageInventory,
-            isAdminSessionActive,
-            isAdminLoginConfigured,
-            brands,
-            objekttypen,
-            models,
-            addBrand,
-            addObjectType,
-            addModel,
-            setScannedCode,
-            filters,
-            isFilterVisible,
-            setIsFilterVisible,
-            activateAdminSession,
-            clearAdminSession,
-        } = useInventory();
-        const hasActiveFilters = Boolean(filters.status || filters.bereich || filters.standort);
+const TopBar = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [showAdminModal, setShowAdminModal] = useState(false);
+    const [showMasterdataModal, setShowMasterdataModal] = useState(false);
+    const [adminPassword, setAdminPassword] = useState("");
+    const [adminError, setAdminError] = useState<string | null>(null);
 
-        const handleAdminLogin = () => {
-            if (activateAdminSession(adminPassword)) {
-                setAdminPassword("");
-                setAdminError(null);
-                setShowAdminModal(false);
-                return;
-            }
+    const {
+        setIsAddPageVisible,
+        canManageInventory,
+        isAdminSessionActive,
+        isAdminLoginConfigured,
+        brands,
+        objekttypen,
+        models,
+        addBrand,
+        addObjectType,
+        addModel,
+        setScannedCode,
+        filters,
+        isFilterVisible,
+        setIsFilterVisible,
+        activateAdminSession,
+        clearAdminSession,
+    } = useInventory();
 
-            setAdminError("Passwort ist ungültig.");
-        };
+    const hasActiveFilters = Boolean(filters.status || filters.bereich || filters.standort);
 
-        const handleAdminLogout = () => {
-            clearAdminSession();
+    const handleAdminLogin = () => {
+        if (activateAdminSession(adminPassword)) {
             setAdminPassword("");
             setAdminError(null);
             setShowAdminModal(false);
-        };
+            return;
+        }
 
-        return (
-            <View>
-                    <Appbar.Header>
-                            <Appbar.BackAction onPress={() => {
-                            }}/>
-                            <Appbar.Content title="ChurchINV"/>
-                            <View style={[styles.adminBadge, isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive]}>
-                                <Text style={[styles.adminBadgeText, isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive]}>
-                                    {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
-                                </Text>
-                            </View>
-                            {isAdminLoginConfigured && (
-                                <Appbar.Action
-                                    icon={isAdminSessionActive ? "lock-open-outline" : "lock-outline"}
-                                    onPress={() => setShowAdminModal(true)}
-                                />
-                            )}
-                            {canManageInventory && (
-                                <Appbar.Action icon="database-cog-outline" onPress={() => setShowMasterdataModal(true)}/>
-                            )}
-                            {canManageInventory && (
-                                <Appbar.Action icon="plus" onPress={() => setIsAddPageVisible(true)}/>
-                            )}
-                            <Appbar.Action icon="qrcode-scan" onPress={() => setShowModal(true)}/>
-                            <Appbar.Action
-                                icon="filter"
-                                color={isFilterVisible || hasActiveFilters ? "#1976d2" : undefined}
-                                onPress={() => setIsFilterVisible((prev) => !prev)}
-                            />
-                    </Appbar.Header>
-                <Portal>
-                        <Modal visible={showModal} onDismiss={() => setShowModal(false)}>
-                                <View style={styles.scannerModal}>
-                                        <QrCodeScanner
-                                            setShowModal={setShowModal}
-                                            onScan={(value) => setScannedCode(value)}
-                                        />
-                                </View>
-                        </Modal>
-                        <Modal visible={showAdminModal} onDismiss={() => setShowAdminModal(false)} contentContainerStyle={styles.adminModal}>
-                                <View style={styles.adminContent}>
-                                        <Text variant="titleMedium">
-                                                {isAdminSessionActive ? "Admin angemeldet" : "Admin-Anmeldung"}
-                                        </Text>
-                                        <Text variant="bodyMedium" style={styles.adminText}>
-                                                {isAdminSessionActive
-                                                    ? "Die Admin-Freigabe ist für diese Session aktiv."
-                                                    : "Mit dem Admin-Passwort schaltest du Ändern und Löschen frei."}
-                                        </Text>
-                                        {!isAdminSessionActive && (
-                                            <>
-                                                <TextInput
-                                                    mode="outlined"
-                                                    label="Admin-Passwort"
-                                                    value={adminPassword}
-                                                    onChangeText={(value) => {
-                                                        setAdminPassword(value);
-                                                        if (adminError) {
-                                                            setAdminError(null);
-                                                        }
-                                                    }}
-                                                    secureTextEntry
-                                                />
-                                                {adminError && <HelperText type="error">{adminError}</HelperText>}
-                                            </>
-                                        )}
-                                        <View style={styles.actionRow}>
-                                                <Button mode="outlined" onPress={() => setShowAdminModal(false)}>
-                                                        Schließen
-                                                </Button>
-                                                {isAdminSessionActive ? (
-                                                    <Button mode="contained" onPress={handleAdminLogout}>
-                                                        Abmelden
-                                                    </Button>
-                                                ) : (
-                                                    <Button mode="contained" onPress={handleAdminLogin}>
-                                                        Anmelden
-                                                    </Button>
-                                                )}
-                                        </View>
-                                </View>
-                        </Modal>
-                        <MasterdataAdminModal
-                            visible={showMasterdataModal}
-                            onDismiss={() => setShowMasterdataModal(false)}
-                            brands={brands}
-                            objekttypen={objekttypen}
-                            models={models}
-                            addBrand={addBrand}
-                            addObjectType={addObjectType}
-                            addModel={addModel}
+        setAdminError("Passwort ist ungültig.");
+    };
+
+    const handleAdminLogout = () => {
+        clearAdminSession();
+        setAdminPassword("");
+        setAdminError(null);
+        setShowAdminModal(false);
+    };
+
+    return (
+        <View>
+            <Appbar.Header style={styles.header}>
+                <Appbar.BackAction onPress={() => {}} />
+                <Appbar.Content title="ChurchINV" titleStyle={styles.title} />
+                <View style={[styles.adminBadge, isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive]}>
+                    <Text style={[styles.adminBadgeText, isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive]}>
+                        {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
+                    </Text>
+                </View>
+                {isAdminLoginConfigured && (
+                    <Appbar.Action
+                        icon={isAdminSessionActive ? "lock-open-outline" : "lock-outline"}
+                        color="#445160"
+                        onPress={() => setShowAdminModal(true)}
+                    />
+                )}
+                {canManageInventory && (
+                    <Appbar.Action
+                        icon="database-cog-outline"
+                        color="#445160"
+                        onPress={() => setShowMasterdataModal(true)}
+                    />
+                )}
+                {canManageInventory && (
+                    <Appbar.Action icon="plus" color="#445160" onPress={() => setIsAddPageVisible(true)} />
+                )}
+                <Appbar.Action icon="qrcode-scan" color="#445160" onPress={() => setShowModal(true)} />
+                <Appbar.Action
+                    icon="filter"
+                    color={isFilterVisible || hasActiveFilters ? "#0f5ea8" : "#445160"}
+                    onPress={() => setIsFilterVisible((prev) => !prev)}
+                />
+            </Appbar.Header>
+            <Portal>
+                <Modal visible={showModal} onDismiss={() => setShowModal(false)}>
+                    <View style={styles.scannerModal}>
+                        <QrCodeScanner
+                            setShowModal={setShowModal}
+                            onScan={(value) => setScannedCode(value)}
                         />
-                </Portal>
-            </View>
-);
-}
+                    </View>
+                </Modal>
+                <Modal
+                    visible={showAdminModal}
+                    onDismiss={() => setShowAdminModal(false)}
+                    contentContainerStyle={styles.adminModal}
+                >
+                    <View style={styles.adminContent}>
+                        <Text variant="titleMedium">
+                            {isAdminSessionActive ? "Admin angemeldet" : "Admin-Anmeldung"}
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.adminText}>
+                            {isAdminSessionActive
+                                ? "Die Admin-Freigabe ist für diese Session aktiv."
+                                : "Mit dem Admin-Passwort schaltest du Ändern und Löschen frei."}
+                        </Text>
+                        {!isAdminSessionActive && (
+                            <>
+                                <TextInput
+                                    mode="outlined"
+                                    label="Admin-Passwort"
+                                    value={adminPassword}
+                                    onChangeText={(value) => {
+                                        setAdminPassword(value);
+                                        if (adminError) {
+                                            setAdminError(null);
+                                        }
+                                    }}
+                                    secureTextEntry
+                                />
+                                {adminError && <HelperText type="error">{adminError}</HelperText>}
+                            </>
+                        )}
+                        <View style={styles.actionRow}>
+                            <Button mode="outlined" onPress={() => setShowAdminModal(false)}>
+                                Schließen
+                            </Button>
+                            {isAdminSessionActive ? (
+                                <Button mode="contained" onPress={handleAdminLogout}>
+                                    Abmelden
+                                </Button>
+                            ) : (
+                                <Button mode="contained" onPress={handleAdminLogin}>
+                                    Anmelden
+                                </Button>
+                            )}
+                        </View>
+                    </View>
+                </Modal>
+                <MasterdataAdminModal
+                    visible={showMasterdataModal}
+                    onDismiss={() => setShowMasterdataModal(false)}
+                    brands={brands}
+                    objekttypen={objekttypen}
+                    models={models}
+                    addBrand={addBrand}
+                    addObjectType={addObjectType}
+                    addModel={addModel}
+                />
+            </Portal>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
+    header: {
+        backgroundColor: "#f7f7f8",
+        borderBottomWidth: 1,
+        borderBottomColor: "#e7e7ea",
+        elevation: 0,
+        shadowOpacity: 0,
+        paddingHorizontal: 8,
+        minHeight: 68,
+    },
+    title: {
+        color: "#111111",
+        fontSize: 23,
+        fontWeight: "700",
+        letterSpacing: -0.35,
+    },
     scannerModal: {
         height: 500,
         padding: 20,
@@ -156,38 +181,39 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         margin: 20,
         padding: 20,
-        borderRadius: 12,
+        borderRadius: 14,
     },
     adminContent: {
         gap: 12,
     },
     adminText: {
-        color: "#5f6368",
+        color: "#6e6e73",
     },
     adminBadge: {
         borderRadius: 999,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        marginRight: 4,
+        paddingHorizontal: 11,
+        paddingVertical: 5,
+        marginRight: 8,
         borderWidth: 1,
     },
     adminBadgeActive: {
-        backgroundColor: "#e8f5e9",
-        borderColor: "#81c784",
+        backgroundColor: "#eef6ee",
+        borderColor: "#cfe5cf",
     },
     adminBadgeInactive: {
-        backgroundColor: "#f5f5f5",
-        borderColor: "#d0d0d0",
+        backgroundColor: "#f0f1f3",
+        borderColor: "#e0e2e6",
     },
     adminBadgeText: {
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: "600",
+        letterSpacing: 0.1,
     },
     adminBadgeTextActive: {
-        color: "#256029",
+        color: "#2d6a36",
     },
     adminBadgeTextInactive: {
-        color: "#616161",
+        color: "#6e6e73",
     },
     actionRow: {
         flexDirection: "row",
@@ -196,4 +222,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MyComponent;
+export default TopBar;

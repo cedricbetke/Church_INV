@@ -109,52 +109,59 @@ const DataTableComponent: React.FC<DataTableProps> = ({
 
     return (
         <View style={styles.container}>
-            <View style={styles.toolbarRow}>
-                <View style={styles.toolbarSpacer} />
-                <View style={styles.searchbarContainer}>
-                    <Searchbar
-                        placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
-                        value={searchQuery}
-                        onChangeText={(value) => {
-                            setSearchQuery(value);
-                            setPage(0);
-                        }}
-                        style={styles.searchbar}
-                    />
-                </View>
-                <View style={styles.toolbarAction}>
-                    <Menu
-                        visible={isColumnMenuVisible}
-                        onDismiss={() => setIsColumnMenuVisible(false)}
-                        anchor={(
-                            <Button
-                                mode="outlined"
-                                compact
-                                icon="table-column"
-                                onPress={() => setIsColumnMenuVisible(true)}
-                            >
-                                Spalten
-                            </Button>
-                        )}
-                        contentStyle={styles.columnMenu}
-                    >
-                        {columns.map((column) => (
-                            <Menu.Item
-                                key={column.key}
-                                title={column.title}
-                                leadingIcon={
-                                    column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"
-                                }
-                                trailingIcon={column.locked ? "lock-outline" : undefined}
-                                onPress={() => {
-                                    if (column.locked) {
-                                        return;
+            <View style={styles.toolbarSection}>
+                <View style={styles.toolbarRow}>
+                    <View style={styles.searchbarContainer}>
+                        <Searchbar
+                            placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
+                            value={searchQuery}
+                            onChangeText={(value) => {
+                                setSearchQuery(value);
+                                setPage(0);
+                            }}
+                            inputStyle={styles.searchbarInput}
+                            iconColor="#8e8e93"
+                            elevation={0}
+                            style={styles.searchbar}
+                        />
+                    </View>
+                    <View style={styles.toolbarAction}>
+                        <Menu
+                            visible={isColumnMenuVisible}
+                            onDismiss={() => setIsColumnMenuVisible(false)}
+                            anchor={(
+                                <Button
+                                    mode="outlined"
+                                    compact
+                                    icon="table-column"
+                                    onPress={() => setIsColumnMenuVisible(true)}
+                                    style={styles.columnButton}
+                                    contentStyle={styles.columnButtonContent}
+                                    labelStyle={styles.columnButtonLabel}
+                                >
+                                    Spalten
+                                </Button>
+                            )}
+                            contentStyle={styles.columnMenu}
+                        >
+                            {columns.map((column) => (
+                                <Menu.Item
+                                    key={column.key}
+                                    title={column.title}
+                                    leadingIcon={
+                                        column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"
                                     }
-                                    onToggleColumnVisibility(column.key);
-                                }}
-                            />
-                        ))}
-                    </Menu>
+                                    trailingIcon={column.locked ? "lock-outline" : undefined}
+                                    onPress={() => {
+                                        if (column.locked) {
+                                            return;
+                                        }
+                                        onToggleColumnVisibility(column.key);
+                                    }}
+                                />
+                            ))}
+                        </Menu>
+                    </View>
                 </View>
             </View>
             {isFilterVisible && (
@@ -163,7 +170,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                         <Text variant="titleSmall">Filter</Text>
                         {hasActiveFilters && (
                             <Button compact mode="text" onPress={clearFilters}>
-                                Zuruecksetzen
+                                Zurücksetzen
                             </Button>
                         )}
                     </View>
@@ -240,13 +247,14 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 </View>
             )}
             <DataTable style={styles.table}>
-                <DataTable.Header>
+                <DataTable.Header style={styles.tableHeader}>
                     {visibleColumns.map((column) => (
                         <DataTable.Title
                             key={column.key}
                             sortDirection={column.sortDirection}
                             numeric={column.numeric}
                             onPress={() => onSort(column.key)}
+                            textStyle={styles.tableHeaderText}
                         >
                             {column.title}
                         </DataTable.Title>
@@ -254,7 +262,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 </DataTable.Header>
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                     {pagedItems.map((item) => (
-                        <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)}>
+                        <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)} style={styles.tableRow}>
                             {visibleColumns.map((column) => (
                                 <DataTable.Cell key={column.key} numeric={column.numeric}>
                                     {column.key === "foto" ? (
@@ -267,7 +275,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                             <MaterialIcons name="image-not-supported" size={22} color="#888" />
                                         )
                                     ) : (
-                                        <Text>{getValueOrFallback(item, column.key)}</Text>
+                                        <Text style={styles.cellText}>{getValueOrFallback(item, column.key)}</Text>
                                     )}
                                 </DataTable.Cell>
                             ))}
@@ -275,22 +283,32 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     ))}
                     {pagedItems.length === 0 && (
                         <View style={styles.emptyState}>
-                            <Text>Keine Geraete fuer die aktuelle Suche oder Filter gefunden.</Text>
+                            <Text>Keine Geräte für die aktuelle Suche oder Filter gefunden.</Text>
                         </View>
                     )}
                 </ScrollView>
             </DataTable>
             <View style={styles.pagination}>
-                <DataTable.Pagination
-                    page={page}
-                    numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
-                    onPageChange={setPage}
-                    label={filteredItems.length === 0 ? "0-0 of 0" : `${from + 1}-${Math.min(to, filteredItems.length)} of ${filteredItems.length}`}
-                    numberOfItemsPerPageList={Platform.OS === "web" ? numberOfItemsPerPageList : undefined}
-                    numberOfItemsPerPage={itemsPerPage}
-                    onItemsPerPageChange={Platform.OS === "web" ? onItemsPerPageChange : undefined}
-                    showFastPaginationControls
-                />
+                {Platform.OS === "web" ? (
+                    <DataTable.Pagination
+                        page={page}
+                        numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
+                        onPageChange={setPage}
+                        label={filteredItems.length === 0 ? "0-0 von 0" : `${from + 1}-${Math.min(to, filteredItems.length)} von ${filteredItems.length}`}
+                        numberOfItemsPerPageList={numberOfItemsPerPageList}
+                        numberOfItemsPerPage={itemsPerPage}
+                        onItemsPerPageChange={onItemsPerPageChange}
+                        showFastPaginationControls
+                    />
+                ) : (
+                    <DataTable.Pagination
+                        page={page}
+                        numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
+                        onPageChange={setPage}
+                        label={filteredItems.length === 0 ? "0-0 von 0" : `${from + 1}-${Math.min(to, filteredItems.length)} von ${filteredItems.length}`}
+                        showFastPaginationControls
+                    />
+                )}
             </View>
         </View>
     );
@@ -303,45 +321,89 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         height: "100%",
         overflow: "hidden",
+        backgroundColor: "#f5f5f7",
+    },
+    toolbarSection: {
+        minHeight: 76,
+        justifyContent: "center",
+        marginBottom: 2,
+        position: "relative",
     },
     toolbarRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 8,
+        justifyContent: "center",
         width: "100%",
     },
-    toolbarSpacer: {
-        width: Platform.OS === "web" ? 140 : 0,
-    },
     searchbarContainer: {
-        flex: 1,
+        width: "100%",
         alignItems: "center",
+        justifyContent: "center",
     },
     searchbar: {
         width: Platform.OS === "web" ? "72%" : "100%",
-        maxWidth: 760,
+        maxWidth: 680,
         flexShrink: 1,
+        backgroundColor: "#ffffff",
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "#dfe3e8",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.035,
+        shadowRadius: 16,
+    },
+    searchbarInput: {
+        color: "#1d1d1f",
+        fontSize: 15,
     },
     toolbarAction: {
-        width: Platform.OS === "web" ? 140 : "auto",
+        position: Platform.OS === "web" ? "absolute" : "relative",
+        right: Platform.OS === "web" ? 0 : undefined,
+        top: Platform.OS === "web" ? 0 : undefined,
+        bottom: Platform.OS === "web" ? 0 : undefined,
         alignItems: Platform.OS === "web" ? "flex-end" : "center",
-        marginLeft: 12,
+        justifyContent: "center",
+        paddingLeft: Platform.OS === "web" ? 16 : 0,
+    },
+    columnButton: {
+        backgroundColor: "#ffffff",
+        borderColor: "#dfe3e8",
+        borderRadius: 14,
+        minHeight: 42,
+    },
+    columnButtonContent: {
+        minHeight: 42,
+        paddingHorizontal: 2,
+    },
+    columnButtonLabel: {
+        color: "#3a3a3c",
+        fontSize: 13,
     },
     columnMenu: {
         backgroundColor: "#ffffff",
     },
     table: {
         flex: 1,
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "#dfe3e8",
+        borderRadius: 20,
+        overflow: "hidden",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.028,
+        shadowRadius: 24,
     },
     filterPanel: {
-        marginTop: 10,
-        marginBottom: 12,
-        padding: 12,
-        borderRadius: 12,
-        backgroundColor: "#f8fafc",
+        marginTop: 4,
+        marginBottom: 14,
+        padding: 16,
+        borderRadius: 18,
+        backgroundColor: "#ffffff",
         borderWidth: 1,
-        borderColor: "#e2e8f0",
-        gap: 10,
+        borderColor: "#e5e5ea",
+        gap: 12,
     },
     filterHeader: {
         flexDirection: "row",
@@ -355,23 +417,43 @@ const styles = StyleSheet.create({
         gap: 8,
         paddingRight: 8,
     },
+    tableHeader: {
+        backgroundColor: "#f7f7f9",
+        borderBottomWidth: 1,
+        borderBottomColor: "#e8eaee",
+        minHeight: 44,
+    },
+    tableHeaderText: {
+        color: "#7c7c84",
+        fontSize: 11,
+        fontWeight: "700",
+        textTransform: "uppercase",
+        letterSpacing: 0.65,
+    },
     scrollView: {
         flex: 1,
     },
     scrollContent: {
         flexGrow: 1,
     },
+    tableRow: {
+        borderBottomWidth: 1,
+        borderBottomColor: "#eff1f4",
+        minHeight: 56,
+    },
+    cellText: {
+        color: "#1d1d1f",
+        fontSize: 14,
+    },
     pagination: {
         width: "100%",
         marginTop: "auto",
-        backgroundColor: "white",
-        minHeight: 64,
-        paddingVertical: 8,
+        backgroundColor: "#f9f9fb",
+        minHeight: 60,
+        paddingVertical: 4,
         justifyContent: "center",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        borderTopWidth: 1,
+        borderTopColor: "#e8eaee",
     },
     image: {
         width: 50,
