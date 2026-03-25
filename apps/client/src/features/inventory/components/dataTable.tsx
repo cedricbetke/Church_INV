@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Chip, DataTable, Searchbar, Text } from "react-native-paper";
-import { ScrollView, View, Image, StyleSheet } from "react-native";
+import { ScrollView, View, Image, StyleSheet, Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getValueOrFallback } from "@/src/shared/utils/helpers";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
@@ -240,9 +240,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
                     onPageChange={setPage}
                     label={filteredItems.length === 0 ? "0-0 of 0" : `${from + 1}-${Math.min(to, filteredItems.length)} of ${filteredItems.length}`}
-                    numberOfItemsPerPageList={numberOfItemsPerPageList}
+                    numberOfItemsPerPageList={Platform.OS === "web" ? numberOfItemsPerPageList : undefined}
                     numberOfItemsPerPage={itemsPerPage}
-                    onItemsPerPageChange={onItemsPerPageChange}
+                    onItemsPerPageChange={Platform.OS === "web" ? onItemsPerPageChange : undefined}
                     showFastPaginationControls
                 />
             </View>
@@ -293,7 +293,9 @@ const styles = StyleSheet.create({
         width: "100%",
         marginTop: "auto",
         backgroundColor: "white",
-        paddingTop: 15,
+        minHeight: 64,
+        paddingVertical: 8,
+        justifyContent: "center",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
