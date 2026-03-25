@@ -58,6 +58,29 @@ export const parseDbDate = (value: string) => {
     return new Date(year, month - 1, day);
 };
 
+export const toStoredAssetPath = (value?: string | null) => {
+    if (!value) {
+        return null;
+    }
+
+    if (value.startsWith("/uploads/") || value.startsWith("data:")) {
+        return value;
+    }
+
+    if (/^https?:\/\//i.test(value)) {
+        try {
+            const url = new URL(value);
+            if (url.pathname.startsWith("/uploads/")) {
+                return url.pathname;
+            }
+        } catch {
+            return value;
+        }
+    }
+
+    return value;
+};
+
 export const isValidIsoDate = (value: string) => {
     if (!DATE_PATTERN.test(value)) {
         return false;

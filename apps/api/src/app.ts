@@ -17,10 +17,11 @@ const statusRoutes = require("./routes/statusRoutes");
 const geraetRoutes = require("./routes/geraetRoutes");
 
 export const app = express();
+const uploadsDir = path.resolve(__dirname, "..", "uploads");
 
 app.use(cors());
 app.use(express.json({ limit: "15mb" })); // body-parser brauchst du dann nicht mehr
-app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
+app.use("/uploads", express.static(uploadsDir));
 
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
 

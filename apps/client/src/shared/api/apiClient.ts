@@ -57,7 +57,23 @@ const apiClient = {
     },
 
     resolveAssetUrl: (path: string): string => {
-        if (/^https?:\/\//i.test(path) || path.startsWith("data:")) {
+        if (path.startsWith("data:")) {
+            return path;
+        }
+
+        if (/^https?:\/\//i.test(path)) {
+            try {
+                const assetUrl = new URL(path);
+                const isLocalhostAsset =
+                    assetUrl.hostname === "localhost" || assetUrl.hostname === "127.0.0.1";
+
+                if (isLocalhostAsset && assetUrl.pathname.startsWith("/uploads/")) {
+                    return `${publicBaseUrl}${assetUrl.pathname}`;
+                }
+            } catch {
+                return path;
+            }
+
             return path;
         }
 

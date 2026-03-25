@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Dokumente = require('../models/dokumenteModel');
+const dokumenteUploadDir = path.resolve(__dirname, '..', '..', 'uploads', 'dokumente');
 
 const getAllDokumente = async (req, res) => {
     try {
@@ -45,10 +46,8 @@ const uploadDokument = async (req, res) => {
             .replace(/\.[^.]+$/, '')
             .replace(/[^a-zA-Z0-9_-]/g, '_');
         const finalFileName = `${Date.now()}_${safeBaseName}.${extension}`;
-        const uploadDir = path.resolve(process.cwd(), 'uploads', 'dokumente');
-
-        fs.mkdirSync(uploadDir, { recursive: true });
-        fs.writeFileSync(path.join(uploadDir, finalFileName), base64Data, 'base64');
+        fs.mkdirSync(dokumenteUploadDir, { recursive: true });
+        fs.writeFileSync(path.join(dokumenteUploadDir, finalFileName), base64Data, 'base64');
 
         res.status(201).json({
             path: `/uploads/dokumente/${finalFileName}`,

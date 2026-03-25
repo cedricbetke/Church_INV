@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Geraet = require('../models/geratModel');
+const geraeteUploadDir = path.resolve(__dirname, '..', '..', 'uploads', 'geraete');
 
 const getAllGeraete = async (req, res) => {
     try {
@@ -50,10 +51,8 @@ const uploadGeraetFoto = async (req, res) => {
             .replace(/\.[^.]+$/, '')
             .replace(/[^a-zA-Z0-9_-]/g, '_');
         const finalFileName = `${Date.now()}_${safeBaseName}.${extension}`;
-        const uploadDir = path.resolve(process.cwd(), 'uploads', 'geraete');
-
-        fs.mkdirSync(uploadDir, { recursive: true });
-        fs.writeFileSync(path.join(uploadDir, finalFileName), base64Data, 'base64');
+        fs.mkdirSync(geraeteUploadDir, { recursive: true });
+        fs.writeFileSync(path.join(geraeteUploadDir, finalFileName), base64Data, 'base64');
 
         res.status(201).json({
             path: `/uploads/geraete/${finalFileName}`,

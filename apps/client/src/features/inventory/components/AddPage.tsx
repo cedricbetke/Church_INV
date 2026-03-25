@@ -27,6 +27,7 @@ import {
     parsePrice,
     PendingModel,
     today,
+    toStoredAssetPath,
     validateFormData,
 } from "./addPage.helpers";
 
@@ -135,7 +136,7 @@ const AddPage: React.FC<AddPageProps> = ({
             setPendingNewObjekttyp(null);
             setPendingModel(null);
             setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
-            setUploadedPhotoPath(editingItem.geraeteFoto ?? null);
+            setUploadedPhotoPath(toStoredAssetPath(editingItem.geraeteFoto));
             setAttachments(editingItem.attachments.map((attachment) => ({ ...attachment })));
             return;
         }
