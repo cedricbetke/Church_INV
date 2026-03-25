@@ -1,10 +1,11 @@
 import React from "react";
-import { Button, Chip, DataTable, Menu, Searchbar, Text } from "react-native-paper";
+import { Button, Chip, DataTable, IconButton, Menu, Modal, Portal, Searchbar, Text } from "react-native-paper";
 import { ScrollView, View, Image, StyleSheet, Platform } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getValueOrFallback } from "@/src/shared/utils/helpers";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
+import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
 
 export interface Column {
     sortDirection: "ascending" | "descending" | undefined;
@@ -55,8 +56,11 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         filters,
         setFilters,
         isFilterVisible,
+        setIsFilterVisible,
+        setScannedCode,
     } = useInventory();
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
+    const [isScannerVisible, setIsScannerVisible] = React.useState(false);
     const visibleColumns = columns.filter((column) => column.visible);
 
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -111,7 +115,8 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         <View style={styles.container}>
             <View style={styles.toolbarSection}>
                 <View style={styles.toolbarRow}>
-                    <View style={styles.searchbarContainer}>
+                <View style={styles.searchbarContainer}>
+                    <View style={styles.searchToolsRow}>
                         <Searchbar
                             placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
                             value={searchQuery}
@@ -124,7 +129,28 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             elevation={0}
                             style={styles.searchbar}
                         />
+                        <View style={styles.searchActions}>
+                            <IconButton
+                                icon="qrcode-scan"
+                                mode="contained-tonal"
+                                size={20}
+                                containerColor="#ffffff"
+                                iconColor="#445160"
+                                style={styles.searchActionButton}
+                                onPress={() => setIsScannerVisible(true)}
+                            />
+                            <IconButton
+                                icon="filter"
+                                mode="contained-tonal"
+                                size={20}
+                                containerColor={isFilterVisible || hasActiveFilters ? "#e8f1ff" : "#ffffff"}
+                                iconColor={isFilterVisible || hasActiveFilters ? "#0f5ea8" : "#445160"}
+                                style={styles.searchActionButton}
+                                onPress={() => setIsFilterVisible((prev) => !prev)}
+                            />
+                        </View>
                     </View>
+                </View>
                     <View style={styles.toolbarAction}>
                         <Menu
                             visible={isColumnMenuVisible}
@@ -164,6 +190,16 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     </View>
                 </View>
             </View>
+            <Portal>
+                <Modal visible={isScannerVisible} onDismiss={() => setIsScannerVisible(false)}>
+                    <View style={styles.scannerModal}>
+                        <QrCodeScanner
+                            setShowModal={setIsScannerVisible}
+                            onScan={(value) => setScannedCode(value)}
+                        />
+                    </View>
+                </Modal>
+            </Portal>
             {isFilterVisible && (
                 <View style={styles.filterPanel}>
                     <View style={styles.filterHeader}>
@@ -340,9 +376,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    searchbar: {
+    searchToolsRow: {
         width: Platform.OS === "web" ? "72%" : "100%",
-        maxWidth: 680,
+        maxWidth: 780,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+    },
+    searchbar: {
+        flex: 1,
         flexShrink: 1,
         backgroundColor: "#ffffff",
         borderRadius: 20,
@@ -356,6 +399,16 @@ const styles = StyleSheet.create({
     searchbarInput: {
         color: "#1d1d1f",
         fontSize: 15,
+    },
+    searchActions: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    searchActionButton: {
+        margin: 0,
+        borderWidth: 1,
+        borderColor: "#dfe3e8",
     },
     toolbarAction: {
         position: Platform.OS === "web" ? "absolute" : "relative",
@@ -382,6 +435,10 @@ const styles = StyleSheet.create({
     },
     columnMenu: {
         backgroundColor: "#ffffff",
+    },
+    scannerModal: {
+        height: 500,
+        padding: 20,
     },
     table: {
         flex: 1,

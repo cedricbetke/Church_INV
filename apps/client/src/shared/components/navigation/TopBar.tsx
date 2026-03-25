@@ -2,12 +2,10 @@ import * as React from "react";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
-import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
 
 const TopBar = () => {
-    const [showModal, setShowModal] = useState(false);
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showMasterdataModal, setShowMasterdataModal] = useState(false);
     const [adminPassword, setAdminPassword] = useState("");
@@ -24,15 +22,9 @@ const TopBar = () => {
         addBrand,
         addObjectType,
         addModel,
-        setScannedCode,
-        filters,
-        isFilterVisible,
-        setIsFilterVisible,
         activateAdminSession,
         clearAdminSession,
     } = useInventory();
-
-    const hasActiveFilters = Boolean(filters.status || filters.bereich || filters.standort);
 
     const handleAdminLogin = () => {
         if (activateAdminSession(adminPassword)) {
@@ -79,22 +71,8 @@ const TopBar = () => {
                 {canManageInventory && (
                     <Appbar.Action icon="plus" color="#445160" onPress={() => setIsAddPageVisible(true)} />
                 )}
-                <Appbar.Action icon="qrcode-scan" color="#445160" onPress={() => setShowModal(true)} />
-                <Appbar.Action
-                    icon="filter"
-                    color={isFilterVisible || hasActiveFilters ? "#0f5ea8" : "#445160"}
-                    onPress={() => setIsFilterVisible((prev) => !prev)}
-                />
             </Appbar.Header>
             <Portal>
-                <Modal visible={showModal} onDismiss={() => setShowModal(false)}>
-                    <View style={styles.scannerModal}>
-                        <QrCodeScanner
-                            setShowModal={setShowModal}
-                            onScan={(value) => setScannedCode(value)}
-                        />
-                    </View>
-                </Modal>
                 <Modal
                     visible={showAdminModal}
                     onDismiss={() => setShowAdminModal(false)}
@@ -172,10 +150,6 @@ const styles = StyleSheet.create({
         fontSize: 23,
         fontWeight: "700",
         letterSpacing: -0.35,
-    },
-    scannerModal: {
-        height: 500,
-        padding: 20,
     },
     adminModal: {
         backgroundColor: "#ffffff",
