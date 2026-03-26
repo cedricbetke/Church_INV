@@ -10,6 +10,7 @@ interface InventoryItem {
     seriennummer?: string;
     kaufdatum?: Date;
     einkaufspreis?: number;
+    zustandshinweis?: string;
     standort: string;
     verantwortlicher?: string;
     bereich: string;

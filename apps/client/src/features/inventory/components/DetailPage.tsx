@@ -246,6 +246,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                 <View style={styles.detailGrid}>
                                     <DetailRow label="Kaufdatum" value={formatDate(selectedItem.kaufdatum)} isDarkMode={isDarkMode} />
                                     <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Zustandshinweis" value={getDisplayValue(selectedItem.zustandshinweis)} isDarkMode={isDarkMode} />
                                     <DetailRow label="Seriennummer" value={getDisplayValue(selectedItem.seriennummer)} isDarkMode={isDarkMode} />
                                     <DetailRow
                                         label="Foto"

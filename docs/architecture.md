@@ -66,6 +66,13 @@ Wichtige Tabellen:
 - `person`
 - `status`
 
+Wichtige Gerätefelder zusätzlich zu den Relationen:
+
+- `serien_nr`
+- `kaufdatum`
+- `einkaufspreis`
+- `zustandshinweis`
+
 ## Medien
 
 Uploads liegen im API-Projekt unter:

@@ -172,6 +172,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     keyboardType: "decimal-pad",
                     placeholder: "0,00",
                 })}
+                {renderField("zustandshinweis", "Zustandshinweis")}
                 {renderField("standort", "Standort", {
                     onFocus: () => setShowStandortDialog(true),
                     onPressIn: () => setShowStandortDialog(true),

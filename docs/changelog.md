@@ -15,6 +15,7 @@ Geräteverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesen
 - QR-Scan öffnet direkt die Detailansicht
 - Geräteverlauf ist sichtbar
 - Admin-Panel für erste Stammdatenpflege ist vorhanden
+- Zustandshinweis ist als eigenes Gerätefeld verfügbar
 - Swagger-Dokumentation wurde verbessert
 - Optionaler Dark Mode wurde ergänzt
 - Patch Notes sind als read-only Ansicht in der App verfügbar

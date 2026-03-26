@@ -27,6 +27,13 @@ Ein Teil der Stammdatenpflege ist zusätzlich über ein Admin-Panel erreichbar.
 - Ein Gerätefoto pro Gerät
 - Dokumente pro Gerät
 
+## Zusatzdaten
+
+- Seriennummer
+- Kaufdatum
+- Einkaufspreis
+- Zustandshinweis
+
 ## Suche und Tabelle
 
 - Textsuche

@@ -9,6 +9,7 @@ export interface CreateGeraetPayload {
     serien_nr?: string;
     kaufdatum?: string;
     einkaufspreis?: number;
+    zustandshinweis?: string;
     geraetefoto_url?: string;
 }
 

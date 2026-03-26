@@ -28,6 +28,7 @@ export const patchNotesData: PatchNotesData = {
                 "QR-Scan \u00f6ffnet direkt die Detailansicht",
                 "Ger\u00e4teverlauf ist sichtbar",
                 "Admin-Panel f\u00fcr erste Stammdatenpflege ist vorhanden",
+                "Zustandshinweis ist als eigenes Ger\u00e4tefeld verf\u00fcgbar",
                 "Swagger-Dokumentation wurde verbessert",
                 "Optionaler Dark Mode wurde erg\u00e4nzt",
                 "Patch Notes sind als read-only Ansicht in der App verf\u00fcgbar",

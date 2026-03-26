@@ -16,6 +16,7 @@ ChurchINV verwaltet Geräte und zugehörige Informationen wie:
 - Inventarnummer
 - Hersteller, Objekttyp und Modell
 - Bereich, Standort, Kategorie und verantwortliche Person
+- Zustandshinweis pro Gerät
 - Fotos und Dokumente
 - Bearbeitungsverlauf
 
