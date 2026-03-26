@@ -248,7 +248,7 @@ const BookingDeviceSelector = React.memo(
     },
 );
 
-const BookingListPanel = React.memo(
+const BookingListPanelLegacy = React.memo(
     ({
         isDarkMode,
         isLoading,
@@ -330,6 +330,121 @@ const BookingListPanel = React.memo(
             )}
         </Surface>
     ),
+);
+
+const BookingListPanel = React.memo(
+    ({
+        isDarkMode,
+        isLoading,
+        bookings,
+        canManageInventory,
+        onDeleteBooking,
+    }: {
+        isDarkMode: boolean;
+        isLoading: boolean;
+        bookings: Booking[];
+        canManageInventory: boolean;
+        onDeleteBooking: (bookingId: number) => void;
+    }) => {
+        const [expandedBookingIds, setExpandedBookingIds] = useState<number[]>([]);
+
+        useEffect(() => {
+            const bookingIds = new Set(bookings.map((booking) => booking.id));
+            setExpandedBookingIds((current) => current.filter((id) => bookingIds.has(id)));
+        }, [bookings]);
+
+        const toggleBooking = (bookingId: number) => {
+            setExpandedBookingIds((current) =>
+                current.includes(bookingId)
+                    ? current.filter((id) => id !== bookingId)
+                    : [...current, bookingId],
+            );
+        };
+
+        return (
+            <Surface style={[styles.listCard, isDarkMode && styles.listCardDark]}>
+                <View style={styles.listHeader}>
+                    <View>
+                        <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Bestehende Buchungen</Text>
+                        <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
+                            Hier ist der Bereich, der spaeter gut an Planning Center andocken kann.
+                        </Text>
+                    </View>
+                    {isLoading ? <Chip compact>laedt</Chip> : <Chip compact>{bookings.length} Eintraege</Chip>}
+                </View>
+
+                {bookings.length === 0 && !isLoading ? (
+                    <Text style={[styles.emptyStateText, isDarkMode && styles.emptyStateTextDark]}>
+                        Noch keine Buchungen vorhanden.
+                    </Text>
+                ) : (
+                    bookings.map((booking, index) => {
+                        const isExpanded = expandedBookingIds.includes(booking.id);
+
+                        return (
+                            <View key={booking.id}>
+                                <Card style={[styles.bookingCard, isDarkMode && styles.bookingCardDark]}>
+                                    <Card.Content>
+                                        <View style={styles.bookingCardHeader}>
+                                            <View style={styles.bookingCardMeta}>
+                                                <Text style={[styles.bookingTitle, isDarkMode && styles.bookingTitleDark]}>
+                                                    {booking.titel}
+                                                </Text>
+                                                <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
+                                                    Fuer {booking.bucherName}
+                                                </Text>
+                                            </View>
+                                            <View style={styles.bookingHeaderActions}>
+                                                <Chip compact>{booking.status}</Chip>
+                                                <Button mode="text" compact onPress={() => toggleBooking(booking.id)}>
+                                                    {isExpanded ? "Weniger" : "Anzeigen"}
+                                                </Button>
+                                            </View>
+                                        </View>
+
+                                        <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
+                                            {formatDateRange(booking)}
+                                        </Text>
+
+                                        {isExpanded ? (
+                                            <>
+                                                {booking.zweck ? (
+                                                    <Text style={[styles.bookingPurpose, isDarkMode && styles.bookingPurposeDark]}>
+                                                        {booking.zweck}
+                                                    </Text>
+                                                ) : null}
+
+                                                <View style={styles.bookingDeviceChipRow}>
+                                                    {booking.geraete.map((geraet) => (
+                                                        <Chip key={`${booking.id}-${geraet.invNr}`} compact style={styles.deviceChip}>
+                                                            {geraet.invNr} {geraet.modell}
+                                                        </Chip>
+                                                    ))}
+                                                </View>
+
+                                                {canManageInventory ? (
+                                                    <View style={styles.bookingActions}>
+                                                        <Button
+                                                            mode="text"
+                                                            onPress={() => onDeleteBooking(booking.id)}
+                                                            textColor="#b3261e"
+                                                        >
+                                                            Loeschen
+                                                        </Button>
+                                                    </View>
+                                                ) : null}
+                                            </>
+                                        ) : null}
+                                    </Card.Content>
+                                </Card>
+                                {index < bookings.length - 1 ? <Divider style={styles.listDivider} /> : null}
+                            </View>
+                        );
+                    })
+                )}
+            </Surface>
+        );
+    },
 );
 
 const BookingPage = () => {
@@ -1593,6 +1708,11 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 10,
         marginBottom: 8,
+    },
+    bookingHeaderActions: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
     },
     bookingCardMeta: {
         flex: 1,
