@@ -4,34 +4,19 @@ const objekttypController = require('../controllers/objekttypController');
 
 /**
  * @swagger
- * tags:
- *   - name: Objekttyp
- *     description: Endpoints zur Verwaltung von Objekttypen
- */
-
-/**
- * @swagger
  * /api/objekttyp:
  *   get:
- *     tags:
- *       - Objekttyp
- *     description: Alle Objekttypen abrufen
+ *     tags: [Objekttyp]
+ *     summary: Alle Objekttypen abrufen
  *     responses:
  *       200:
- *         description: Erfolgreich alle Objekttypen abgerufen
+ *         description: Objekttypenliste
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   name:
- *                     type: string
- *                   beschreibung:
- *                     type: string
+ *                 $ref: '#/components/schemas/Objekttyp'
  */
 router.get('/', objekttypController.getAllObjekttypen);
 
@@ -39,32 +24,27 @@ router.get('/', objekttypController.getAllObjekttypen);
  * @swagger
  * /api/objekttyp/{id}:
  *   get:
- *     tags:
- *       - Objekttyp
- *     description: Objekttyp mit einer bestimmten ID abrufen
+ *     tags: [Objekttyp]
+ *     summary: Einen Objekttyp abrufen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Objekttyps
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Objekttyp erfolgreich abgerufen
+ *         description: Objekttyp gefunden
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
- *                 beschreibung:
- *                   type: string
+ *               $ref: '#/components/schemas/Objekttyp'
  *       404:
- *         description: Objekttyp mit dieser ID nicht gefunden
+ *         description: Objekttyp nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:id', objekttypController.getObjekttypById);
 
@@ -72,25 +52,27 @@ router.get('/:id', objekttypController.getObjekttypById);
  * @swagger
  * /api/objekttyp:
  *   post:
- *     tags:
- *       - Objekttyp
- *     description: Neuen Objekttyp erstellen
+ *     tags: [Objekttyp]
+ *     summary: Neuen Objekttyp anlegen
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
- *               beschreibung:
- *                 type: string
+ *             $ref: '#/components/schemas/ObjekttypWritePayload'
  *     responses:
  *       201:
- *         description: Objekttyp erfolgreich erstellt
+ *         description: Objekttyp erfolgreich angelegt
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Objekttyp'
+ *       500:
+ *         description: Interner Serverfehler
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/', objekttypController.createObjekttyp);
 
@@ -98,14 +80,12 @@ router.post('/', objekttypController.createObjekttyp);
  * @swagger
  * /api/objekttyp/{id}:
  *   put:
- *     tags:
- *       - Objekttyp
- *     description: Objekttyp mit einer bestimmten ID aktualisieren
+ *     tags: [Objekttyp]
+ *     summary: Objekttyp aktualisieren
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Objekttyps
  *         schema:
  *           type: integer
  *     requestBody:
@@ -113,19 +93,20 @@ router.post('/', objekttypController.createObjekttyp);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
- *               beschreibung:
- *                 type: string
+ *             $ref: '#/components/schemas/ObjekttypWritePayload'
  *     responses:
  *       200:
  *         description: Objekttyp erfolgreich aktualisiert
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Objekttyp'
  *       404:
  *         description: Objekttyp nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/:id', objekttypController.updateObjekttyp);
 
@@ -133,21 +114,27 @@ router.put('/:id', objekttypController.updateObjekttyp);
  * @swagger
  * /api/objekttyp/{id}:
  *   delete:
- *     tags:
- *       - Objekttyp
- *     description: Objekttyp mit einer bestimmten ID löschen
+ *     tags: [Objekttyp]
+ *     summary: Objekttyp löschen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Objekttyps
  *         schema:
  *           type: integer
  *     responses:
  *       200:
  *         description: Objekttyp erfolgreich gelöscht
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
  *       404:
  *         description: Objekttyp nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:id', objekttypController.deleteObjekttyp);
 

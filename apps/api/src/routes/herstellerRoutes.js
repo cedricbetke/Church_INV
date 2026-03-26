@@ -4,32 +4,19 @@ const herstellerController = require('../controllers/herstellerController');
 
 /**
  * @swagger
- * tags:
- *   - name: Hersteller
- *     description: Endpoints zum Verwalten der Hersteller
- */
-
-/**
- * @swagger
  * /api/hersteller:
  *   get:
- *     tags:
- *       - Hersteller
- *     description: Alle Hersteller abrufen
+ *     tags: [Hersteller]
+ *     summary: Alle Hersteller abrufen
  *     responses:
  *       200:
- *         description: Erfolgreich alle Hersteller abgerufen
+ *         description: Herstellerliste
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   name:
- *                     type: string
+ *                 $ref: '#/components/schemas/Hersteller'
  */
 router.get('/', herstellerController.getAllHersteller);
 
@@ -37,30 +24,27 @@ router.get('/', herstellerController.getAllHersteller);
  * @swagger
  * /api/hersteller/{id}:
  *   get:
- *     tags:
- *       - Hersteller
- *     description: Hersteller mit einer bestimmten ID abrufen
+ *     tags: [Hersteller]
+ *     summary: Einen Hersteller abrufen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Herstellers
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Hersteller erfolgreich abgerufen
+ *         description: Hersteller gefunden
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
+ *               $ref: '#/components/schemas/Hersteller'
  *       404:
- *         description: Hersteller mit dieser ID nicht gefunden
+ *         description: Hersteller nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:id', herstellerController.getHerstellerById);
 
@@ -68,32 +52,27 @@ router.get('/:id', herstellerController.getHerstellerById);
  * @swagger
  * /api/hersteller:
  *   post:
- *     tags:
- *       - Hersteller
- *     description: Neuen Hersteller erstellen
+ *     tags: [Hersteller]
+ *     summary: Neuen Hersteller anlegen
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
+ *             $ref: '#/components/schemas/HerstellerWritePayload'
  *     responses:
  *       201:
- *         description: Hersteller erfolgreich erstellt
+ *         description: Hersteller erfolgreich angelegt
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
+ *               $ref: '#/components/schemas/Hersteller'
+ *       500:
+ *         description: Interner Serverfehler
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/', herstellerController.createHersteller);
 
@@ -101,14 +80,12 @@ router.post('/', herstellerController.createHersteller);
  * @swagger
  * /api/hersteller/{id}:
  *   put:
- *     tags:
- *       - Hersteller
- *     description: Hersteller mit einer bestimmten ID aktualisieren
+ *     tags: [Hersteller]
+ *     summary: Hersteller aktualisieren
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Herstellers
  *         schema:
  *           type: integer
  *     requestBody:
@@ -116,26 +93,20 @@ router.post('/', herstellerController.createHersteller);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
+ *             $ref: '#/components/schemas/HerstellerWritePayload'
  *     responses:
  *       200:
  *         description: Hersteller erfolgreich aktualisiert
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
+ *               $ref: '#/components/schemas/Hersteller'
  *       404:
- *         description: Hersteller mit dieser ID nicht gefunden
+ *         description: Hersteller nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/:id', herstellerController.updateHersteller);
 
@@ -143,21 +114,27 @@ router.put('/:id', herstellerController.updateHersteller);
  * @swagger
  * /api/hersteller/{id}:
  *   delete:
- *     tags:
- *       - Hersteller
- *     description: Hersteller mit einer bestimmten ID löschen
+ *     tags: [Hersteller]
+ *     summary: Hersteller löschen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Herstellers
  *         schema:
  *           type: integer
  *     responses:
  *       200:
  *         description: Hersteller erfolgreich gelöscht
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
  *       404:
- *         description: Hersteller mit dieser ID nicht gefunden
+ *         description: Hersteller nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:id', herstellerController.deleteHersteller);
 

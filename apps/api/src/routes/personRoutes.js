@@ -4,21 +4,13 @@ const personController = require('../controllers/personController');
 
 /**
  * @swagger
- * tags:
- *   - name: Person
- *     description: Endpoints zur Verwaltung von Personen
- */
-
-/**
- * @swagger
  * /api/person:
  *   get:
- *     tags:
- *       - Person
- *     description: Alle Personen abrufen
+ *     tags: [Person]
+ *     summary: Alle Personen abrufen
  *     responses:
  *       200:
- *         description: Erfolgreich alle Personen abgerufen
+ *         description: Personenliste
  *         content:
  *           application/json:
  *             schema:
@@ -28,12 +20,13 @@ const personController = require('../controllers/personController');
  *                 properties:
  *                   id:
  *                     type: integer
+ *                     example: 1
  *                   vorname:
  *                     type: string
+ *                     example: Cedric
  *                   nachname:
  *                     type: string
- *                   email:
- *                     type: string
+ *                     example: Betke
  */
 router.get('/', personController.getAllPersonen);
 
@@ -41,34 +34,23 @@ router.get('/', personController.getAllPersonen);
  * @swagger
  * /api/person/{id}:
  *   get:
- *     tags:
- *       - Person
- *     description: Person mit einer bestimmten ID abrufen
+ *     tags: [Person]
+ *     summary: Eine Person abrufen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID der Person
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Person erfolgreich abgerufen
+ *         description: Person gefunden
+ *       404:
+ *         description: Person nicht gefunden
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 vorname:
- *                   type: string
- *                 nachname:
- *                   type: string
- *                 email:
- *                   type: string
- *       404:
- *         description: Person mit dieser ID nicht gefunden
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:id', personController.getPersonById);
 
@@ -76,29 +58,25 @@ router.get('/:id', personController.getPersonById);
  * @swagger
  * /api/person:
  *   post:
- *     tags:
- *       - Person
- *     description: Neue Person erstellen
+ *     tags: [Person]
+ *     summary: Neue Person anlegen
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - vorname
- *               - nachname
- *               - email
+ *             required: [vorname, nachname]
  *             properties:
  *               vorname:
  *                 type: string
+ *                 example: Cedric
  *               nachname:
  *                 type: string
- *               email:
- *                 type: string
+ *                 example: Betke
  *     responses:
  *       201:
- *         description: Person erfolgreich erstellt
+ *         description: Person erfolgreich angelegt
  */
 router.post('/', personController.createPerson);
 
@@ -106,14 +84,12 @@ router.post('/', personController.createPerson);
  * @swagger
  * /api/person/{id}:
  *   put:
- *     tags:
- *       - Person
- *     description: Person mit einer bestimmten ID aktualisieren
+ *     tags: [Person]
+ *     summary: Person aktualisieren
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID der Person
  *         schema:
  *           type: integer
  *     requestBody:
@@ -122,22 +98,23 @@ router.post('/', personController.createPerson);
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - vorname
- *               - nachname
- *               - email
+ *             required: [vorname, nachname]
  *             properties:
  *               vorname:
  *                 type: string
+ *                 example: Cedric
  *               nachname:
  *                 type: string
- *               email:
- *                 type: string
+ *                 example: Betke
  *     responses:
  *       200:
  *         description: Person erfolgreich aktualisiert
  *       404:
  *         description: Person nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/:id', personController.updatePerson);
 
@@ -145,21 +122,27 @@ router.put('/:id', personController.updatePerson);
  * @swagger
  * /api/person/{id}:
  *   delete:
- *     tags:
- *       - Person
- *     description: Person mit einer bestimmten ID löschen
+ *     tags: [Person]
+ *     summary: Person löschen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID der Person
  *         schema:
  *           type: integer
  *     responses:
  *       200:
  *         description: Person erfolgreich gelöscht
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
  *       404:
  *         description: Person nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:id', personController.deletePerson);
 

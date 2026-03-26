@@ -4,21 +4,13 @@ const standortController = require('../controllers/standortController');
 
 /**
  * @swagger
- * tags:
- *   - name: Standort
- *     description: Endpoints zur Verwaltung von Standorten
- */
-
-/**
- * @swagger
  * /api/standort:
  *   get:
- *     tags:
- *       - Standort
- *     description: Alle Standorte abrufen
+ *     tags: [Standort]
+ *     summary: Alle Standorte abrufen
  *     responses:
  *       200:
- *         description: Erfolgreich alle Standorte abgerufen
+ *         description: Standortliste
  *         content:
  *           application/json:
  *             schema:
@@ -28,10 +20,10 @@ const standortController = require('../controllers/standortController');
  *                 properties:
  *                   id:
  *                     type: integer
+ *                     example: 1
  *                   name:
  *                     type: string
- *                   adresse:
- *                     type: string
+ *                     example: Studio
  */
 router.get('/', standortController.getAllStandorte);
 
@@ -39,32 +31,23 @@ router.get('/', standortController.getAllStandorte);
  * @swagger
  * /api/standort/{id}:
  *   get:
- *     tags:
- *       - Standort
- *     description: Standort mit einer bestimmten ID abrufen
+ *     tags: [Standort]
+ *     summary: Einen Standort abrufen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Standorts
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Standort erfolgreich abgerufen
+ *         description: Standort gefunden
+ *       404:
+ *         description: Standort nicht gefunden
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
- *                 adresse:
- *                   type: string
- *       404:
- *         description: Standort mit dieser ID nicht gefunden
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:id', standortController.getStandortById);
 
@@ -72,26 +55,22 @@ router.get('/:id', standortController.getStandortById);
  * @swagger
  * /api/standort:
  *   post:
- *     tags:
- *       - Standort
- *     description: Neuen Standort erstellen
+ *     tags: [Standort]
+ *     summary: Neuen Standort anlegen
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - name
- *               - adresse
+ *             required: [name]
  *             properties:
  *               name:
  *                 type: string
- *               adresse:
- *                 type: string
+ *                 example: Regie
  *     responses:
  *       201:
- *         description: Standort erfolgreich erstellt
+ *         description: Standort erfolgreich angelegt
  */
 router.post('/', standortController.createStandort);
 
@@ -99,14 +78,12 @@ router.post('/', standortController.createStandort);
  * @swagger
  * /api/standort/{id}:
  *   put:
- *     tags:
- *       - Standort
- *     description: Standort mit einer bestimmten ID aktualisieren
+ *     tags: [Standort]
+ *     summary: Standort aktualisieren
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Standorts
  *         schema:
  *           type: integer
  *     requestBody:
@@ -115,19 +92,20 @@ router.post('/', standortController.createStandort);
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - name
- *               - adresse
+ *             required: [name]
  *             properties:
  *               name:
  *                 type: string
- *               adresse:
- *                 type: string
+ *                 example: Gemeindesaal
  *     responses:
  *       200:
  *         description: Standort erfolgreich aktualisiert
  *       404:
  *         description: Standort nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/:id', standortController.updateStandort);
 
@@ -135,21 +113,27 @@ router.put('/:id', standortController.updateStandort);
  * @swagger
  * /api/standort/{id}:
  *   delete:
- *     tags:
- *       - Standort
- *     description: Standort mit einer bestimmten ID löschen
+ *     tags: [Standort]
+ *     summary: Standort löschen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Standorts
  *         schema:
  *           type: integer
  *     responses:
  *       200:
  *         description: Standort erfolgreich gelöscht
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
  *       404:
  *         description: Standort nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:id', standortController.deleteStandort);
 

@@ -4,34 +4,19 @@ const modellController = require('../controllers/modellController');
 
 /**
  * @swagger
- * tags:
- *   - name: Modell
- *     description: Endpoints zum Verwalten der Modelle
- */
-
-/**
- * @swagger
  * /api/modell:
  *   get:
- *     tags:
- *       - Modell
- *     description: Alle Modelle abrufen
+ *     tags: [Modell]
+ *     summary: Alle Modelle abrufen
  *     responses:
  *       200:
- *         description: Erfolgreich alle Modelle abgerufen
+ *         description: Modellliste
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   name:
- *                     type: string
- *                   beschreibung:
- *                     type: string
+ *                 $ref: '#/components/schemas/Modell'
  */
 router.get('/', modellController.getAllModelle);
 
@@ -39,32 +24,27 @@ router.get('/', modellController.getAllModelle);
  * @swagger
  * /api/modell/{id}:
  *   get:
- *     tags:
- *       - Modell
- *     description: Modell mit einer bestimmten ID abrufen
+ *     tags: [Modell]
+ *     summary: Ein Modell abrufen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Modells
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Modell erfolgreich abgerufen
+ *         description: Modell gefunden
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 name:
- *                   type: string
- *                 beschreibung:
- *                   type: string
+ *               $ref: '#/components/schemas/Modell'
  *       404:
- *         description: Modell mit dieser ID nicht gefunden
+ *         description: Modell nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.get('/:id', modellController.getModellById);
 
@@ -72,25 +52,27 @@ router.get('/:id', modellController.getModellById);
  * @swagger
  * /api/modell:
  *   post:
- *     tags:
- *       - Modell
- *     description: Neues Modell erstellen
+ *     tags: [Modell]
+ *     summary: Neues Modell anlegen
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
- *               beschreibung:
- *                 type: string
+ *             $ref: '#/components/schemas/ModellWritePayload'
  *     responses:
  *       201:
- *         description: Modell erfolgreich erstellt
+ *         description: Modell erfolgreich angelegt
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Modell'
+ *       500:
+ *         description: Interner Serverfehler
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post('/', modellController.createModell);
 
@@ -98,14 +80,12 @@ router.post('/', modellController.createModell);
  * @swagger
  * /api/modell/{id}:
  *   put:
- *     tags:
- *       - Modell
- *     description: Modell mit einer bestimmten ID aktualisieren
+ *     tags: [Modell]
+ *     summary: Modell aktualisieren
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Modells
  *         schema:
  *           type: integer
  *     requestBody:
@@ -113,17 +93,20 @@ router.post('/', modellController.createModell);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *             properties:
- *               name:
- *                 type: string
- *               beschreibung:
- *                 type: string
+ *             $ref: '#/components/schemas/ModellWritePayload'
  *     responses:
  *       200:
  *         description: Modell erfolgreich aktualisiert
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Modell'
+ *       404:
+ *         description: Modell nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.put('/:id', modellController.updateModell);
 
@@ -131,19 +114,27 @@ router.put('/:id', modellController.updateModell);
  * @swagger
  * /api/modell/{id}:
  *   delete:
- *     tags:
- *       - Modell
- *     description: Modell mit einer bestimmten ID löschen
+ *     tags: [Modell]
+ *     summary: Modell löschen
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Die ID des Modells
  *         schema:
  *           type: integer
  *     responses:
  *       200:
  *         description: Modell erfolgreich gelöscht
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SuccessMessage'
+ *       404:
+ *         description: Modell nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:id', modellController.deleteModell);
 
