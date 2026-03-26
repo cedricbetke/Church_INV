@@ -58,6 +58,28 @@ cd apps/client
 npx expo start
 ```
 
+## Scripts
+
+Die projektspezifischen Scripts sind in `package.json` definiert und werden aus dem Projekt-Root gestartet.
+Argumente werden mit `--` durchgereicht.
+
+```bash
+npm run import:teams -- --dry-run
+```
+
+Import- und Cleanup-Scripts (Details in `docs/import.md`):
+
+- `import:teams`
+- `import:teams-documents`
+- `import:teams-photos`
+- `backfill:photo-thumbs`
+- `cleanup:photo-documents`
+
+Patch-Notes-Sync:
+
+- `sync:patch-notes` (erstellt `docs/changelog.md` und `apps/client/src/features/patch-notes/data/patchNotes.ts`
+  aus `docs/patch-notes/patch-notes.json`)
+
 ## Testen im lokalen Netzwerk
 
 Wenn die App auf einem Handy oder einem anderen Geraet im gleichen WLAN laufen soll, muss der Client auf die IP des Entwicklungsrechners zeigen.
