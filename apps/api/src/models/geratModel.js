@@ -1,4 +1,21 @@
-const db = require('../config/db'); // Import der DB-Verbindung
+const fs = require('fs');
+const path = require('path');
+const db = require('../config/db');
+
+const uploadsRootDir = path.resolve(__dirname, '..', '..', 'uploads');
+
+const deleteUploadedFile = (storedPath) => {
+    if (!storedPath || typeof storedPath !== 'string' || !storedPath.startsWith('/uploads/')) {
+        return;
+    }
+
+    const relativePath = storedPath.replace(/^\/uploads[\\/]?/, '');
+    const filePath = path.resolve(uploadsRootDir, relativePath);
+
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+};
 
 const Geraet = {
     getAll: async () => {
@@ -33,13 +50,13 @@ const Geraet = {
         const [rows] = await db.query('SELECT * FROM geraet WHERE inv_nr = ?', [id]);
         return rows[0];
     },
+
     getMaxId: async () => {
-            const [maxId] = await db.query('SELECT naechste_inventarnummer() AS next_number');
-            return maxId[0].next_number;
+        const [maxId] = await db.query('SELECT naechste_inventarnummer() AS next_number');
+        return maxId[0].next_number;
     },
 
     create: async (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, geraetefoto_url) => {
-        // Falls der Wert nicht übergeben wird, dann als NULL speichern
         const _kaufdatum = kaufdatum || null;
         const _einkaufspreis = einkaufspreis || null;
         const _serien_nr = serien_nr || null;
@@ -48,9 +65,9 @@ const Geraet = {
         const _kategorie_id = kategorie_id || null;
         const _geraetefoto_url = geraetefoto_url || null;
 
-        const [result] = await db.query(
+        await db.query(
             'INSERT INTO geraet (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, geraetefoto_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [inv_nr, status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _geraetefoto_url]
+            [inv_nr, status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _geraetefoto_url],
         );
 
         return {
@@ -64,12 +81,11 @@ const Geraet = {
             standort_id: _standort_id,
             verantwortlicher_id: _verantwortlicher_id,
             kategorie_id: _kategorie_id,
-            geraetefoto_url: _geraetefoto_url
+            geraetefoto_url: _geraetefoto_url,
         };
     },
 
     update: async (id, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, geraetefoto_url) => {
-        // Falls der Wert nicht übergeben wird, dann als NULL speichern
         const _kaufdatum = kaufdatum || null;
         const _einkaufspreis = einkaufspreis || null;
         const _serien_nr = serien_nr || null;
@@ -80,7 +96,7 @@ const Geraet = {
 
         await db.query(
             'UPDATE geraet SET status_id = ?, modell_id = ?, bereich_id = ?, kaufdatum = ?, einkaufspreis = ?, serien_nr = ?, standort_id = ?, verantwortlicher_id = ?, kategorie_id = ?, geraetefoto_url = ? WHERE inv_nr = ?',
-            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _geraetefoto_url, id]
+            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _geraetefoto_url, id],
         );
 
         return {
@@ -94,14 +110,24 @@ const Geraet = {
             standort_id: _standort_id,
             verantwortlicher_id: _verantwortlicher_id,
             kategorie_id: _kategorie_id,
-            geraetefoto_url: _geraetefoto_url
+            geraetefoto_url: _geraetefoto_url,
         };
     },
 
     delete: async (id) => {
+        const [geraetRows] = await db.query('SELECT geraetefoto_url FROM geraet WHERE inv_nr = ?', [id]);
+        const geraet = geraetRows[0] ?? null;
+        const [dokumentRows] = await db.query('SELECT url FROM dokumente WHERE geraete_id = ?', [id]);
+
         await db.query('DELETE FROM geraet WHERE inv_nr = ?', [id]);
-        return { message: `Gerät mit ID ${id} gelöscht` };
-    }
+
+        deleteUploadedFile(geraet?.geraetefoto_url);
+        for (const dokument of dokumentRows) {
+            deleteUploadedFile(dokument.url);
+        }
+
+        return { message: `Geraet mit ID ${id} geloescht` };
+    },
 };
 
 module.exports = Geraet;
