@@ -15,6 +15,7 @@ const personRoutes = require("./routes/personRoutes");
 const standortRoutes = require("./routes/standortRoutes");
 const statusRoutes = require("./routes/statusRoutes");
 const geraetRoutes = require("./routes/geraetRoutes");
+const buchungRoutes = require("./routes/buchungRoutes");
 
 export const app = express();
 const uploadsDir = path.resolve(__dirname, "..", "uploads");
@@ -35,3 +36,4 @@ app.use("/api/person", personRoutes);
 app.use("/api/standort", standortRoutes);
 app.use("/api/status", statusRoutes);
 app.use("/api/geraet", geraetRoutes);
+app.use("/api/buchung", buchungRoutes);

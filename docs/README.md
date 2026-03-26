@@ -16,7 +16,8 @@ Wenn du neu im Projekt bist, lies in dieser Reihenfolge:
 Wenn du mit echten Bestandsdaten arbeitest:
 
 1. [Import und Migration](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/import.md)
-2. [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
+2. [Buchung](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/booking.md)
+3. [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
 
 ## Was Die App Abdeckt
 
@@ -28,6 +29,7 @@ ChurchINV verwaltet:
 - Geraetefotos und Dokumente
 - Verlauf pro Geraet
 - QR-Scan auf die Detailansicht
+- Mehrgeraete-Buchungen mit Zeitraum
 
 ## Welche Seite Fuer Was
 
@@ -42,6 +44,9 @@ ChurchINV verwaltet:
 
 - [Import und Migration](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/import.md)
   Hier steht der gesamte Pfad fuer CSV-, Dokument- und Foto-Import aus Teams/SharePoint.
+
+- [Buchung](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/booking.md)
+  Diese Seite beschreibt die Datenbanktabellen und den ersten Buchungs-Workflow fuer mehrere Geraete.
 
 - [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
   Menschenlesbare Aenderungshistorie.

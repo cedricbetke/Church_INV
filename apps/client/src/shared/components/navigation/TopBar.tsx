@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
+import { router } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
@@ -75,6 +76,13 @@ const TopBar = () => {
                     color={isDarkMode ? "#dbe6f5" : "#445160"}
                     onPress={() => setShowPatchNotesModal(true)}
                 />
+                {canManageInventory && (
+                    <Appbar.Action
+                        icon="calendar-plus"
+                        color={isDarkMode ? "#dbe6f5" : "#445160"}
+                        onPress={() => router.push("/bookings")}
+                    />
+                )}
                 <Appbar.Action
                     icon={isDarkMode ? "weather-sunny" : "moon-waning-crescent"}
                     color={isDarkMode ? "#dbe6f5" : "#445160"}

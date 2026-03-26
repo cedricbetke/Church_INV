@@ -9,6 +9,7 @@ const AppShell = () => {
         <PaperProvider theme={theme}>
             <Stack>
                 <Stack.Screen name="index" options={{ title: "ChurchINV", headerShown: false }} />
+                <Stack.Screen name="bookings" options={{ title: "Buchungen", headerShown: false }} />
             </Stack>
         </PaperProvider>
     );

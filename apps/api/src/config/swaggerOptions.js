@@ -6,8 +6,8 @@ const options = {
         openapi: '3.0.3',
         info: {
             title: 'ChurchINV API',
-            version: '1.1.0',
-            description: 'OpenAPI-Dokumentation für die ChurchINV-API.',
+            version: '1.2.0',
+            description: 'OpenAPI-Dokumentation fuer die ChurchINV-API.',
         },
         servers: [
             {
@@ -16,8 +16,9 @@ const options = {
             },
         ],
         tags: [
-            { name: 'Gerät', description: 'Geräteverwaltung, Upload und Verlauf' },
-            { name: 'Dokumente', description: 'Dokument-Upload und Geräte-Dokumente' },
+            { name: 'Geraet', description: 'Geraeteverwaltung, Upload und Verlauf' },
+            { name: 'Buchung', description: 'Mehrgeraete-Buchungen mit Zeitraum' },
+            { name: 'Dokumente', description: 'Dokument-Upload und Geraete-Dokumente' },
             { name: 'Hersteller', description: 'Pflege der Hersteller-Stammdaten' },
             { name: 'Modell', description: 'Pflege der Modell-Stammdaten' },
             { name: 'Objekttyp', description: 'Pflege der Objekttyp-Stammdaten' },
@@ -28,7 +29,7 @@ const options = {
                     type: 'apiKey',
                     in: 'header',
                     name: 'x-admin-password',
-                    description: 'Erforderlich für Admin-Endpunkte wie POST, PUT und DELETE.',
+                    description: 'Erforderlich fuer Admin-Endpunkte wie POST, PUT und DELETE.',
                 },
             },
             schemas: {
@@ -41,7 +42,48 @@ const options = {
                 SuccessMessage: {
                     type: 'object',
                     properties: {
-                        message: { type: 'string', example: 'Eintrag erfolgreich gelöscht' },
+                        message: { type: 'string', example: 'Eintrag erfolgreich geloescht' },
+                    },
+                },
+                BookingDevice: {
+                    type: 'object',
+                    properties: {
+                        inv_nr: { type: 'integer', example: 12 },
+                        modell: { type: 'string', example: 'PXW-FS5' },
+                        hersteller: { type: 'string', nullable: true, example: 'Sony' },
+                    },
+                },
+                Booking: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer', example: 4 },
+                        titel: { type: 'string', example: 'Jugendabend Technik' },
+                        bucher_name: { type: 'string', example: 'Cedric Betke' },
+                        zweck: { type: 'string', nullable: true, example: 'Beschallung und Bild fuer den Abend' },
+                        start_datum: { type: 'string', format: 'date-time', example: '2026-03-27T17:00:00.000Z' },
+                        end_datum: { type: 'string', format: 'date-time', example: '2026-03-27T22:00:00.000Z' },
+                        status: { type: 'string', example: 'reserviert' },
+                        erstellt_am: { type: 'string', format: 'date-time' },
+                        geraete: {
+                            type: 'array',
+                            items: { $ref: '#/components/schemas/BookingDevice' },
+                        },
+                    },
+                },
+                BookingWritePayload: {
+                    type: 'object',
+                    required: ['titel', 'bucher_name', 'start_datum', 'end_datum', 'geraete_inv_nr'],
+                    properties: {
+                        titel: { type: 'string', example: 'Jugendabend Technik' },
+                        bucher_name: { type: 'string', example: 'Cedric Betke' },
+                        zweck: { type: 'string', nullable: true, example: 'Beschallung und Bild fuer den Abend' },
+                        start_datum: { type: 'string', format: 'date-time', example: '2026-03-27T17:00:00.000Z' },
+                        end_datum: { type: 'string', format: 'date-time', example: '2026-03-27T22:00:00.000Z' },
+                        geraete_inv_nr: {
+                            type: 'array',
+                            items: { type: 'integer' },
+                            example: [12, 13, 18],
+                        },
                     },
                 },
                 DeviceListItem: {
@@ -52,7 +94,7 @@ const options = {
                         einkaufspreis: { type: 'number', format: 'float', nullable: true, example: 249.99 },
                         zustandshinweis: { type: 'string', nullable: true, example: 'Leichte Gebrauchsspuren am Gehaeuse' },
                         geraetefoto_url: { type: 'string', nullable: true, example: '/uploads/geraete/171234_test.png' },
-                        Status: { type: 'string', example: 'Verfügbar' },
+                        Status: { type: 'string', example: 'Verfuegbar' },
                         Hersteller: { type: 'string', example: 'Sony' },
                         Objekttyp: { type: 'string', example: 'Videokamera' },
                         Modell: { type: 'string', example: 'PXW-FS5' },
@@ -122,7 +164,7 @@ const options = {
                         geraet_inv_nr: { type: 'integer', example: 11 },
                         aktion: { type: 'string', example: 'update' },
                         feld: { type: 'string', nullable: true, example: 'status' },
-                        alter_wert: { type: 'string', nullable: true, example: 'Verfügbar' },
+                        alter_wert: { type: 'string', nullable: true, example: 'Verfuegbar' },
                         neuer_wert: { type: 'string', nullable: true, example: 'Defekt' },
                         erstellt_am: { type: 'string', format: 'date-time' },
                     },
