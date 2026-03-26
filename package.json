@@ -1,6 +1,8 @@
 {
   "scripts": {
+    "cleanup:photo-documents": "npx tsx scripts/cleanup-photo-documents.ts",
     "import:teams-documents": "npx tsx scripts/import-teams-documents.ts",
+    "import:teams-photos": "npx tsx scripts/import-teams-photos.ts",
     "import:teams": "npx tsx scripts/import-teams-inventory.ts",
     "sync:patch-notes": "npx tsx scripts/sync-patch-notes.ts"
   },

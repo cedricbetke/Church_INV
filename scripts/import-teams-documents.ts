@@ -158,6 +158,8 @@ const safeFileName = (value: string) =>
         .replace(/[<>:"/\\|?*\x00-\x1F]/g, "_")
         .replace(/\s+/g, "_");
 
+const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".heic", ".heif", ".dng"]);
+
 const createStoredDocumentName = (invNr: number, fileName: string) => `${Date.now()}_${invNr}_${safeFileName(fileName)}`;
 
 const writeReport = (summary: ImportSummary) => {
@@ -238,6 +240,13 @@ const fetchBinary = async (request: APIRequestContext, url: string) => {
     }
 
     return Buffer.from(await response.body());
+};
+
+const isDevicePhotoAttachment = (fileName: string) => {
+    const normalizedName = cleanText(fileName);
+    const extension = path.extname(normalizedName).toLowerCase();
+
+    return normalizedName.startsWith("Reserved_ImageAttachment_") && imageExtensions.has(extension);
 };
 
 const main = async () => {
@@ -326,6 +335,17 @@ const main = async () => {
                             invNr,
                             type: "attachment-metadata-missing",
                             message: "Ein Attachment hatte keinen gueltigen Dateinamen oder Pfad.",
+                        });
+                        continue;
+                    }
+
+                    if (isDevicePhotoAttachment(originalFileName)) {
+                        summary.skippedDocuments += 1;
+                        summary.warnings.push({
+                            itemId,
+                            invNr,
+                            type: "photo-attachment-skipped",
+                            message: `Attachment '${originalFileName}' sieht nach dem SharePoint-Geraetefoto aus und wird nicht als Dokument importiert.`,
                         });
                         continue;
                     }
