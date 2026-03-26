@@ -7,6 +7,7 @@ Diese Dokumentation ist der Einstieg für das Projekt. Sie ist so aufgebaut, das
 - [Setup und Betrieb](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/setup.md)
 - [Funktionen und Workflows](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/features.md)
 - [Architektur](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/architecture.md)
+- [Import und Migration](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/import.md)
 - [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
 
 ## Ziel des Projekts
