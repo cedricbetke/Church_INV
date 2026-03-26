@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Image, Platform, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import {
     Button,
     Chip,
@@ -71,8 +71,10 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         setScannedCode,
     } = useInventory();
     const { isDarkMode } = useAppThemeMode();
+    const { width } = useWindowDimensions();
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
+    const isCompactMobile = Platform.OS !== "web" && width < 640;
 
     const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -127,9 +129,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     return (
         <View style={[styles.container, isDarkMode && styles.containerDark]}>
             <View style={styles.toolbarSection}>
-                <View style={styles.toolbarRow}>
+                <View style={[styles.toolbarRow, isCompactMobile && styles.toolbarRowMobile]}>
                     <View style={styles.searchbarContainer}>
-                        <View style={styles.searchToolsRow}>
+                        <View style={[styles.searchToolsRow, isCompactMobile && styles.searchToolsRowMobile]}>
                             <Searchbar
                                 placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
                                 value={searchQuery}
@@ -173,40 +175,42 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                         </View>
                     </View>
 
-                    <View style={styles.toolbarAction}>
-                        <Menu
-                            visible={isColumnMenuVisible}
-                            onDismiss={() => setIsColumnMenuVisible(false)}
-                            anchor={(
-                                <Button
-                                    mode="outlined"
-                                    compact
-                                    icon="table-column"
-                                    onPress={() => setIsColumnMenuVisible(true)}
-                                    style={[styles.columnButton, isDarkMode && styles.columnButtonDark]}
-                                    contentStyle={styles.columnButtonContent}
-                                    labelStyle={[styles.columnButtonLabel, isDarkMode && styles.columnButtonLabelDark]}
-                                >
-                                    Spalten
-                                </Button>
-                            )}
-                            contentStyle={[styles.columnMenu, isDarkMode && styles.columnMenuDark]}
-                        >
-                            {columns.map((column) => (
-                                <Menu.Item
-                                    key={column.key}
-                                    title={column.title}
-                                    leadingIcon={column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"}
-                                    trailingIcon={column.locked ? "lock-outline" : undefined}
-                                    onPress={() => {
-                                        if (!column.locked) {
-                                            onToggleColumnVisibility(column.key);
-                                        }
-                                    }}
-                                />
-                            ))}
-                        </Menu>
-                    </View>
+                    {!isCompactMobile ? (
+                        <View style={[styles.toolbarAction, isCompactMobile && styles.toolbarActionMobile]}>
+                            <Menu
+                                visible={isColumnMenuVisible}
+                                onDismiss={() => setIsColumnMenuVisible(false)}
+                                anchor={(
+                                    <Button
+                                        mode="outlined"
+                                        compact
+                                        icon="table-column"
+                                        onPress={() => setIsColumnMenuVisible(true)}
+                                        style={[styles.columnButton, isDarkMode && styles.columnButtonDark]}
+                                        contentStyle={styles.columnButtonContent}
+                                        labelStyle={[styles.columnButtonLabel, isDarkMode && styles.columnButtonLabelDark]}
+                                    >
+                                        Spalten
+                                    </Button>
+                                )}
+                                contentStyle={[styles.columnMenu, isDarkMode && styles.columnMenuDark]}
+                            >
+                                {columns.map((column) => (
+                                    <Menu.Item
+                                        key={column.key}
+                                        title={column.title}
+                                        leadingIcon={column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"}
+                                        trailingIcon={column.locked ? "lock-outline" : undefined}
+                                        onPress={() => {
+                                            if (!column.locked) {
+                                                onToggleColumnVisibility(column.key);
+                                            }
+                                        }}
+                                    />
+                                ))}
+                            </Menu>
+                        </View>
+                    ) : null}
                 </View>
             </View>
 
@@ -311,6 +315,56 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 </View>
             )}
 
+            {isCompactMobile ? (
+                <View style={[styles.mobileList, isDarkMode && styles.tableDark]}>
+                    <ScrollView style={styles.scrollView} contentContainerStyle={styles.mobileListContent}>
+                        {pagedItems.map((item) => (
+                            <View key={item.invNr} style={[styles.mobileCard, isDarkMode && styles.mobileCardDark]}>
+                                <View style={styles.mobileCardHeader}>
+                                    <View style={styles.mobileCardMeta}>
+                                        <Text style={[styles.mobileInvNr, isDarkMode && styles.cellTextDark]}>#{item.invNr}</Text>
+                                        <Text style={[styles.mobileModel, isDarkMode && styles.cellTextDark]}>{item.modell}</Text>
+                                        <Text style={[styles.mobileStatus, isDarkMode && styles.deviceSubtitleDark]}>{item.status}</Text>
+                                    </View>
+                                    {item.geraeteFoto ? (
+                                        <View style={[styles.thumbnailFrame, isDarkMode && styles.thumbnailFrameDark]}>
+                                            <Image
+                                                source={{ uri: item.geraeteFotoThumb ?? item.geraeteFoto }}
+                                                style={styles.image}
+                                                resizeMode="cover"
+                                            />
+                                        </View>
+                                    ) : (
+                                        <View style={[styles.photoStatus, isDarkMode && styles.photoStatusDark]}>
+                                            <MaterialIcons
+                                                name="image-not-supported"
+                                                size={18}
+                                                color={isDarkMode ? "#7f8b99" : "#888"}
+                                            />
+                                        </View>
+                                    )}
+                                </View>
+                                <View style={styles.mobileFacts}>
+                                    <Chip compact style={styles.mobileChip}>{item.standort}</Chip>
+                                    <Chip compact style={styles.mobileChip}>{item.bereich}</Chip>
+                                    {item.hersteller ? <Chip compact style={styles.mobileChip}>{item.hersteller}</Chip> : null}
+                                </View>
+                                <Button mode="text" onPress={() => openDetailModal(item)} contentStyle={styles.mobileDetailButtonContent}>
+                                    Details ansehen
+                                </Button>
+                            </View>
+                        ))}
+
+                        {pagedItems.length === 0 && (
+                            <View style={styles.emptyState}>
+                                <Text style={isDarkMode ? styles.emptyStateTextDark : undefined}>
+                                    Keine Geräte für die aktuelle Suche oder Filter gefunden.
+                                </Text>
+                            </View>
+                        )}
+                    </ScrollView>
+                </View>
+            ) : (
             <DataTable style={[styles.table, isDarkMode && styles.tableDark]}>
                 <DataTable.Header style={[styles.tableHeader, isDarkMode && styles.tableHeaderDark]}>
                     {visibleColumns.map((column) => (
@@ -377,6 +431,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     )}
                 </ScrollView>
             </DataTable>
+            )}
 
             <View style={[styles.pagination, isDarkMode && styles.paginationDark]}>
                 {Platform.OS === "web" ? (
@@ -428,6 +483,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         width: "100%",
     },
+    toolbarRowMobile: {
+        flexDirection: "column",
+        alignItems: "stretch",
+        gap: 10,
+    },
     searchbarContainer: {
         width: "100%",
         alignItems: "center",
@@ -440,6 +500,9 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 8,
+    },
+    searchToolsRowMobile: {
+        width: "100%",
     },
     searchbar: {
         flex: 1,
@@ -486,6 +549,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingLeft: Platform.OS === "web" ? 12 : 0,
     },
+    toolbarActionMobile: {
+        position: "relative",
+        right: undefined,
+        top: undefined,
+        bottom: undefined,
+        alignItems: "stretch",
+        paddingLeft: 0,
+        marginTop: 8,
+    },
     columnButton: {
         backgroundColor: "#ffffff",
         borderColor: "#dfe3e8",
@@ -516,6 +588,64 @@ const styles = StyleSheet.create({
     scannerModal: {
         height: 500,
         padding: 20,
+    },
+    mobileList: {
+        flex: 1,
+        backgroundColor: "#ffffff",
+        borderWidth: 1,
+        borderColor: "#dfe3e8",
+        borderRadius: 20,
+        overflow: "hidden",
+    },
+    mobileListContent: {
+        padding: 12,
+        gap: 12,
+    },
+    mobileCard: {
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "#e5e9ef",
+        backgroundColor: "#ffffff",
+        padding: 12,
+        gap: 10,
+    },
+    mobileCardDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
+    },
+    mobileCardHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: 12,
+    },
+    mobileCardMeta: {
+        flex: 1,
+        gap: 4,
+    },
+    mobileInvNr: {
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#5f6877",
+    },
+    mobileModel: {
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#1d1d1f",
+    },
+    mobileStatus: {
+        fontSize: 13,
+    },
+    mobileFacts: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+    },
+    mobileChip: {
+        alignSelf: "flex-start",
+    },
+    mobileDetailButtonContent: {
+        justifyContent: "flex-start",
     },
     table: {
         flex: 1,
