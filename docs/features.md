@@ -1,15 +1,27 @@
 # Funktionen und Workflows
 
-## Geräteverwaltung
+Diese Seite beschreibt, was die App aktuell fachlich abdeckt und wo noch bewusste Grenzen liegen.
 
-- Geräte anlegen
-- Geräte bearbeiten
-- Geräte löschen
-- Pflichtfelder und Stammdaten prüfen
+## Kurz gesagt
+
+ChurchINV kann aktuell:
+
+- Geraete verwalten
+- Stammdaten pflegen
+- Fotos und Dokumente je Geraet ablegen
+- per QR zur Detailansicht springen
+- Aenderungen pro Geraet im Verlauf anzeigen
+
+## Geraeteverwaltung
+
+- Geraete anlegen
+- Geraete bearbeiten
+- Geraete loeschen
+- Pflichtfelder und Stammdaten beim Speichern pruefen
 
 ## Stammdaten
 
-Im aktuellen Stand werden gepflegt:
+Im aktuellen Stand werden diese Stammdaten genutzt:
 
 - Hersteller
 - Objekttyp
@@ -20,12 +32,12 @@ Im aktuellen Stand werden gepflegt:
 - Person
 - Status
 
-Ein Teil der Stammdatenpflege ist zusätzlich über ein Admin-Panel erreichbar.
+Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 
 ## Medien
 
-- Ein Gerätefoto pro Gerät
-- Dokumente pro Gerät
+- ein Geraetefoto pro Geraet
+- mehrere Dokumente pro Geraet
 
 ## Zusatzdaten
 
@@ -34,48 +46,48 @@ Ein Teil der Stammdatenpflege ist zusätzlich über ein Admin-Panel erreichbar.
 - Einkaufspreis
 - Zustandshinweis
 
-## Suche und Tabelle
+## Suche und Tabellenansicht
 
 - Textsuche
 - Filter
 - Sortierung
-- auswählbare sichtbare Spalten
+- sichtbare Spalten waehlbar
 
 ## QR-Flow
 
-- QR-Scan öffnet das passende Gerät
-- Grundlage ist aktuell die Inventarnummer
-- kein separates QR-Feld in der Datenbank notwendig
+- QR-Scan oeffnet das passende Geraet
+- Grundlage ist die Inventarnummer
+- kein separates QR-Feld in der Datenbank noetig
 
 ## Verlauf
 
-Pro Gerät gibt es einen Verlauf mit:
+Pro Geraet gibt es einen Verlauf fuer:
 
 - Anlage
-- Änderungen wichtiger Felder
+- Aenderungen wichtiger Felder
 
-Mehrere Änderungen eines Speichervorgangs werden in der Oberfläche gruppiert dargestellt.
+Mehrere Aenderungen eines Speichervorgangs werden in der Oberflaeche als gemeinsamer Block gruppiert.
 
 ## Admin-Funktionen
 
 - Admin-Login per Passwort
 - Session-Speicherung im Browser-Tab
-- Admin-Panel für erste Stammdatenpflege
+- Admin-Panel fuer erste Stammdatenpflege
 
 ## Dark Mode
 
-- optional umschaltbar in der Topbar
-- Hauptansicht, Detailseite, Add/Edit und große Teile der Admin-Oberfläche sind bereits angepasst
-- sollte weiter im Alltag geprüft werden, besonders auf kleineren Screens
+- optional ueber die Topbar umschaltbar
+- Hauptansicht, Detailseite, Add/Edit und grosse Teile des Admin-Bereichs sind bereits angepasst
+- sollte im Alltag weiter auf kleineren Screens mitgeprueft werden
 
 ## Patch Notes
 
 - strukturierte Datenbasis in `docs/patch-notes/patch-notes.json`
-- zusätzliche Markdown-Übersicht in [changelog.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
-- read-only Anzeige direkt in der App über die Topbar
+- Markdown-Uebersicht in [changelog.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
+- read-only Anzeige direkt in der App ueber die Topbar
 
 ## Bekannte fachliche Grenzen
 
-- Authentifizierung ist noch kein echtes Benutzer-/Rollenmodell
-- der Admin-Bereich ist noch bewusst eine erste Version
+- Authentifizierung ist noch kein echtes Benutzer- und Rollenmodell
+- der Admin-Bereich ist bewusst noch eine erste Version
 - einige UI-Feinkanten sollten nach echtem Nutzerfeedback weiter geschliffen werden

@@ -1,37 +1,62 @@
 # ChurchINV Dokumentation
 
-Diese Dokumentation ist der Einstieg für das Projekt. Sie ist so aufgebaut, dass sie sowohl für Entwickler als auch für spätere interne Nutzer verständlich bleibt.
+Diese Dokumentation ist der Einstieg ins Projekt. Sie soll zwei Dinge leisten:
 
-## Inhalte
+- neue Personen schnell orientieren
+- spaetere Detailfragen gezielt beantworten
+
+## Start Here
+
+Wenn du neu im Projekt bist, lies in dieser Reihenfolge:
+
+1. [Setup und Betrieb](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/setup.md)
+2. [Funktionen und Workflows](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/features.md)
+3. [Architektur](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/architecture.md)
+
+Wenn du mit echten Bestandsdaten arbeitest:
+
+1. [Import und Migration](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/import.md)
+2. [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
+
+## Was Die App Abdeckt
+
+ChurchINV verwaltet:
+
+- Inventarnummern und Geraetestammdaten
+- Bereich, Standort, Kategorie und verantwortliche Person
+- Zustandshinweise
+- Geraetefotos und Dokumente
+- Verlauf pro Geraet
+- QR-Scan auf die Detailansicht
+
+## Welche Seite Fuer Was
 
 - [Setup und Betrieb](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/setup.md)
+  Hier steht, wie du Client, API, lokale Umgebung und Netzwerkzugriff startest.
+
 - [Funktionen und Workflows](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/features.md)
+  Diese Seite beschreibt, was die App fachlich kann und wo aktuelle Grenzen liegen.
+
 - [Architektur](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/architecture.md)
+  Diese Seite ist fuer technische Orientierung im Code und fuer spaetere Erweiterungen gedacht.
+
 - [Import und Migration](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/import.md)
+  Hier steht der gesamte Pfad fuer CSV-, Dokument- und Foto-Import aus Teams/SharePoint.
+
 - [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
+  Menschenlesbare Aenderungshistorie.
 
-## Ziel des Projekts
-
-ChurchINV verwaltet Geräte und zugehörige Informationen wie:
-
-- Inventarnummer
-- Hersteller, Objekttyp und Modell
-- Bereich, Standort, Kategorie und verantwortliche Person
-- Zustandshinweis pro Gerät
-- Fotos und Dokumente
-- Bearbeitungsverlauf
-
-## Technischer Überblick
+## Technischer Kurzueberblick
 
 - Client: Expo / React Native / React Native Paper
 - API: Node.js / Express
 - Datenbank: MySQL
 - API-Doku: Swagger / OpenAPI
 
-## Patch Notes in der App
+## Patch Notes In Der App
 
-Zusätzlich zur normalen Markdown-Doku gibt es strukturierte Patch Notes als JSON:
+Zusatzlich zur Markdown-Doku gibt es strukturierte Patch Notes als JSON:
 
 - [patch-notes.json](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/patch-notes/patch-notes.json)
 
-Darauf basiert inzwischen auch die read-only Anzeige direkt in der App. Damit gibt es eine gemeinsame Datenbasis für Projektdoku, Vorstellung und spätere Release-Notes.
+Darauf basiert auch die read-only Anzeige direkt in der App.
