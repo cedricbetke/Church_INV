@@ -29,6 +29,8 @@ const escapeTsString = (value: string) =>
         .replace(/</g, "\\u003c")
         .replace(/>/g, "\\u003e");
 
+// The JSON file is the single source of truth.
+// This script derives the readable Markdown changelog and the client-side TS module from it.
 const markdown = [
     "# Patch Notes",
     "",

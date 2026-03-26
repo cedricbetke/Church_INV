@@ -119,6 +119,8 @@ const Geraet = {
         const geraet = geraetRows[0] ?? null;
         const [dokumentRows] = await db.query('SELECT url FROM dokumente WHERE geraete_id = ?', [id]);
 
+        // DB cascades remove related rows in dokumente/geraet_verlauf.
+        // File cleanup must still happen here because the database cannot delete files from disk.
         await db.query('DELETE FROM geraet WHERE inv_nr = ?', [id]);
 
         deleteUploadedFile(geraet?.geraetefoto_url);

@@ -29,6 +29,8 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
             setScanned(true);
             onScan(data);
 
+            // Close slightly after the scan callback so the parent can resolve the device first
+            // without immediately tearing down the camera on repeated detections.
             setTimeout(() => {
                 setShowModal(false);
                 setScanned(false);

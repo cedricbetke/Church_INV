@@ -445,6 +445,8 @@ const AddPage: React.FC<AddPageProps> = ({
 
         try {
             setError(null);
+            // New master data stays local until submit. Resolve and persist it here in dependency order:
+            // brand -> object type -> model -> device.
             let resolvedBrand = existingBrands.find(
                 (brand) => normalize(brand.name) === normalize(formData.hersteller),
             );
@@ -530,6 +532,7 @@ const AddPage: React.FC<AddPageProps> = ({
             };
 
             await onSubmit(payload);
+            // Attachments are persisted after the device exists so we always have a stable inventory number.
             await persistAttachmentChanges(payload.inv_nr);
             await fetchItems();
             resetForm();

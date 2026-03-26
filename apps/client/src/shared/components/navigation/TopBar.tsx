@@ -137,7 +137,7 @@ const TopBar = () => {
                         )}
                         <View style={styles.actionRow}>
                             <Button mode="outlined" onPress={() => setShowAdminModal(false)}>
-                                Schlie\u00dfen
+                                Schließen
                             </Button>
                             {isAdminSessionActive ? (
                                 <Button mode="contained" onPress={handleAdminLogout}>

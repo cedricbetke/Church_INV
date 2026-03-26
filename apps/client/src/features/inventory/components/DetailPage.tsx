@@ -72,6 +72,8 @@ const getHistoryGroupTitle = (aktion: string, entryCount: number) => {
 };
 
 const groupHistoryEntries = (entries: HistoryEntry[]) => {
+    // A single save action writes multiple history rows with the same action and timestamp.
+    // Grouping them here keeps the UI readable without changing the DB schema.
     const groupedEntries: Array<{
         key: string;
         aktion: string;
