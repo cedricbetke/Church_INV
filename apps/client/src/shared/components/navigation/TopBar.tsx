@@ -4,11 +4,13 @@ import { StyleSheet, View } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
+import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 const TopBar = () => {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showMasterdataModal, setShowMasterdataModal] = useState(false);
+    const [showPatchNotesModal, setShowPatchNotesModal] = useState(false);
     const [adminPassword, setAdminPassword] = useState("");
     const [adminError, setAdminError] = useState<string | null>(null);
     const { isDarkMode, toggleTheme } = useAppThemeMode();
@@ -36,7 +38,7 @@ const TopBar = () => {
             return;
         }
 
-        setAdminError("Passwort ist ungültig.");
+        setAdminError("Passwort ist ung\u00fcltig.");
     };
 
     const handleAdminLogout = () => {
@@ -68,6 +70,11 @@ const TopBar = () => {
                         {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
                     </Text>
                 </View>
+                <Appbar.Action
+                    icon="history"
+                    color={isDarkMode ? "#dbe6f5" : "#445160"}
+                    onPress={() => setShowPatchNotesModal(true)}
+                />
                 <Appbar.Action
                     icon={isDarkMode ? "weather-sunny" : "moon-waning-crescent"}
                     color={isDarkMode ? "#dbe6f5" : "#445160"}
@@ -108,8 +115,8 @@ const TopBar = () => {
                         </Text>
                         <Text variant="bodyMedium" style={[styles.adminText, isDarkMode && styles.adminTextDark]}>
                             {isAdminSessionActive
-                                ? "Die Admin-Freigabe ist für diese Session aktiv."
-                                : "Mit dem Admin-Passwort schaltest du Ändern und Löschen frei."}
+                                ? "Die Admin-Freigabe ist f\u00fcr diese Session aktiv."
+                                : "Mit dem Admin-Passwort schaltest du \u00c4ndern und L\u00f6schen frei."}
                         </Text>
                         {!isAdminSessionActive && (
                             <>
@@ -130,7 +137,7 @@ const TopBar = () => {
                         )}
                         <View style={styles.actionRow}>
                             <Button mode="outlined" onPress={() => setShowAdminModal(false)}>
-                                Schließen
+                                Schlie\u00dfen
                             </Button>
                             {isAdminSessionActive ? (
                                 <Button mode="contained" onPress={handleAdminLogout}>
@@ -154,6 +161,11 @@ const TopBar = () => {
                     addBrand={addBrand}
                     addObjectType={addObjectType}
                     addModel={addModel}
+                />
+
+                <PatchNotesModal
+                    visible={showPatchNotesModal}
+                    onDismiss={() => setShowPatchNotesModal(false)}
                 />
             </Portal>
         </View>

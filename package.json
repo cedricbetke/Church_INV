@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "sync:patch-notes": "npx tsx scripts/sync-patch-notes.ts"
+  },
   "devDependencies": {
     "@types/node": "^25.5.0",
     "tsx": "^4.21.0",

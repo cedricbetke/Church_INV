@@ -1,50 +1,64 @@
-# Welcome to your Expo app 👋
+# ChurchINV
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ChurchINV ist eine Inventar-App für Geräteverwaltung mit Expo/React Native im Client und einer Node/Express-API mit MySQL im Backend.
 
-## Get started
+## Schnellstart
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+1. Abhängigkeiten installieren
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. API konfigurieren
 
-## Learn more
+`apps/api/.env`
 
-To learn more about developing your project with Expo, look at the following resources:
+```env
+PORT=3000
+ADMIN_PASSWORD=admin
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+3. Client konfigurieren
 
-## Join the community
+`apps/client/.env`
 
-Join our community of developers creating universal apps.
+```env
+EXPO_PUBLIC_API_BASE_URL=http://localhost:3000
+EXPO_PUBLIC_ADMIN_PASSWORD=admin
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+4. API starten
+
+```bash
+npx tsx apps/api/src/server.ts
+```
+
+5. Client starten
+
+```bash
+cd apps/client
+npx expo start
+```
+
+## Doku
+
+- Projektdoku: [docs/README.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/README.md)
+- Setup und Betrieb: [docs/setup.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/setup.md)
+- Funktionen und Workflows: [docs/features.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/features.md)
+- Architekturüberblick: [docs/architecture.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/architecture.md)
+- Patch Notes: [docs/changelog.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
+- Strukturierte Patch Notes: [patch-notes.json](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/patch-notes/patch-notes.json)
+
+## API-Doku
+
+Nach dem Start der API:
+
+- Swagger UI: `http://localhost:3000/api/docs`
+
+## Hinweise
+
+- Admin-Aktionen laufen aktuell über ein einfaches Passwortmodell.
+- Für produktive Nutzung sollte das später durch echte Authentifizierung, z. B. OAuth, ersetzt werden.
+- Der QR-Flow nutzt aktuell die Inventarnummer als Scan-Inhalt.
+- Patch Notes sind sowohl als Markdown als auch bereits read-only in der App verfügbar.

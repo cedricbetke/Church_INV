@@ -1,0 +1,43 @@
+{
+  "app": "ChurchINV",
+  "entries": [
+    {
+      "version": "0.6.0",
+      "date": "2026-03-26",
+      "title": "Inventar-Workflow deutlich erweitert",
+      "summary": "Ger\u00e4teverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.",
+      "items": [
+        "Ger\u00e4te k\u00f6nnen angelegt, bearbeitet und gel\u00f6scht werden",
+        "Dokumente pro Ger\u00e4t sind integriert",
+        "QR-Scan \u00f6ffnet direkt die Detailansicht",
+        "Ger\u00e4teverlauf ist sichtbar",
+        "Admin-Panel f\u00fcr erste Stammdatenpflege ist vorhanden",
+        "Swagger-Dokumentation wurde verbessert",
+        "Optionaler Dark Mode wurde erg\u00e4nzt",
+        "Patch Notes sind als read-only Ansicht in der App verf\u00fcgbar"
+      ]
+    },
+    {
+      "version": "0.5.0",
+      "date": "2026-03-22",
+      "title": "Detail und Edit-Flow verbessert",
+      "summary": "Die Detailansicht wurde ausgebaut und der Edit-Flow auf eine gemeinsame Formularbasis gestellt.",
+      "items": [
+        "Detailansicht deutlich erweitert",
+        "Add- und Edit-Formular zusammengef\u00fchrt",
+        "Foto-Upload integriert",
+        "Erste Admin-Logik erg\u00e4nzt"
+      ]
+    },
+    {
+      "version": "0.4.0",
+      "date": "2026-03-18",
+      "title": "Inventarliste und Grundnavigation stehen",
+      "summary": "Die erste funktionsf\u00e4hige Inventaransicht und der Basis-Flow zum Anlegen von Ger\u00e4ten wurden aufgebaut.",
+      "items": [
+        "Ger\u00e4te k\u00f6nnen angelegt werden",
+        "Inventarliste und Grundnavigation stehen"
+      ]
+    }
+  ]
+}
