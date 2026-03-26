@@ -19,6 +19,11 @@ CREATE TABLE geraet_buchung (
     start_datum DATETIME NOT NULL,
     end_datum DATETIME NOT NULL,
     status VARCHAR(30) NOT NULL DEFAULT 'reserviert',
+    quelle VARCHAR(30) NOT NULL DEFAULT 'manual',
+    external_id VARCHAR(160) NULL,
+    pco_service_type_id VARCHAR(80) NULL,
+    planning_center_url VARCHAR(255) NULL,
+    UNIQUE KEY uq_geraet_buchung_external_source (quelle, external_id),
     erstellt_am TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -40,6 +45,21 @@ CREATE TABLE geraet_buchung_geraet (
 - `GET /api/buchung`
 - `POST /api/buchung`
 - `DELETE /api/buchung/:id`
+
+## PCO-Erweiterung
+
+Wenn Buchungen direkt aus Planning Center synchronisiert werden sollen, braucht `geraet_buchung` die Felder `quelle`, `external_id`, `pco_service_type_id` und `planning_center_url`.
+
+Falls die Tabelle schon ohne diese Felder existiert, fuehre einmal aus:
+
+```sql
+ALTER TABLE geraet_buchung
+    ADD COLUMN quelle VARCHAR(30) NOT NULL DEFAULT 'manual' AFTER status,
+    ADD COLUMN external_id VARCHAR(160) NULL AFTER quelle,
+    ADD COLUMN pco_service_type_id VARCHAR(80) NULL AFTER external_id,
+    ADD COLUMN planning_center_url VARCHAR(255) NULL AFTER pco_service_type_id,
+    ADD UNIQUE KEY uq_geraet_buchung_external_source (quelle, external_id);
+```
 
 ## Erste Grenzen
 

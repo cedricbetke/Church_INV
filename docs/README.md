@@ -17,7 +17,8 @@ Wenn du mit echten Bestandsdaten arbeitest:
 
 1. [Import und Migration](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/import.md)
 2. [Buchung](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/booking.md)
-3. [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
+3. [Planning Center](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/pco.md)
+4. [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
 
 ## Was Die App Abdeckt
 
@@ -47,6 +48,9 @@ ChurchINV verwaltet:
 
 - [Buchung](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/booking.md)
   Diese Seite beschreibt die Datenbanktabellen und den ersten Buchungs-Workflow fuer mehrere Geraete.
+
+- [Planning Center](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/pco.md)
+  Diese Seite beschreibt den aktuellen PCO-Mapping-Schritt zwischen Service Types und Standard-Geraeten.
 
 - [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
   Menschenlesbare Aenderungshistorie.

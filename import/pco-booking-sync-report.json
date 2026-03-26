@@ -1,0 +1,51 @@
+{
+  "dryRun": false,
+  "sourceFile": "C:\\Users\\cedri\\vsProjects\\ChurhINV_REPO\\Church_INV\\import\\pco-services-import-report.json",
+  "processedPlans": 20,
+  "createdBookings": 0,
+  "updatedBookings": 20,
+  "skippedPlans": 0,
+  "conflicts": [],
+  "warnings": [
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 05_Sonderveranstaltungen hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "349570"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 02_Gebets-/Kennenlernabend/MV hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "360894"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 04_Jugend hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "597730"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 03_Bibelcafé hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "1084873"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 08_Russischer Gottesdienst hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "1351872"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 06_Jungen Erwachsenen Arbeit hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "1434361"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 07_Teeny hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "1491609"
+    },
+    {
+      "type": "no-active-mapping",
+      "message": "Service Type 05_Sonderveranstaltungen::GBK hat kein aktives Mapping mit Geraeten.",
+      "serviceTypeId": "349570::series::GBK"
+    }
+  ]
+}
