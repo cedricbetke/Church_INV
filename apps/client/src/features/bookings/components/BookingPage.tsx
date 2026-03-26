@@ -723,11 +723,11 @@ const BookingPage = () => {
         setIsSubmitting(true);
         try {
             await buchungService.delete(bookingId);
-            setFeedback("Buchung gelÃ¶scht.");
+            setFeedback("Buchung gelöscht.");
             await loadBookings();
         } catch (error) {
-            console.error("Fehler beim LÃ¶schen der Buchung:", error);
-            setFeedback("Buchung konnte nicht gelÃ¶scht werden.");
+            console.error("Fehler beim Löschen der Buchung:", error);
+            setFeedback("Buchung konnte nicht gelöscht werden.");
         } finally {
             setIsSubmitting(false);
         }
