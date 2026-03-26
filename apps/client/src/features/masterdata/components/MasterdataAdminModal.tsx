@@ -73,6 +73,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
+    if (!visible) {
+        return null;
+    }
+
     const sortedBrands = useMemo(
         () => [...brands].sort((left, right) => left.name.localeCompare(right.name, "de")),
         [brands],

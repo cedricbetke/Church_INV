@@ -7,6 +7,9 @@ import { Column } from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
 import { HistoryEntry } from "@/src/features/inventory/types/HistoryEntry";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
+import dokumenteService from "@/src/features/masterdata/services/dokumenteService";
+import Attachment from "@/src/features/inventory/types/Attachment";
+import apiClient from "@/src/shared/api/apiClient";
 
 interface DetailModalProps {
     visible: boolean;
@@ -112,6 +115,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
 }) => {
     const { isDarkMode } = useAppThemeMode();
     const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+    const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
     const [isPhotoLoading, setIsPhotoLoading] = useState(false);
     const groupedHistoryEntries = useMemo(
@@ -122,6 +126,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
     useEffect(() => {
         if (!visible || !selectedItem) {
             setHistoryEntries([]);
+            setAttachments([]);
             setIsHistoryExpanded(false);
             setIsPhotoLoading(false);
             return;
@@ -141,6 +146,27 @@ const DetailModal: React.FC<DetailModalProps> = ({
                 console.error("Fehler beim Laden des Geräteverlaufs:", error);
                 if (isActive) {
                     setHistoryEntries([]);
+                }
+            });
+
+        void dokumenteService.getAllByGeraetId(selectedItem.invNr)
+            .then((items) => {
+                if (!isActive) {
+                    return;
+                }
+
+                setAttachments(items.map((attachment) => ({
+                    id: String(attachment.id),
+                    name: attachment.name,
+                    type: attachment.url.split(".").pop()?.toLowerCase() ?? "datei",
+                    file: apiClient.resolveAssetUrl(attachment.url),
+                    uploadedAt: attachment.hochgeladen_am ? new Date(attachment.hochgeladen_am) : new Date(),
+                })));
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der Dokumente:", error);
+                if (isActive) {
+                    setAttachments([]);
                 }
             });
 
@@ -280,10 +306,10 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                 </View>
                                 <Surface style={[styles.attachmentCard, isDarkMode && styles.attachmentCardDark]}>
-                                    {selectedItem.attachments.length === 0 ? (
+                                    {attachments.length === 0 ? (
                                         <Text style={[styles.emptyAttachmentText, isDarkMode && styles.emptyAttachmentTextDark]}>Noch keine Dokumente hinterlegt.</Text>
                                     ) : (
-                                        selectedItem.attachments.map((attachment) => (
+                                        attachments.map((attachment) => (
                                             <View key={attachment.id} style={[styles.attachmentRow, isDarkMode && styles.attachmentRowDark]}>
                                                 <View style={styles.attachmentMeta}>
                                                     <Text style={[styles.attachmentName, isDarkMode && styles.attachmentNameDark]}>{attachment.name}</Text>
@@ -350,7 +376,10 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     <>
                                         <Button
                                             mode="outlined"
-                                            onPress={() => onEdit(selectedItem)}
+                                            onPress={() => onEdit({
+                                                ...selectedItem,
+                                                attachments,
+                                            })}
                                             style={styles.button}
                                         >
                                             Bearbeiten

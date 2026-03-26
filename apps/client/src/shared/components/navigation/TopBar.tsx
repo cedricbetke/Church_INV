@@ -152,21 +152,25 @@ const TopBar = () => {
                     </View>
                 </Modal>
 
-                <MasterdataAdminModal
-                    visible={showMasterdataModal}
-                    onDismiss={() => setShowMasterdataModal(false)}
-                    brands={brands}
-                    objekttypen={objekttypen}
-                    models={models}
-                    addBrand={addBrand}
-                    addObjectType={addObjectType}
-                    addModel={addModel}
-                />
+                {showMasterdataModal && (
+                    <MasterdataAdminModal
+                        visible={showMasterdataModal}
+                        onDismiss={() => setShowMasterdataModal(false)}
+                        brands={brands}
+                        objekttypen={objekttypen}
+                        models={models}
+                        addBrand={addBrand}
+                        addObjectType={addObjectType}
+                        addModel={addModel}
+                    />
+                )}
 
-                <PatchNotesModal
-                    visible={showPatchNotesModal}
-                    onDismiss={() => setShowPatchNotesModal(false)}
-                />
+                {showPatchNotesModal && (
+                    <PatchNotesModal
+                        visible={showPatchNotesModal}
+                        onDismiss={() => setShowPatchNotesModal(false)}
+                    />
+                )}
             </Portal>
         </View>
     );
