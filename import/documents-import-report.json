@@ -1,0 +1,2444 @@
+{
+  "sourceFile": "C:\\Users\\cedri\\vsProjects\\ChurhINV_REPO\\Church_INV\\import\\teams-export-with-id.csv",
+  "processedRows": 569,
+  "importedDocuments": 233,
+  "skippedDocuments": 1,
+  "skippedRows": 3,
+  "warnings": [
+    {
+      "itemId": 7,
+      "invNr": 5,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 8,
+      "invNr": 6,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 15,
+      "invNr": 13,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 16,
+      "invNr": 14,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 18,
+      "invNr": 16,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 19,
+      "invNr": 17,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 24,
+      "invNr": 22,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 30,
+      "invNr": 27,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 34,
+      "invNr": 32,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 46,
+      "invNr": 44,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 52,
+      "invNr": 50,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 65,
+      "invNr": 63,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 115,
+      "invNr": 81,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 119,
+      "invNr": 85,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 120,
+      "invNr": 86,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 121,
+      "invNr": 87,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 124,
+      "invNr": 90,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 125,
+      "invNr": 91,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 127,
+      "invNr": 93,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 129,
+      "invNr": 95,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 190,
+      "invNr": 158,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 195,
+      "invNr": 163,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 196,
+      "invNr": 164,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 197,
+      "invNr": 165,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 207,
+      "invNr": 175,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 224,
+      "invNr": 192,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 250,
+      "invNr": 217,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 269,
+      "invNr": 236,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 271,
+      "invNr": 238,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 280,
+      "invNr": 247,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 296,
+      "invNr": 265,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 337,
+      "invNr": 306,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 367,
+      "invNr": 330,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 371,
+      "invNr": 334,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 372,
+      "invNr": 335,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 376,
+      "invNr": 339,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 1,
+      "invNr": 1001,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 3,
+      "invNr": 1,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 4,
+      "invNr": 2,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 5,
+      "invNr": 3,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 6,
+      "invNr": 4,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 9,
+      "invNr": 7,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 10,
+      "invNr": 8,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 11,
+      "invNr": 9,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 12,
+      "invNr": 10,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 13,
+      "invNr": 11,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 14,
+      "invNr": 12,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 17,
+      "invNr": 15,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 20,
+      "invNr": 18,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 21,
+      "invNr": 19,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 25,
+      "invNr": 23,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 26,
+      "invNr": 24,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 27,
+      "invNr": 25,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 28,
+      "invNr": 26,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 29,
+      "invNr": 28,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 31,
+      "invNr": 29,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 32,
+      "invNr": 30,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 33,
+      "invNr": 31,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 35,
+      "invNr": 33,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 36,
+      "invNr": 34,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 37,
+      "invNr": 35,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 38,
+      "invNr": 36,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 39,
+      "invNr": 37,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 40,
+      "invNr": 38,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 41,
+      "invNr": 39,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 43,
+      "invNr": 41,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 44,
+      "invNr": 42,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 45,
+      "invNr": 43,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 47,
+      "invNr": 45,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 48,
+      "invNr": 46,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 49,
+      "invNr": 47,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 50,
+      "invNr": 48,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 51,
+      "invNr": 49,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 53,
+      "invNr": 51,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 54,
+      "invNr": 52,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 55,
+      "invNr": 53,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 56,
+      "invNr": 54,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 57,
+      "invNr": 55,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 58,
+      "invNr": 56,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 59,
+      "invNr": 57,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 60,
+      "invNr": 58,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 61,
+      "invNr": 59,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 62,
+      "invNr": 60,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 63,
+      "invNr": 61,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 64,
+      "invNr": 62,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 66,
+      "invNr": 64,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 67,
+      "invNr": 65,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 68,
+      "invNr": 66,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 69,
+      "invNr": 67,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 71,
+      "invNr": 69,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 72,
+      "invNr": 70,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 73,
+      "invNr": 71,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 74,
+      "invNr": 72,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 75,
+      "invNr": 73,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 76,
+      "invNr": 74,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 77,
+      "invNr": 501,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 78,
+      "invNr": 502,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 81,
+      "invNr": 505,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 82,
+      "invNr": 506,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 84,
+      "invNr": 508,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 87,
+      "invNr": 512,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 88,
+      "invNr": 513,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 109,
+      "invNr": 75,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 110,
+      "invNr": 76,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 111,
+      "invNr": 77,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 112,
+      "invNr": 78,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 113,
+      "invNr": 79,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 114,
+      "invNr": 80,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 116,
+      "invNr": 82,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 117,
+      "invNr": 83,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 118,
+      "invNr": 84,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 122,
+      "invNr": 88,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 123,
+      "invNr": 89,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 126,
+      "invNr": 92,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 128,
+      "invNr": 94,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 130,
+      "invNr": 96,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 131,
+      "invNr": 97,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 132,
+      "invNr": 98,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 133,
+      "invNr": 99,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 134,
+      "invNr": 100,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 135,
+      "invNr": 101,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 136,
+      "invNr": 102,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 137,
+      "invNr": 103,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 138,
+      "invNr": 104,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 139,
+      "invNr": 105,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 140,
+      "invNr": 107,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 141,
+      "invNr": 108,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 142,
+      "invNr": 109,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 143,
+      "invNr": 110,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 144,
+      "invNr": 111,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 145,
+      "invNr": 112,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 146,
+      "invNr": 113,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 147,
+      "invNr": 115,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 148,
+      "invNr": 116,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 149,
+      "invNr": 117,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 150,
+      "invNr": 118,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 151,
+      "invNr": 119,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 152,
+      "invNr": 120,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 153,
+      "invNr": 121,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 154,
+      "invNr": 122,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 155,
+      "invNr": 123,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 156,
+      "invNr": 124,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 157,
+      "invNr": 125,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 158,
+      "invNr": 126,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 159,
+      "invNr": 127,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 160,
+      "invNr": 128,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 161,
+      "invNr": 129,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 162,
+      "invNr": 130,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 163,
+      "invNr": 131,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 164,
+      "invNr": 132,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 165,
+      "invNr": 133,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 166,
+      "invNr": 134,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 167,
+      "invNr": 135,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 168,
+      "invNr": 136,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 169,
+      "invNr": 137,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 170,
+      "invNr": 138,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 171,
+      "invNr": 139,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 173,
+      "invNr": 143,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 174,
+      "invNr": 141,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 175,
+      "invNr": 142,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 177,
+      "invNr": 145,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 178,
+      "invNr": 146,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 179,
+      "invNr": 147,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 180,
+      "invNr": 148,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 181,
+      "invNr": 149,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 182,
+      "invNr": 150,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 183,
+      "invNr": 151,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 184,
+      "invNr": 152,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 186,
+      "invNr": 154,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 187,
+      "invNr": 155,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 188,
+      "invNr": 156,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 189,
+      "invNr": 157,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 191,
+      "invNr": 159,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 192,
+      "invNr": 160,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 194,
+      "invNr": 162,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 198,
+      "invNr": 166,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 199,
+      "invNr": 167,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 200,
+      "invNr": 168,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 201,
+      "invNr": 169,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 202,
+      "invNr": 170,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 203,
+      "invNr": 171,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 205,
+      "invNr": 173,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 206,
+      "invNr": 174,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 208,
+      "invNr": 176,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 209,
+      "invNr": 177,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 211,
+      "invNr": 179,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 212,
+      "invNr": 180,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 213,
+      "invNr": 181,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 214,
+      "invNr": 182,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 215,
+      "invNr": 183,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 216,
+      "invNr": 184,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 217,
+      "invNr": 185,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 218,
+      "invNr": 186,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 219,
+      "invNr": 187,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 220,
+      "invNr": 188,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 221,
+      "invNr": 189,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 222,
+      "invNr": 190,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 223,
+      "invNr": 191,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 225,
+      "invNr": 193,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 226,
+      "invNr": 194,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 227,
+      "invNr": 195,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 228,
+      "invNr": 196,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 229,
+      "invNr": 197,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 230,
+      "invNr": 198,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 231,
+      "invNr": 199,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 232,
+      "invNr": 200,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 233,
+      "invNr": 201,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 234,
+      "invNr": 202,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 235,
+      "invNr": 203,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 236,
+      "invNr": 203,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 237,
+      "invNr": 204,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 238,
+      "invNr": 205,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 239,
+      "invNr": 206,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 240,
+      "invNr": 207,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 241,
+      "invNr": 208,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 242,
+      "invNr": 209,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 243,
+      "invNr": 210,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 244,
+      "invNr": 211,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 245,
+      "invNr": 212,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 246,
+      "invNr": 213,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 247,
+      "invNr": 214,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 248,
+      "invNr": 215,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 249,
+      "invNr": 216,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 251,
+      "invNr": 218,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 252,
+      "invNr": 219,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 253,
+      "invNr": 220,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 254,
+      "invNr": 221,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 255,
+      "invNr": 222,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 256,
+      "invNr": 223,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 257,
+      "invNr": 224,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 258,
+      "invNr": 225,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 259,
+      "invNr": 226,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 260,
+      "invNr": 227,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 261,
+      "invNr": 226,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 262,
+      "invNr": 229,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 263,
+      "invNr": 230,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 264,
+      "invNr": 231,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 265,
+      "invNr": 232,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 266,
+      "invNr": 233,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 267,
+      "invNr": 234,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 268,
+      "invNr": 235,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 270,
+      "invNr": 237,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 272,
+      "invNr": 239,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 273,
+      "invNr": 240,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 274,
+      "invNr": 241,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 275,
+      "invNr": 242,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 276,
+      "invNr": 243,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 277,
+      "invNr": 244,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 278,
+      "invNr": 255,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 279,
+      "invNr": 246,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 281,
+      "invNr": 248,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 282,
+      "invNr": 249,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 283,
+      "invNr": 250,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 284,
+      "invNr": 251,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 285,
+      "invNr": 253,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 286,
+      "invNr": 256,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 287,
+      "invNr": 252,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 288,
+      "invNr": 257,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 289,
+      "invNr": 258,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 290,
+      "invNr": 259,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 291,
+      "invNr": 260,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 292,
+      "invNr": 261,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 293,
+      "invNr": 262,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 294,
+      "invNr": 263,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 295,
+      "invNr": 264,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 297,
+      "invNr": 266,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 299,
+      "invNr": 268,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 300,
+      "invNr": 269,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 301,
+      "invNr": 270,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 324,
+      "invNr": 293,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 336,
+      "invNr": 305,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 348,
+      "invNr": 310,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 350,
+      "invNr": 312,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 351,
+      "invNr": 313,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 353,
+      "invNr": 315,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 354,
+      "invNr": 316,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 355,
+      "invNr": 317,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 356,
+      "invNr": 318,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 378,
+      "invNr": 344,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 379,
+      "invNr": 347,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 380,
+      "invNr": 348,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 381,
+      "invNr": 349,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 382,
+      "invNr": 350,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 383,
+      "invNr": 351,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 384,
+      "invNr": 352,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 385,
+      "invNr": 353,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 386,
+      "invNr": 354,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 387,
+      "invNr": 355,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 388,
+      "invNr": 356,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 389,
+      "invNr": 357,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 392,
+      "invNr": 365,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 404,
+      "invNr": 360,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 405,
+      "invNr": 361,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 406,
+      "invNr": 362,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 407,
+      "invNr": 366,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 408,
+      "invNr": 367,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 409,
+      "invNr": 368,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 410,
+      "invNr": 369,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 411,
+      "invNr": 370,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 412,
+      "invNr": 371,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 422,
+      "invNr": 391,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 423,
+      "invNr": 392,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 424,
+      "invNr": 393,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 425,
+      "invNr": 394,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 426,
+      "invNr": 395,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 427,
+      "invNr": 396,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 428,
+      "invNr": 399,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 429,
+      "invNr": 399,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 430,
+      "invNr": 398,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 431,
+      "invNr": 397,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 432,
+      "invNr": 400,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 433,
+      "invNr": 401,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 440,
+      "invNr": 408,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 441,
+      "invNr": 409,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 442,
+      "invNr": 410,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 443,
+      "invNr": 411,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 452,
+      "invNr": 425,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 534,
+      "invNr": 497,
+      "type": "document-exists",
+      "message": "Dokument 'invoice.pdf' ist bereits in der DB vorhanden und wird uebersprungen."
+    },
+    {
+      "itemId": 70,
+      "invNr": 68,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 79,
+      "invNr": 503,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 80,
+      "invNr": 504,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 83,
+      "invNr": 507,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 85,
+      "invNr": 510,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 86,
+      "invNr": 511,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 89,
+      "invNr": 514,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 90,
+      "invNr": 509,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 91,
+      "invNr": 515,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 92,
+      "invNr": 516,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 93,
+      "invNr": 517,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 94,
+      "invNr": 518,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 95,
+      "invNr": 519,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 97,
+      "invNr": 520,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 98,
+      "invNr": 521,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 99,
+      "invNr": 522,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 100,
+      "invNr": 524,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 101,
+      "invNr": 523,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 102,
+      "invNr": 525,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 103,
+      "invNr": 528,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 104,
+      "invNr": 526,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 105,
+      "invNr": 527,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 106,
+      "invNr": 529,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 107,
+      "invNr": 530,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 108,
+      "invNr": 531,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 176,
+      "invNr": 144,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 193,
+      "invNr": 161,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 204,
+      "invNr": 172,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 298,
+      "invNr": 267,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 302,
+      "invNr": 271,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 303,
+      "invNr": 272,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 304,
+      "invNr": 274,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 305,
+      "invNr": 273,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 306,
+      "invNr": 275,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 307,
+      "invNr": 276,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 308,
+      "invNr": 277,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 309,
+      "invNr": 278,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 310,
+      "invNr": 279,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 311,
+      "invNr": 280,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 312,
+      "invNr": 281,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 313,
+      "invNr": 282,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 314,
+      "invNr": 283,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 316,
+      "invNr": 285,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 317,
+      "invNr": 286,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 318,
+      "invNr": 287,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 320,
+      "invNr": 289,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 321,
+      "invNr": 290,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 322,
+      "invNr": 291,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 323,
+      "invNr": 292,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 328,
+      "invNr": 296,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 329,
+      "invNr": 298,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 330,
+      "invNr": 300,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 331,
+      "invNr": 302,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 332,
+      "invNr": 297,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 333,
+      "invNr": 299,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 334,
+      "invNr": 301,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 335,
+      "invNr": 303,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 338,
+      "invNr": 536,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 339,
+      "invNr": 537,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 340,
+      "invNr": 538,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 341,
+      "invNr": 539,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 342,
+      "invNr": 542,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 343,
+      "invNr": 543,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 344,
+      "invNr": 544,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 349,
+      "invNr": 311,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 358,
+      "invNr": 320,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 363,
+      "invNr": 325,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 364,
+      "invNr": 329,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 365,
+      "invNr": 328,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 366,
+      "invNr": 327,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 368,
+      "invNr": 331,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 369,
+      "invNr": 332,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 370,
+      "invNr": 333,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 373,
+      "invNr": 343,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 374,
+      "invNr": 342,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 434,
+      "invNr": 402,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 435,
+      "invNr": 403,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 436,
+      "invNr": 404,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 438,
+      "invNr": 406,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 439,
+      "invNr": 407,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 444,
+      "invNr": 415,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    },
+    {
+      "itemId": 450,
+      "invNr": 423,
+      "type": "no-attachments",
+      "message": "Keine Dokument-Anhaenge fuer dieses SharePoint-Item gefunden."
+    }
+  ],
+  "errors": [
+    {
+      "itemId": 42,
+      "invNr": 40,
+      "message": "Geraet zur Inventar Nummer nicht in der DB gefunden",
+      "row": {
+        "ID": "42",
+        "Inventar Nummer": "0040",
+        "Kurzbezeichnung": "Zubehörstativ",
+        "Modell": "kein"
+      }
+    },
+    {
+      "itemId": 521,
+      "invNr": 489,
+      "message": "Geraet zur Inventar Nummer nicht in der DB gefunden",
+      "row": {
+        "ID": "521",
+        "Inventar Nummer": "0489",
+        "Kurzbezeichnung": "",
+        "Modell": ""
+      }
+    },
+    {
+      "itemId": 557,
+      "invNr": 779,
+      "message": "Geraet zur Inventar Nummer nicht in der DB gefunden",
+      "row": {
+        "ID": "557",
+        "Inventar Nummer": "0779",
+        "Kurzbezeichnung": "Intercom Headset",
+        "Modell": "HMD685a"
+      }
+    }
+  ]
+}

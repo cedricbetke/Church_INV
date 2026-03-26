@@ -1,0 +1,558 @@
+{
+  "sourceFile": "C:\\Users\\cedri\\vsProjects\\ChurhINV_REPO\\Church_INV\\import\\Inventar Liste csv.csv",
+  "processedRows": 569,
+  "createdDevices": 0,
+  "updatedDevices": 565,
+  "skippedDevices": 4,
+  "createdMasterdata": {
+    "status": 0,
+    "hersteller": 0,
+    "objekttyp": 0,
+    "modell": 0,
+    "bereich": 0,
+    "standort": 0,
+    "kategorie": 0,
+    "person": 0
+  },
+  "warnings": [
+    {
+      "invNr": 85,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht, GFX"
+    },
+    {
+      "invNr": 86,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht"
+    },
+    {
+      "invNr": 87,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht"
+    },
+    {
+      "invNr": 164,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, GFX"
+    },
+    {
+      "invNr": 335,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 33,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht, Audio"
+    },
+    {
+      "invNr": 38,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht, Audio"
+    },
+    {
+      "invNr": 39,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht, Audio"
+    },
+    {
+      "invNr": 64,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 65,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 66,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 67,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 96,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht, GFX, Audio"
+    },
+    {
+      "invNr": 100,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht"
+    },
+    {
+      "invNr": 159,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Audio, Video"
+    },
+    {
+      "invNr": 166,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, GFX"
+    },
+    {
+      "invNr": 167,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht"
+    },
+    {
+      "invNr": 190,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht, GFX"
+    },
+    {
+      "invNr": 246,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 312,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 313,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 317,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, GFX"
+    },
+    {
+      "invNr": 318,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, GFX"
+    },
+    {
+      "invNr": 319,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: GFX, Video"
+    },
+    {
+      "invNr": 323,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 375,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 376,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 377,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 378,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 379,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 380,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 381,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 382,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 383,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 384,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Audio, Video"
+    },
+    {
+      "invNr": 360,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 361,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 361,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 362,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio"
+    },
+    {
+      "invNr": 362,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 399,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 426,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht"
+    },
+    {
+      "invNr": 427,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht"
+    },
+    {
+      "invNr": 459,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, GFX"
+    },
+    {
+      "invNr": 471,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 511,
+      "type": "person-skipped",
+      "message": "Zuständige Person konnte nicht sauber aufgelöst werden und wird übersprungen: EF-Köln | Sekretariat"
+    },
+    {
+      "invNr": 509,
+      "type": "person-skipped",
+      "message": "Zuständige Person konnte nicht sauber aufgelöst werden und wird übersprungen: EF-Köln | Sekretariat"
+    },
+    {
+      "invNr": 271,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 272,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 274,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 273,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 275,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 276,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 277,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 278,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 279,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 280,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 281,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 282,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 283,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 284,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 285,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 286,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 287,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 288,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 289,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 290,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 291,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 292,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 296,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 298,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 300,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 302,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 297,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 299,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 301,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 303,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Licht"
+    },
+    {
+      "invNr": 536,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 537,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 538,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 539,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 542,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 543,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 543,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 544,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 329,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 328,
+      "type": "multi-kategorie",
+      "message": "Mehrere Unterkategorien gefunden, erster Wert wird verwendet: Video, Audio, Licht, GFX"
+    },
+    {
+      "invNr": 328,
+      "type": "fallback-hersteller",
+      "message": "Hersteller fehlt, Fallback 'Unbekannt' wird verwendet."
+    },
+    {
+      "invNr": 328,
+      "type": "fallback-objekttyp",
+      "message": "Objekttyp fehlt, Fallback 'Unbekannt' wird verwendet."
+    }
+  ],
+  "errors": [
+    {
+      "invNr": 40,
+      "message": "Pflichtfelder fehlen nach der Normalisierung",
+      "row": {
+        "Inventar-Nr": "0040",
+        "Status": "In Verwendung",
+        "Hersteller": "Neewer",
+        "Modell": "kein",
+        "Kurzbezeichnung": "Zubehörstativ",
+        "Objekttyp": "Stativ Licht",
+        "Farbe": "Schwarz",
+        "Seriennummer": "kein",
+        "Kaufdatum": "",
+        "Einkaufspreis": "",
+        "Gerätefoto": "IMG_2998.JPG",
+        "Standort": "Studio",
+        "Bereich": "[\"Medientechnik\"]",
+        "Unterkategorie": "[\"Video\"]",
+        "Zuständige Person": "",
+        "Vorbesitzer": "",
+        "Zustandshinweis": ""
+      }
+    },
+    {
+      "invNr": 399,
+      "message": "Pflichtfelder fehlen nach der Normalisierung",
+      "row": {
+        "Inventar-Nr": "0399",
+        "Status": "In Verwendung",
+        "Hersteller": "Sennheiser",
+        "Modell": "",
+        "Kurzbezeichnung": "",
+        "Objekttyp": "",
+        "Farbe": "Schwarz",
+        "Seriennummer": "",
+        "Kaufdatum": "",
+        "Einkaufspreis": "",
+        "Gerätefoto": "",
+        "Standort": "Gemeindesaal Bühne",
+        "Bereich": "[\"Medientechnik\"]",
+        "Unterkategorie": "[\"Audio\"]",
+        "Zuständige Person": "",
+        "Vorbesitzer": "",
+        "Zustandshinweis": ""
+      }
+    },
+    {
+      "invNr": 489,
+      "message": "Pflichtfelder fehlen nach der Normalisierung",
+      "row": {
+        "Inventar-Nr": "0489",
+        "Status": "In Verwendung",
+        "Hersteller": "Dell",
+        "Modell": "",
+        "Kurzbezeichnung": "",
+        "Objekttyp": "Bildschirm",
+        "Farbe": "",
+        "Seriennummer": "",
+        "Kaufdatum": "",
+        "Einkaufspreis": "",
+        "Gerätefoto": "",
+        "Standort": "",
+        "Bereich": "[\"Medientechnik\"]",
+        "Unterkategorie": "[\"Videoproduktion\"]",
+        "Zuständige Person": "Nico Fröse | EF-Köln",
+        "Vorbesitzer": "",
+        "Zustandshinweis": ""
+      }
+    },
+    {
+      "invNr": 779,
+      "message": "Pflichtfelder fehlen nach der Normalisierung",
+      "row": {
+        "Inventar-Nr": "0779",
+        "Status": "In Verwendung",
+        "Hersteller": "Superlux",
+        "Modell": "HMD685a",
+        "Kurzbezeichnung": "Intercom Headset",
+        "Objekttyp": "Intercom-Headset",
+        "Farbe": "Schwarz",
+        "Seriennummer": "",
+        "Kaufdatum": "",
+        "Einkaufspreis": "59,00",
+        "Gerätefoto": "Reserved_ImageAttachment_[11]_[DevicePhoto][32]_[2ba7bfc395de4c4187b3a97ec18462e5][1]_[2].png",
+        "Standort": "",
+        "Bereich": "",
+        "Unterkategorie": "",
+        "Zuständige Person": "",
+        "Vorbesitzer": "",
+        "Zustandshinweis": ""
+      }
+    }
+  ]
+}

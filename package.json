@@ -1,9 +1,12 @@
 {
   "scripts": {
+    "import:teams-documents": "npx tsx scripts/import-teams-documents.ts",
+    "import:teams": "npx tsx scripts/import-teams-inventory.ts",
     "sync:patch-notes": "npx tsx scripts/sync-patch-notes.ts"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "playwright": "^1.55.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
