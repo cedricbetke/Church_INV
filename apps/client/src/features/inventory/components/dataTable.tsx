@@ -1,11 +1,22 @@
 import React from "react";
-import { Button, Chip, DataTable, IconButton, Menu, Modal, Portal, Searchbar, Text } from "react-native-paper";
-import { ScrollView, View, Image, StyleSheet, Platform } from "react-native";
+import { Image, Platform, ScrollView, StyleSheet, View } from "react-native";
+import {
+    Button,
+    Chip,
+    DataTable,
+    IconButton,
+    Menu,
+    Modal,
+    Portal,
+    Searchbar,
+    Text,
+} from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { getValueOrFallback } from "@/src/shared/utils/helpers";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 export interface Column {
     sortDirection: "ascending" | "descending" | undefined;
@@ -59,11 +70,13 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         setIsFilterVisible,
         setScannedCode,
     } = useInventory();
+    const { isDarkMode } = useAppThemeMode();
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
-    const visibleColumns = columns.filter((column) => column.visible);
 
+    const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();
+
     const searchableValues = (item: InventoryItem) => [
         item.invNr,
         item.hersteller,
@@ -112,45 +125,54 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isDarkMode && styles.containerDark]}>
             <View style={styles.toolbarSection}>
                 <View style={styles.toolbarRow}>
-                <View style={styles.searchbarContainer}>
-                    <View style={styles.searchToolsRow}>
-                        <Searchbar
-                            placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
-                            value={searchQuery}
-                            onChangeText={(value) => {
-                                setSearchQuery(value);
-                                setPage(0);
-                            }}
-                            inputStyle={styles.searchbarInput}
-                            iconColor="#8e8e93"
-                            elevation={0}
-                            style={styles.searchbar}
-                        />
-                        <View style={styles.searchActions}>
-                            <IconButton
-                                icon="qrcode-scan"
-                                mode="contained-tonal"
-                                size={20}
-                                containerColor="#ffffff"
-                                iconColor="#445160"
-                                style={styles.searchActionButton}
-                                onPress={() => setIsScannerVisible(true)}
+                    <View style={styles.searchbarContainer}>
+                        <View style={styles.searchToolsRow}>
+                            <Searchbar
+                                placeholder="Suche nach Inventarnummer, Modell, Status, Standort..."
+                                value={searchQuery}
+                                onChangeText={(value) => {
+                                    setSearchQuery(value);
+                                    setPage(0);
+                                }}
+                                inputStyle={[styles.searchbarInput, isDarkMode && styles.searchbarInputDark]}
+                                iconColor={isDarkMode ? "#94a3b8" : "#8e8e93"}
+                                elevation={0}
+                                style={[styles.searchbar, isDarkMode && styles.searchbarDark]}
                             />
-                            <IconButton
-                                icon="filter"
-                                mode="contained-tonal"
-                                size={20}
-                                containerColor={isFilterVisible || hasActiveFilters ? "#e8f1ff" : "#ffffff"}
-                                iconColor={isFilterVisible || hasActiveFilters ? "#0f5ea8" : "#445160"}
-                                style={styles.searchActionButton}
-                                onPress={() => setIsFilterVisible((prev) => !prev)}
-                            />
+                            <View style={styles.searchActions}>
+                                <IconButton
+                                    icon="qrcode-scan"
+                                    mode="contained-tonal"
+                                    size={20}
+                                    containerColor={isDarkMode ? "#151c27" : "#ffffff"}
+                                    iconColor={isDarkMode ? "#dbe6f5" : "#445160"}
+                                    style={[styles.searchActionButton, isDarkMode && styles.searchActionButtonDark]}
+                                    onPress={() => setIsScannerVisible(true)}
+                                />
+                                <IconButton
+                                    icon="filter"
+                                    mode="contained-tonal"
+                                    size={20}
+                                    containerColor={
+                                        isFilterVisible || hasActiveFilters
+                                            ? (isDarkMode ? "#1d3a59" : "#e8f1ff")
+                                            : (isDarkMode ? "#151c27" : "#ffffff")
+                                    }
+                                    iconColor={
+                                        isFilterVisible || hasActiveFilters
+                                            ? (isDarkMode ? "#8cc8ff" : "#0f5ea8")
+                                            : (isDarkMode ? "#dbe6f5" : "#445160")
+                                    }
+                                    style={[styles.searchActionButton, isDarkMode && styles.searchActionButtonDark]}
+                                    onPress={() => setIsFilterVisible((prev) => !prev)}
+                                />
+                            </View>
                         </View>
                     </View>
-                </View>
+
                     <View style={styles.toolbarAction}>
                         <Menu
                             visible={isColumnMenuVisible}
@@ -161,28 +183,25 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                     compact
                                     icon="table-column"
                                     onPress={() => setIsColumnMenuVisible(true)}
-                                    style={styles.columnButton}
+                                    style={[styles.columnButton, isDarkMode && styles.columnButtonDark]}
                                     contentStyle={styles.columnButtonContent}
-                                    labelStyle={styles.columnButtonLabel}
+                                    labelStyle={[styles.columnButtonLabel, isDarkMode && styles.columnButtonLabelDark]}
                                 >
                                     Spalten
                                 </Button>
                             )}
-                            contentStyle={styles.columnMenu}
+                            contentStyle={[styles.columnMenu, isDarkMode && styles.columnMenuDark]}
                         >
                             {columns.map((column) => (
                                 <Menu.Item
                                     key={column.key}
                                     title={column.title}
-                                    leadingIcon={
-                                        column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"
-                                    }
+                                    leadingIcon={column.visible ? "checkbox-marked-outline" : "checkbox-blank-outline"}
                                     trailingIcon={column.locked ? "lock-outline" : undefined}
                                     onPress={() => {
-                                        if (column.locked) {
-                                            return;
+                                        if (!column.locked) {
+                                            onToggleColumnVisibility(column.key);
                                         }
-                                        onToggleColumnVisibility(column.key);
                                     }}
                                 />
                             ))}
@@ -190,6 +209,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     </View>
                 </View>
             </View>
+
             <Portal>
                 <Modal visible={isScannerVisible} onDismiss={() => setIsScannerVisible(false)}>
                     <View style={styles.scannerModal}>
@@ -200,18 +220,22 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     </View>
                 </Modal>
             </Portal>
+
             {isFilterVisible && (
-                <View style={styles.filterPanel}>
+                <View style={[styles.filterPanel, isDarkMode && styles.filterPanelDark]}>
                     <View style={styles.filterHeader}>
-                        <Text variant="titleSmall">Filter</Text>
+                        <Text variant="titleSmall" style={isDarkMode ? styles.filterTitleDark : undefined}>
+                            Filter
+                        </Text>
                         {hasActiveFilters && (
                             <Button compact mode="text" onPress={clearFilters}>
                                 Zurücksetzen
                             </Button>
                         )}
                     </View>
+
                     <View style={styles.filterGroup}>
-                        <Text variant="labelMedium">Status</Text>
+                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Status</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
                             {states.map((state) => (
                                 <Chip
@@ -224,8 +248,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             ))}
                         </ScrollView>
                     </View>
+
                     <View style={styles.filterGroup}>
-                        <Text variant="labelMedium">Hersteller</Text>
+                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Hersteller</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
                             {brands.map((brand) => (
                                 <Chip
@@ -238,8 +263,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             ))}
                         </ScrollView>
                     </View>
+
                     <View style={styles.filterGroup}>
-                        <Text variant="labelMedium">Modell</Text>
+                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Modell</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
                             {models.map((model) => (
                                 <Chip
@@ -252,8 +278,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             ))}
                         </ScrollView>
                     </View>
+
                     <View style={styles.filterGroup}>
-                        <Text variant="labelMedium">Bereich</Text>
+                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Bereich</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
                             {bereiche.map((bereich) => (
                                 <Chip
@@ -266,8 +293,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             ))}
                         </ScrollView>
                     </View>
+
                     <View style={styles.filterGroup}>
-                        <Text variant="labelMedium">Standort</Text>
+                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Standort</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
                             {standorte.map((standort) => (
                                 <Chip
@@ -282,49 +310,62 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     </View>
                 </View>
             )}
-            <DataTable style={styles.table}>
-                <DataTable.Header style={styles.tableHeader}>
+
+            <DataTable style={[styles.table, isDarkMode && styles.tableDark]}>
+                <DataTable.Header style={[styles.tableHeader, isDarkMode && styles.tableHeaderDark]}>
                     {visibleColumns.map((column) => (
                         <DataTable.Title
                             key={column.key}
                             sortDirection={column.sortDirection}
                             numeric={column.numeric}
                             onPress={() => onSort(column.key)}
-                            textStyle={styles.tableHeaderText}
+                            textStyle={[styles.tableHeaderText, isDarkMode && styles.tableHeaderTextDark]}
                         >
                             {column.title}
                         </DataTable.Title>
                     ))}
                 </DataTable.Header>
+
                 <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                     {pagedItems.map((item) => (
-                        <DataTable.Row key={item.invNr} onPress={() => openDetailModal(item)} style={styles.tableRow}>
+                        <DataTable.Row
+                            key={item.invNr}
+                            onPress={() => openDetailModal(item)}
+                            style={[styles.tableRow, isDarkMode && styles.tableRowDark]}
+                        >
                             {visibleColumns.map((column) => (
                                 <DataTable.Cell key={column.key} numeric={column.numeric}>
                                     {column.key === "foto" ? (
                                         item.geraeteFoto ? (
-                                            <Image
-                                                source={{ uri: item.geraeteFoto }}
-                                                style={styles.image}
-                                            />
+                                            <Image source={{ uri: item.geraeteFoto }} style={styles.image} />
                                         ) : (
-                                            <MaterialIcons name="image-not-supported" size={22} color="#888" />
+                                            <MaterialIcons
+                                                name="image-not-supported"
+                                                size={22}
+                                                color={isDarkMode ? "#7f8b99" : "#888"}
+                                            />
                                         )
                                     ) : (
-                                        <Text style={styles.cellText}>{getValueOrFallback(item, column.key)}</Text>
+                                        <Text style={[styles.cellText, isDarkMode && styles.cellTextDark]}>
+                                            {getValueOrFallback(item, column.key)}
+                                        </Text>
                                     )}
                                 </DataTable.Cell>
                             ))}
                         </DataTable.Row>
                     ))}
+
                     {pagedItems.length === 0 && (
                         <View style={styles.emptyState}>
-                            <Text>Keine Geräte für die aktuelle Suche oder Filter gefunden.</Text>
+                            <Text style={isDarkMode ? styles.emptyStateTextDark : undefined}>
+                                Keine Geräte für die aktuelle Suche oder Filter gefunden.
+                            </Text>
                         </View>
                     )}
                 </ScrollView>
             </DataTable>
-            <View style={styles.pagination}>
+
+            <View style={[styles.pagination, isDarkMode && styles.paginationDark]}>
                 {Platform.OS === "web" ? (
                     <DataTable.Pagination
                         page={page}
@@ -359,10 +400,13 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         backgroundColor: "#f5f5f7",
     },
+    containerDark: {
+        backgroundColor: "#0f1115",
+    },
     toolbarSection: {
-        minHeight: 76,
+        minHeight: 60,
         justifyContent: "center",
-        marginBottom: 2,
+        marginBottom: 0,
         position: "relative",
     },
     toolbarRow: {
@@ -382,23 +426,30 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 10,
+        gap: 8,
     },
     searchbar: {
         flex: 1,
         flexShrink: 1,
         backgroundColor: "#ffffff",
-        borderRadius: 20,
+        borderRadius: 18,
         borderWidth: 1,
         borderColor: "#dfe3e8",
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.035,
-        shadowRadius: 16,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.028,
+        shadowRadius: 12,
+    },
+    searchbarDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
     },
     searchbarInput: {
         color: "#1d1d1f",
         fontSize: 15,
+    },
+    searchbarInputDark: {
+        color: "#f4f7fb",
     },
     searchActions: {
         flexDirection: "row",
@@ -410,6 +461,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#dfe3e8",
     },
+    searchActionButtonDark: {
+        borderColor: "#2a3340",
+    },
     toolbarAction: {
         position: Platform.OS === "web" ? "absolute" : "relative",
         right: Platform.OS === "web" ? 0 : undefined,
@@ -417,24 +471,34 @@ const styles = StyleSheet.create({
         bottom: Platform.OS === "web" ? 0 : undefined,
         alignItems: Platform.OS === "web" ? "flex-end" : "center",
         justifyContent: "center",
-        paddingLeft: Platform.OS === "web" ? 16 : 0,
+        paddingLeft: Platform.OS === "web" ? 12 : 0,
     },
     columnButton: {
         backgroundColor: "#ffffff",
         borderColor: "#dfe3e8",
         borderRadius: 14,
-        minHeight: 42,
+        minHeight: 40,
+    },
+    columnButtonDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
     },
     columnButtonContent: {
-        minHeight: 42,
+        minHeight: 40,
         paddingHorizontal: 2,
     },
     columnButtonLabel: {
         color: "#3a3a3c",
         fontSize: 13,
     },
+    columnButtonLabelDark: {
+        color: "#dbe6f5",
+    },
     columnMenu: {
         backgroundColor: "#ffffff",
+    },
+    columnMenuDark: {
+        backgroundColor: "#151922",
     },
     scannerModal: {
         height: 500,
@@ -452,6 +516,10 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.028,
         shadowRadius: 24,
     },
+    tableDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
+    },
     filterPanel: {
         marginTop: 4,
         marginBottom: 14,
@@ -462,13 +530,23 @@ const styles = StyleSheet.create({
         borderColor: "#e5e5ea",
         gap: 12,
     },
+    filterPanelDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
+    },
     filterHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
     },
+    filterTitleDark: {
+        color: "#eef4fb",
+    },
     filterGroup: {
         gap: 6,
+    },
+    filterLabelDark: {
+        color: "#c8d1dd",
     },
     chipRow: {
         gap: 8,
@@ -480,12 +558,19 @@ const styles = StyleSheet.create({
         borderBottomColor: "#e8eaee",
         minHeight: 44,
     },
+    tableHeaderDark: {
+        backgroundColor: "#1b212c",
+        borderBottomColor: "#2a3340",
+    },
     tableHeaderText: {
         color: "#7c7c84",
         fontSize: 11,
         fontWeight: "700",
         textTransform: "uppercase",
         letterSpacing: 0.65,
+    },
+    tableHeaderTextDark: {
+        color: "#95a1b2",
     },
     scrollView: {
         flex: 1,
@@ -498,9 +583,15 @@ const styles = StyleSheet.create({
         borderBottomColor: "#eff1f4",
         minHeight: 56,
     },
+    tableRowDark: {
+        borderBottomColor: "#202733",
+    },
     cellText: {
         color: "#1d1d1f",
         fontSize: 14,
+    },
+    cellTextDark: {
+        color: "#f4f7fb",
     },
     pagination: {
         width: "100%",
@@ -512,6 +603,10 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: "#e8eaee",
     },
+    paginationDark: {
+        backgroundColor: "#1b212c",
+        borderTopColor: "#2a3340",
+    },
     image: {
         width: 50,
         height: 50,
@@ -520,6 +615,9 @@ const styles = StyleSheet.create({
     emptyState: {
         paddingVertical: 24,
         alignItems: "center",
+    },
+    emptyStateTextDark: {
+        color: "#95a1b2",
     },
 });
 

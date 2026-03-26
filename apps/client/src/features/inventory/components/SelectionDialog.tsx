@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { Button, Dialog, List, Portal, TextInput } from "react-native-paper";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 interface SelectionDialogProps {
     visible: boolean;
@@ -25,13 +26,15 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
     onAddNew,
     isNewItem,
 }) => {
+    const { isDarkMode } = useAppThemeMode();
+
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
 
     return (
         <Portal>
-            <Dialog visible={visible} onDismiss={onDismiss} style={styles.dialog}>
+            <Dialog visible={visible} onDismiss={onDismiss} style={[styles.dialog, isDarkMode && styles.dialogDark]}>
                 <Dialog.Title>{title}</Dialog.Title>
                 <Dialog.Content>
                     <TextInput
@@ -39,7 +42,7 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                         label="Suchen oder neue eingeben"
                         value={searchQuery}
                         onChangeText={onSearchChange}
-                        style={styles.searchInput}
+                        style={[styles.searchInput, isDarkMode && styles.searchInputDark]}
                     />
 
                     <ScrollView style={styles.list}>
@@ -48,7 +51,8 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                                 key={item.id}
                                 title={item.name}
                                 onPress={() => onSelect(item.name)}
-                                style={styles.listItem}
+                                style={[styles.listItem, isDarkMode && styles.listItemDark]}
+                                titleStyle={isDarkMode ? styles.listItemTitleDark : undefined}
                             />
                         ))}
 
@@ -57,7 +61,8 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                                 title={`"${searchQuery}" als neu hinzufügen`}
                                 left={(props) => <List.Icon {...props} icon="plus" />}
                                 onPress={onAddNew}
-                                style={styles.newItem}
+                                style={[styles.newItem, isDarkMode && styles.newItemDark]}
+                                titleStyle={isDarkMode ? styles.listItemTitleDark : undefined}
                             />
                         )}
                     </ScrollView>
@@ -77,8 +82,14 @@ const styles = StyleSheet.create({
         width: Platform.OS === "web" ? "92%" : undefined,
         maxWidth: 560,
     },
+    dialogDark: {
+        backgroundColor: "#161b22",
+    },
     searchInput: {
         marginBottom: 8,
+    },
+    searchInputDark: {
+        backgroundColor: "#11161d",
     },
     list: {
         maxHeight: 280,
@@ -87,8 +98,18 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.5,
         borderBottomColor: "#e0e0e0",
     },
+    listItemDark: {
+        borderBottomColor: "#273142",
+        backgroundColor: "#161b22",
+    },
+    listItemTitleDark: {
+        color: "#f3f4f6",
+    },
     newItem: {
         backgroundColor: "#f0f0f0",
+    },
+    newItemDark: {
+        backgroundColor: "#1f2937",
     },
 });
 

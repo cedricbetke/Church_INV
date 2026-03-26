@@ -12,6 +12,7 @@ import dokumenteService from "@/src/features/masterdata/services/dokumenteServic
 import apiClient from "@/src/shared/api/apiClient";
 import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
 import { pickDocumentAsDataUrl } from "@/src/shared/utils/documentPicker";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 import {
     buildPersonItems,
     buildMasterdataResolutionError,
@@ -51,6 +52,7 @@ const AddPage: React.FC<AddPageProps> = ({
     onSubmit,
     editingItem = null,
 }) => {
+    const { isDarkMode } = useAppThemeMode();
     const { states, fetchMaxGeraeteId, fetchItems, addObjectType, addModel, objekttypen, bereiche, standorte, kategorien, personen } = useInventory();
     const [showStatusDialog, setShowStatusDialog] = useState(false);
     const [showObjekttypDialog, setShowObjekttypDialog] = useState(false);
@@ -541,7 +543,7 @@ const AddPage: React.FC<AddPageProps> = ({
 
     return (
         <Portal>
-            <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={styles.modalContainer}>
+            <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={[styles.modalContainer, isDarkMode && styles.modalContainerDark]}>
                 <ScrollView>
                     <Title style={styles.title}>
                         {isEditMode ? `Gerät ${formData.invNr} bearbeiten` : "Neuen Artikel hinzufügen"}
@@ -564,10 +566,10 @@ const AddPage: React.FC<AddPageProps> = ({
                             setShowVerantwortlicherDialog={setShowVerantwortlicherDialog}
                             setShowKaufdatumPicker={setShowKaufdatumPicker}
                         />
-                        <View style={styles.photoCard}>
+                        <View style={[styles.photoCard, isDarkMode && styles.photoCardDark]}>
                             <View style={styles.photoHeader}>
                                 <Text variant="titleMedium">Gerätefoto</Text>
-                                <Text variant="bodySmall" style={styles.photoHint}>
+                                <Text variant="bodySmall" style={[styles.photoHint, isDarkMode && styles.photoHintDark]}>
                                     Optional
                                 </Text>
                             </View>
@@ -575,7 +577,7 @@ const AddPage: React.FC<AddPageProps> = ({
                                 {selectedPhotoDataUrl ? (
                                     <Image source={{ uri: selectedPhotoDataUrl }} style={styles.photoPreview} />
                                 ) : (
-                                    <View style={styles.photoPlaceholder}>
+                                    <View style={[styles.photoPlaceholder, isDarkMode && styles.photoPlaceholderDark]}>
                                         <Text style={styles.photoPlaceholderText}>Noch kein Foto ausgewählt</Text>
                                     </View>
                                 )}
@@ -586,7 +588,7 @@ const AddPage: React.FC<AddPageProps> = ({
                                 </View>
                             </View>
                         </View>
-                        <View style={styles.photoCard}>
+                        <View style={[styles.photoCard, isDarkMode && styles.photoCardDark]}>
                             <View style={styles.photoHeader}>
                                 <Text variant="titleMedium">Dokumente</Text>
                                 <Text variant="bodySmall" style={styles.photoHint}>
@@ -595,15 +597,15 @@ const AddPage: React.FC<AddPageProps> = ({
                             </View>
                             <View style={styles.documentSection}>
                                 {visibleAttachments.length === 0 ? (
-                                    <View style={styles.documentPlaceholder}>
+                                    <View style={[styles.documentPlaceholder, isDarkMode && styles.photoPlaceholderDark]}>
                                         <Text style={styles.photoPlaceholderText}>Noch keine Dokumente ausgewählt</Text>
                                     </View>
                                 ) : (
                                     visibleAttachments.map((attachment) => (
-                                        <View key={attachment.id} style={styles.documentRow}>
+                                        <View key={attachment.id} style={[styles.documentRow, isDarkMode && styles.documentRowDark]}>
                                             <View style={styles.documentMeta}>
                                                 <Text variant="bodyMedium">{attachment.name}</Text>
-                                                <Text variant="bodySmall" style={styles.photoHint}>
+                                                <Text variant="bodySmall" style={[styles.photoHint, isDarkMode && styles.photoHintDark]}>
                                                     {attachment.isPending ? "Wird beim Speichern hochgeladen" : "Bereits hinterlegt"}
                                                 </Text>
                                             </View>
@@ -791,6 +793,11 @@ const styles = StyleSheet.create({
         width: Platform.OS === "web" ? "94%" : undefined,
         maxWidth: Platform.OS === "web" ? 980 : undefined,
     },
+    modalContainerDark: {
+        backgroundColor: "#151a22",
+        borderWidth: 1,
+        borderColor: "#263140",
+    },
     title: {
         fontSize: 24,
         marginBottom: 20,
@@ -808,6 +815,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#fafafa",
         gap: 12,
     },
+    photoCardDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
     photoHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -815,6 +826,9 @@ const styles = StyleSheet.create({
     },
     photoHint: {
         color: "#666",
+    },
+    photoHintDark: {
+        color: "#9aa4b2",
     },
     photoSection: {
         gap: 10,
@@ -842,6 +856,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: "#666",
     },
+    photoPlaceholderDark: {
+        borderColor: "#334155",
+        backgroundColor: "#11161d",
+    },
+    photoPlaceholderTextDark: {
+        color: "#9aa4b2",
+    },
     photoActions: {
         width: "100%",
         alignItems: "center",
@@ -868,6 +889,9 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderBottomWidth: 1,
         borderBottomColor: "#ececec",
+    },
+    documentRowDark: {
+        borderBottomColor: "#263140",
     },
     documentMeta: {
         flex: 1,

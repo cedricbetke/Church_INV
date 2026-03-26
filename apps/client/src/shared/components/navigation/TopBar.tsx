@@ -4,12 +4,14 @@ import { StyleSheet, View } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 const TopBar = () => {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showMasterdataModal, setShowMasterdataModal] = useState(false);
     const [adminPassword, setAdminPassword] = useState("");
     const [adminError, setAdminError] = useState<string | null>(null);
+    const { isDarkMode, toggleTheme } = useAppThemeMode();
 
     const {
         setIsAddPageVisible,
@@ -46,43 +48,65 @@ const TopBar = () => {
 
     return (
         <View>
-            <Appbar.Header style={styles.header}>
-                <Appbar.BackAction onPress={() => {}} />
-                <Appbar.Content title="ChurchINV" titleStyle={styles.title} />
-                <View style={[styles.adminBadge, isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive]}>
-                    <Text style={[styles.adminBadgeText, isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive]}>
+            <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark]}>
+                <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => {}} />
+                <Appbar.Content title="ChurchINV" titleStyle={[styles.title, isDarkMode && styles.titleDark]} />
+                <View
+                    style={[
+                        styles.adminBadge,
+                        isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive,
+                        isDarkMode && (isAdminSessionActive ? styles.adminBadgeActiveDark : styles.adminBadgeInactiveDark),
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.adminBadgeText,
+                            isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive,
+                            isDarkMode && (isAdminSessionActive ? styles.adminBadgeTextActiveDark : styles.adminBadgeTextInactiveDark),
+                        ]}
+                    >
                         {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
                     </Text>
                 </View>
+                <Appbar.Action
+                    icon={isDarkMode ? "weather-sunny" : "moon-waning-crescent"}
+                    color={isDarkMode ? "#dbe6f5" : "#445160"}
+                    onPress={toggleTheme}
+                />
                 {isAdminLoginConfigured && (
                     <Appbar.Action
                         icon={isAdminSessionActive ? "lock-open-outline" : "lock-outline"}
-                        color="#445160"
+                        color={isDarkMode ? "#dbe6f5" : "#445160"}
                         onPress={() => setShowAdminModal(true)}
                     />
                 )}
                 {canManageInventory && (
                     <Appbar.Action
                         icon="database-cog-outline"
-                        color="#445160"
+                        color={isDarkMode ? "#dbe6f5" : "#445160"}
                         onPress={() => setShowMasterdataModal(true)}
                     />
                 )}
                 {canManageInventory && (
-                    <Appbar.Action icon="plus" color="#445160" onPress={() => setIsAddPageVisible(true)} />
+                    <Appbar.Action
+                        icon="plus"
+                        color={isDarkMode ? "#dbe6f5" : "#445160"}
+                        onPress={() => setIsAddPageVisible(true)}
+                    />
                 )}
             </Appbar.Header>
+
             <Portal>
                 <Modal
                     visible={showAdminModal}
                     onDismiss={() => setShowAdminModal(false)}
-                    contentContainerStyle={styles.adminModal}
+                    contentContainerStyle={[styles.adminModal, isDarkMode && styles.adminModalDark]}
                 >
                     <View style={styles.adminContent}>
-                        <Text variant="titleMedium">
+                        <Text variant="titleMedium" style={isDarkMode ? styles.adminTitleDark : undefined}>
                             {isAdminSessionActive ? "Admin angemeldet" : "Admin-Anmeldung"}
                         </Text>
-                        <Text variant="bodyMedium" style={styles.adminText}>
+                        <Text variant="bodyMedium" style={[styles.adminText, isDarkMode && styles.adminTextDark]}>
                             {isAdminSessionActive
                                 ? "Die Admin-Freigabe ist für diese Session aktiv."
                                 : "Mit dem Admin-Passwort schaltest du Ändern und Löschen frei."}
@@ -120,6 +144,7 @@ const TopBar = () => {
                         </View>
                     </View>
                 </Modal>
+
                 <MasterdataAdminModal
                     visible={showMasterdataModal}
                     onDismiss={() => setShowMasterdataModal(false)}
@@ -145,11 +170,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         minHeight: 68,
     },
+    headerDark: {
+        backgroundColor: "#121722",
+        borderBottomColor: "#212938",
+    },
     title: {
         color: "#111111",
         fontSize: 23,
         fontWeight: "700",
         letterSpacing: -0.35,
+    },
+    titleDark: {
+        color: "#f5f7fb",
     },
     adminModal: {
         backgroundColor: "#ffffff",
@@ -157,11 +189,20 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 14,
     },
+    adminModalDark: {
+        backgroundColor: "#151922",
+    },
     adminContent: {
         gap: 12,
     },
+    adminTitleDark: {
+        color: "#f5f7fb",
+    },
     adminText: {
         color: "#6e6e73",
+    },
+    adminTextDark: {
+        color: "#a2adbb",
     },
     adminBadge: {
         borderRadius: 999,
@@ -174,9 +215,17 @@ const styles = StyleSheet.create({
         backgroundColor: "#eef6ee",
         borderColor: "#cfe5cf",
     },
+    adminBadgeActiveDark: {
+        backgroundColor: "#173226",
+        borderColor: "#28513c",
+    },
     adminBadgeInactive: {
         backgroundColor: "#f0f1f3",
         borderColor: "#e0e2e6",
+    },
+    adminBadgeInactiveDark: {
+        backgroundColor: "#1b2230",
+        borderColor: "#2a3344",
     },
     adminBadgeText: {
         fontSize: 11,
@@ -186,8 +235,14 @@ const styles = StyleSheet.create({
     adminBadgeTextActive: {
         color: "#2d6a36",
     },
+    adminBadgeTextActiveDark: {
+        color: "#b8e0c0",
+    },
     adminBadgeTextInactive: {
         color: "#6e6e73",
+    },
+    adminBadgeTextInactiveDark: {
+        color: "#a2adbb",
     },
     actionRow: {
         flexDirection: "row",

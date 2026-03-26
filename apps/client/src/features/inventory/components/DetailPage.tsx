@@ -5,6 +5,7 @@ import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
 import { HistoryEntry } from "@/src/features/inventory/types/HistoryEntry";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 interface DetailModalProps {
     visible: boolean;
@@ -38,11 +39,11 @@ const formatCurrency = (value?: number) => {
 const getDisplayValue = (value?: string) => value?.trim() || "Nicht gesetzt";
 const isUnsetValue = (value: string) => value === "Nicht gesetzt";
 
-const DetailRow = ({ label, value }: { label: string; value: string }) => (
+const DetailRow = ({ label, value, isDarkMode }: { label: string; value: string; isDarkMode: boolean }) => (
     <View style={styles.detailItem}>
-        <Surface style={styles.detailCard}>
-            <Text style={styles.cardLabel}>{label}</Text>
-            <Text style={[styles.cardValue, isUnsetValue(value) && styles.cardValueMuted]}>{value}</Text>
+        <Surface style={[styles.detailCard, isDarkMode && styles.detailCardDark]}>
+            <Text style={[styles.cardLabel, isDarkMode && styles.cardLabelDark]}>{label}</Text>
+            <Text style={[styles.cardValue, isDarkMode && styles.cardValueDark, isUnsetValue(value) && styles.cardValueMuted]}>{value}</Text>
         </Surface>
     </View>
 );
@@ -106,6 +107,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
     onEdit,
     onDelete,
 }) => {
+    const { isDarkMode } = useAppThemeMode();
     const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
     const groupedHistoryEntries = useMemo(
@@ -173,19 +175,19 @@ const DetailModal: React.FC<DetailModalProps> = ({
             <Modal
                 visible={visible}
                 onDismiss={onDismiss}
-                contentContainerStyle={styles.modalContainer}
+                contentContainerStyle={[styles.modalContainer, isDarkMode && styles.modalContainerDark]}
             >
                 <ScrollView>
                     {selectedItem && (
                         <View>
-                            <Text style={styles.title}>
+                            <Text style={[styles.title, isDarkMode && styles.titleDark]}>
                                 Details zu {selectedItem.invNr}
                             </Text>
                             <Text style={styles.subtitle}>Inventarübersicht und aktuelle Zuordnung</Text>
 
-                            <Surface style={styles.heroCard}>
+                            <Surface style={[styles.heroCard, isDarkMode && styles.heroCardDark]}>
                                 <View style={styles.heroContent}>
-                                    <View style={styles.imageFrame}>
+                                    <View style={[styles.imageFrame, isDarkMode && styles.imageFrameDark]}>
                                         {selectedItem.geraeteFoto ? (
                                             <Image
                                                 source={{ uri: selectedItem.geraeteFoto }}
@@ -193,24 +195,24 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                                 resizeMode="contain"
                                             />
                                         ) : (
-                                            <View style={styles.imagePlaceholder}>
-                                                <Text style={styles.imagePlaceholderText}>Kein Foto hinterlegt</Text>
+                                            <View style={[styles.imagePlaceholder, isDarkMode && styles.imagePlaceholderDark]}>
+                                                <Text style={[styles.imagePlaceholderText, isDarkMode && styles.imagePlaceholderTextDark]}>Kein Foto hinterlegt</Text>
                                             </View>
                                         )}
                                     </View>
                                     <View style={styles.heroMeta}>
-                                        <Text style={styles.heroTitle}>{selectedItem.modell}</Text>
-                                        <Text style={styles.heroSubtitle}>
+                                        <Text style={[styles.heroTitle, isDarkMode && styles.heroTitleDark]}>{selectedItem.modell}</Text>
+                                        <Text style={[styles.heroSubtitle, isDarkMode && styles.heroSubtitleDark]}>
                                             Inventarnummer {selectedItem.invNr}
                                         </Text>
                                         <View style={styles.heroBadgeRow}>
-                                            <View style={styles.heroBadge}>
-                                                <Text style={styles.heroBadgeLabel}>Status</Text>
-                                                <Text style={styles.heroBadgeValue}>{getDisplayValue(selectedItem.status)}</Text>
+                                            <View style={[styles.heroBadge, isDarkMode && styles.heroBadgeDark]}>
+                                                <Text style={[styles.heroBadgeLabel, isDarkMode && styles.heroBadgeLabelDark]}>Status</Text>
+                                                <Text style={[styles.heroBadgeValue, isDarkMode && styles.heroBadgeValueDark]}>{getDisplayValue(selectedItem.status)}</Text>
                                             </View>
-                                            <View style={styles.heroBadge}>
-                                                <Text style={styles.heroBadgeLabel}>Bereich</Text>
-                                                <Text style={styles.heroBadgeValue}>{getDisplayValue(selectedItem.bereich)}</Text>
+                                            <View style={[styles.heroBadge, isDarkMode && styles.heroBadgeDark]}>
+                                                <Text style={[styles.heroBadgeLabel, isDarkMode && styles.heroBadgeLabelDark]}>Bereich</Text>
+                                                <Text style={[styles.heroBadgeValue, isDarkMode && styles.heroBadgeValueDark]}>{getDisplayValue(selectedItem.bereich)}</Text>
                                             </View>
                                         </View>
                                     </View>
@@ -219,51 +221,52 @@ const DetailModal: React.FC<DetailModalProps> = ({
 
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Text style={styles.sectionTitle}>Stammdaten</Text>
-                                    <View style={styles.sectionLine} />
+                                    <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Stammdaten</Text>
+                                    <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                 </View>
                                 <View style={styles.detailGrid}>
-                                    <DetailRow label="Status" value={getDisplayValue(selectedItem.status)} />
-                                    <DetailRow label="Hersteller" value={getDisplayValue(selectedItem.hersteller)} />
-                                    <DetailRow label="Objekttyp" value={getDisplayValue(selectedItem.objekttyp)} />
-                                    <DetailRow label="Modell" value={getDisplayValue(selectedItem.modell)} />
-                                    <DetailRow label="Bereich" value={getDisplayValue(selectedItem.bereich)} />
-                                    <DetailRow label="Standort" value={getDisplayValue(selectedItem.standort)} />
-                                    <DetailRow label="Kategorie" value={getDisplayValue(selectedItem.kategorie)} />
-                                    <DetailRow label="Verantwortlicher" value={getDisplayValue(selectedItem.verantwortlicher)} />
+                                    <DetailRow label="Status" value={getDisplayValue(selectedItem.status)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Hersteller" value={getDisplayValue(selectedItem.hersteller)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Objekttyp" value={getDisplayValue(selectedItem.objekttyp)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Modell" value={getDisplayValue(selectedItem.modell)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Bereich" value={getDisplayValue(selectedItem.bereich)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Standort" value={getDisplayValue(selectedItem.standort)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Kategorie" value={getDisplayValue(selectedItem.kategorie)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Verantwortlicher" value={getDisplayValue(selectedItem.verantwortlicher)} isDarkMode={isDarkMode} />
                                 </View>
                             </View>
 
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Text style={styles.sectionTitle}>Zusatzdaten</Text>
-                                    <View style={styles.sectionLine} />
+                                    <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Zusatzdaten</Text>
+                                    <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                 </View>
                                 <View style={styles.detailGrid}>
-                                    <DetailRow label="Kaufdatum" value={formatDate(selectedItem.kaufdatum)} />
-                                    <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} />
-                                    <DetailRow label="Seriennummer" value={getDisplayValue(selectedItem.seriennummer)} />
+                                    <DetailRow label="Kaufdatum" value={formatDate(selectedItem.kaufdatum)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Seriennummer" value={getDisplayValue(selectedItem.seriennummer)} isDarkMode={isDarkMode} />
                                     <DetailRow
                                         label="Foto"
                                         value={selectedItem.geraeteFoto ? "Vorhanden" : "Nicht gesetzt"}
+                                        isDarkMode={isDarkMode}
                                     />
                                 </View>
                             </View>
 
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Text style={styles.sectionTitle}>Dokumente</Text>
-                                    <View style={styles.sectionLine} />
+                                    <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Dokumente</Text>
+                                    <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                 </View>
-                                <Surface style={styles.attachmentCard}>
+                                <Surface style={[styles.attachmentCard, isDarkMode && styles.attachmentCardDark]}>
                                     {selectedItem.attachments.length === 0 ? (
-                                        <Text style={styles.emptyAttachmentText}>Noch keine Dokumente hinterlegt.</Text>
+                                        <Text style={[styles.emptyAttachmentText, isDarkMode && styles.emptyAttachmentTextDark]}>Noch keine Dokumente hinterlegt.</Text>
                                     ) : (
                                         selectedItem.attachments.map((attachment) => (
-                                            <View key={attachment.id} style={styles.attachmentRow}>
+                                            <View key={attachment.id} style={[styles.attachmentRow, isDarkMode && styles.attachmentRowDark]}>
                                                 <View style={styles.attachmentMeta}>
-                                                    <Text style={styles.attachmentName}>{attachment.name}</Text>
-                                                    <Text style={styles.attachmentInfo}>
+                                                    <Text style={[styles.attachmentName, isDarkMode && styles.attachmentNameDark]}>{attachment.name}</Text>
+                                                    <Text style={[styles.attachmentInfo, isDarkMode && styles.attachmentInfoDark]}>
                                                         Hochgeladen am {attachment.uploadedAt.toLocaleDateString("de-DE")}
                                                     </Text>
                                                 </View>
@@ -280,8 +283,8 @@ const DetailModal: React.FC<DetailModalProps> = ({
 
                             <View style={styles.section}>
                                 <View style={styles.sectionHeader}>
-                                    <Text style={styles.sectionTitle}>Verlauf</Text>
-                                    <View style={styles.sectionLine} />
+                                    <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Verlauf</Text>
+                                    <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                     <Button
                                         mode="text"
                                         compact
@@ -293,23 +296,23 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     </Button>
                                 </View>
                                 {isHistoryExpanded && (
-                                    <Surface style={styles.attachmentCard}>
+                                    <Surface style={[styles.attachmentCard, isDarkMode && styles.attachmentCardDark]}>
                                         {groupedHistoryEntries.length === 0 ? (
                                             <Text style={styles.emptyAttachmentText}>Noch keine Verlaufseinträge vorhanden.</Text>
                                         ) : (
                                             groupedHistoryEntries.map((group) => (
-                                                <View key={group.key} style={styles.historyGroupCard}>
+                                                <View key={group.key} style={[styles.historyGroupCard, isDarkMode && styles.historyGroupCardDark]}>
                                                     <View style={styles.historyGroupHeader}>
-                                                        <Text style={styles.historyGroupTitle}>
+                                                        <Text style={[styles.historyGroupTitle, isDarkMode && styles.historyGroupTitleDark]}>
                                                             {getHistoryGroupTitle(group.aktion, group.entries.length)}
                                                         </Text>
-                                                        <Text style={styles.historyGroupTimestamp}>
+                                                        <Text style={[styles.historyGroupTimestamp, isDarkMode && styles.historyGroupTimestampDark]}>
                                                             {new Date(group.erstellt_am).toLocaleString("de-DE")}
                                                         </Text>
                                                     </View>
                                                     <View style={styles.historyEntryList}>
                                                         {group.entries.map((entry) => (
-                                                            <Text key={entry.id} style={styles.historyEntryText}>
+                                                            <Text key={entry.id} style={[styles.historyEntryText, isDarkMode && styles.historyEntryTextDark]}>
                                                                 {getHistoryDescription(entry)}
                                                             </Text>
                                                         ))}
@@ -370,16 +373,26 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#e8e8e8",
     },
+    modalContainerDark: {
+        backgroundColor: "#151a22",
+        borderColor: "#263140",
+    },
     title: {
         fontSize: 28,
         fontWeight: "bold",
         marginBottom: 4,
         color: "#151515",
     },
+    titleDark: {
+        color: "#f3f4f6",
+    },
     subtitle: {
         fontSize: 14,
         color: "#6a6a6a",
         marginBottom: 18,
+    },
+    subtitleDark: {
+        color: "#9aa4b2",
     },
     heroCard: {
         padding: 20,
@@ -388,6 +401,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#f7f8fa",
         borderWidth: 1,
         borderColor: "#e5e7eb",
+    },
+    heroCardDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
     },
     heroContent: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
@@ -401,6 +418,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         borderWidth: 1,
         borderColor: "#e4e6ea",
+    },
+    imageFrameDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#334155",
     },
     image: {
         width: 220,
@@ -419,8 +440,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: "#ffffff",
     },
+    imagePlaceholderDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#334155",
+    },
     imagePlaceholderText: {
         color: "#737983",
+    },
+    imagePlaceholderTextDark: {
+        color: "#9aa4b2",
     },
     heroMeta: {
         gap: 6,
@@ -432,10 +460,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#222222",
     },
+    heroTitleDark: {
+        color: "#f3f4f6",
+    },
     heroSubtitle: {
         fontSize: 14,
         color: "#61656d",
         marginBottom: 8,
+    },
+    heroSubtitleDark: {
+        color: "#9aa4b2",
     },
     heroBadgeRow: {
         flexDirection: "row",
@@ -452,15 +486,25 @@ const styles = StyleSheet.create({
         borderColor: "#e2e5ea",
         minWidth: 140,
     },
+    heroBadgeDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#334155",
+    },
     heroBadgeLabel: {
         fontSize: 12,
         color: "#70757d",
         marginBottom: 2,
     },
+    heroBadgeLabelDark: {
+        color: "#9aa4b2",
+    },
     heroBadgeValue: {
         fontSize: 14,
         fontWeight: "600",
         color: "#1f2328",
+    },
+    heroBadgeValueDark: {
+        color: "#f3f4f6",
     },
     section: {
         marginBottom: 18,
@@ -476,10 +520,16 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#222222",
     },
+    sectionTitleDark: {
+        color: "#f3f4f6",
+    },
     sectionLine: {
         flex: 1,
         height: 1,
         backgroundColor: "#e5e7eb",
+    },
+    sectionLineDark: {
+        backgroundColor: "#263140",
     },
     detailGrid: {
         flexDirection: "row",
@@ -497,6 +547,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#e7e9ee",
     },
+    detailCardDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
     cardLabel: {
         fontSize: 12,
         color: "#6f7680",
@@ -504,10 +558,16 @@ const styles = StyleSheet.create({
         textTransform: "uppercase",
         letterSpacing: 0.4,
     },
+    cardLabelDark: {
+        color: "#9aa4b2",
+    },
     cardValue: {
         fontSize: 16,
         color: "#1d232a",
         fontWeight: "500",
+    },
+    cardValueDark: {
+        color: "#f3f4f6",
     },
     cardValueMuted: {
         color: "#9096a0",
@@ -521,8 +581,15 @@ const styles = StyleSheet.create({
         borderColor: "#e7e9ee",
         gap: 12,
     },
+    attachmentCardDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
     emptyAttachmentText: {
         color: "#6f7680",
+    },
+    emptyAttachmentTextDark: {
+        color: "#9aa4b2",
     },
     attachmentRow: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
@@ -533,6 +600,9 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#f0f2f5",
     },
+    attachmentRowDark: {
+        borderBottomColor: "#263140",
+    },
     attachmentMeta: {
         flex: 1,
         gap: 4,
@@ -542,9 +612,15 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color: "#1d232a",
     },
+    attachmentNameDark: {
+        color: "#f3f4f6",
+    },
     attachmentInfo: {
         color: "#6f7680",
         fontSize: 13,
+    },
+    attachmentInfoDark: {
+        color: "#9aa4b2",
     },
     attachmentActions: {
         flexDirection: "row",
@@ -564,6 +640,10 @@ const styles = StyleSheet.create({
         padding: 14,
         gap: 10,
     },
+    historyGroupCardDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#263140",
+    },
     historyGroupHeader: {
         flexDirection: Platform.OS === "web" ? "row" : "column",
         justifyContent: "space-between",
@@ -575,9 +655,15 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#1d232a",
     },
+    historyGroupTitleDark: {
+        color: "#f3f4f6",
+    },
     historyGroupTimestamp: {
         color: "#6f7680",
         fontSize: 13,
+    },
+    historyGroupTimestampDark: {
+        color: "#9aa4b2",
     },
     historyEntryList: {
         gap: 6,
@@ -586,6 +672,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#2a3138",
         lineHeight: 20,
+    },
+    historyEntryTextDark: {
+        color: "#d6dbe3",
     },
     buttonRow: {
         flexDirection: "row",

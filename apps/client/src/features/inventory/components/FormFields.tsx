@@ -1,15 +1,15 @@
-// FormFields.tsx
-import React from 'react';
-import { Platform, Text, View } from 'react-native';
-import { TextInput, HelperText } from 'react-native-paper';
-import { FormData } from '@/src/features/inventory/types/FormData';
-import UIGrid from './DetailGrid';
+import React from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
+import { HelperText, TextInput } from "react-native-paper";
+import { FormData } from "@/src/features/inventory/types/FormData";
+import UIGrid from "./DetailGrid";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 const formatTodayForDateInput = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
 };
 
@@ -32,12 +32,12 @@ interface FormFieldsProps {
 }
 
 const REQUIRED_FIELDS = new Set<keyof FormData>([
-    'invNr',
-    'hersteller',
-    'objekttyp',
-    'modell',
-    'bereich',
-    'status',
+    "invNr",
+    "hersteller",
+    "objekttyp",
+    "modell",
+    "bereich",
+    "status",
 ]);
 
 const getFieldLabel = (name: keyof FormData, label: string) => (
@@ -45,35 +45,32 @@ const getFieldLabel = (name: keyof FormData, label: string) => (
 );
 
 export const FormFields: React.FC<FormFieldsProps> = ({
-                                                          formData,
-                                                          handleChange,
-                                                          errors,
-                                                          loading,
-                                                          error,
-                                                          invNrDisabled = false,
-                                                          setShowStatusDialog,
-                                                          setShowObjekttypDialog,
-                                                          setShowBrandDialog,
-                                                          setShowModelDialog,
-                                                          setShowStandortDialog,
-                                                          setShowBereichDialog,
-                                                          setShowKategorieDialog,
-                                                          setShowVerantwortlicherDialog,
-                                                          setShowKaufdatumPicker
-                                                      }) => {
+    formData,
+    handleChange,
+    errors,
+    loading,
+    error,
+    invNrDisabled = false,
+    setShowStatusDialog,
+    setShowObjekttypDialog,
+    setShowBrandDialog,
+    setShowModelDialog,
+    setShowStandortDialog,
+    setShowBereichDialog,
+    setShowKategorieDialog,
+    setShowVerantwortlicherDialog,
+    setShowKaufdatumPicker,
+}) => {
+    const { isDarkMode } = useAppThemeMode();
+
     const renderWebDateField = () => (
-        <View style={{ position: 'relative', paddingTop: 4 }}>
+        <View style={styles.dateFieldWrapper}>
             <Text
-                style={{
-                    position: 'absolute',
-                    top: -4,
-                    left: 12,
-                    zIndex: 1,
-                    paddingHorizontal: 4,
-                    backgroundColor: '#ffffff',
-                    color: errors.kaufdatum ? '#b3261e' : '#6750a4',
-                    fontSize: 12,
-                }}
+                style={[
+                    styles.dateFieldLabel,
+                    isDarkMode && styles.dateFieldLabelDark,
+                    errors.kaufdatum && styles.dateFieldLabelError,
+                ]}
             >
                 Kaufdatum
             </Text>
@@ -90,8 +87,9 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     padding: "16px 12px 12px 12px",
                     margin: 0,
                     borderRadius: 4,
-                    border: errors.kaufdatum ? "1px solid #b3261e" : "1px solid #79747e",
-                    backgroundColor: "#ffffff",
+                    border: errors.kaufdatum ? "1px solid #b3261e" : isDarkMode ? "1px solid #6b7280" : "1px solid #79747e",
+                    backgroundColor: isDarkMode ? "#11161d" : "#ffffff",
+                    color: isDarkMode ? "#f3f4f6" : "#1f2937",
                     fontSize: 16,
                     boxSizing: "border-box",
                     outline: "none",
@@ -112,7 +110,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             rightIcon?: string;
             selectionOnly?: boolean;
             placeholder?: string;
-        } = {}
+        } = {},
     ) => (
         <View>
             <TextInput
@@ -128,83 +126,116 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 onPressIn={options.onPressIn}
                 showSoftInputOnFocus={!options.selectionOnly}
                 right={options.rightIcon ? <TextInput.Icon icon={options.rightIcon} /> : undefined}
-                style={{ backgroundColor: 'white' }}
+                style={[styles.fieldInput, isDarkMode && styles.fieldInputDark]}
             />
             {errors[name] && <HelperText type="error">{errors[name]}</HelperText>}
-            {name === 'invNr' && loading && (
+            {name === "invNr" && loading && (
                 <HelperText type="info">Lade Inventarnummer...</HelperText>
             )}
         </View>
     );
 
     return (
-        <View style={{ gap: 8 }}>
+        <View style={styles.container}>
             {error && <HelperText type="error">{error}</HelperText>}
             <UIGrid columns={2} xGap={16} yGap={8}>
-                {renderField('invNr', 'Inventarnummer', { disabled: loading || invNrDisabled })}
-                {renderField('hersteller', 'Hersteller', {
+                {renderField("invNr", "Inventarnummer", { disabled: loading || invNrDisabled })}
+                {renderField("hersteller", "Hersteller", {
                     onFocus: () => setShowBrandDialog(true),
                     onPressIn: () => setShowBrandDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('objekttyp', 'Objekttyp', {
+                {renderField("objekttyp", "Objekttyp", {
                     onFocus: () => setShowObjekttypDialog(true),
                     onPressIn: () => setShowObjekttypDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('modell', 'Modell', {
+                {renderField("modell", "Modell", {
                     onFocus: () => setShowModelDialog(true),
                     onPressIn: () => setShowModelDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('serien_nr', 'Seriennummer')}
-                {Platform.OS === 'web'
+                {renderField("serien_nr", "Seriennummer")}
+                {Platform.OS === "web"
                     ? renderWebDateField()
-                    : renderField('kaufdatum', 'Kaufdatum', {
-                        placeholder: 'YYYY-MM-DD',
+                    : renderField("kaufdatum", "Kaufdatum", {
+                        placeholder: "YYYY-MM-DD",
                         onFocus: () => setShowKaufdatumPicker(true),
                         onPressIn: () => setShowKaufdatumPicker(true),
-                        rightIcon: 'calendar',
-                        selectionOnly: true
+                        rightIcon: "calendar",
+                        selectionOnly: true,
                     })}
-                {renderField('einkaufspreis', 'Einkaufspreis', {
-                    keyboardType: 'decimal-pad',
-                    placeholder: '0,00'
+                {renderField("einkaufspreis", "Einkaufspreis", {
+                    keyboardType: "decimal-pad",
+                    placeholder: "0,00",
                 })}
-                {renderField('standort', 'Standort', {
+                {renderField("standort", "Standort", {
                     onFocus: () => setShowStandortDialog(true),
                     onPressIn: () => setShowStandortDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('bereich', 'Bereich', {
+                {renderField("bereich", "Bereich", {
                     onFocus: () => setShowBereichDialog(true),
                     onPressIn: () => setShowBereichDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('kategorie', 'Kategorie', {
+                {renderField("kategorie", "Kategorie", {
                     onFocus: () => setShowKategorieDialog(true),
                     onPressIn: () => setShowKategorieDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('status', 'Status', {
+                {renderField("status", "Status", {
                     onFocus: () => setShowStatusDialog(true),
                     onPressIn: () => setShowStatusDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
-                {renderField('verantwortlicher', 'Verantwortlicher', {
+                {renderField("verantwortlicher", "Verantwortlicher", {
                     onFocus: () => setShowVerantwortlicherDialog(true),
                     onPressIn: () => setShowVerantwortlicherDialog(true),
-                    rightIcon: 'chevron-down',
-                    selectionOnly: true
+                    rightIcon: "chevron-down",
+                    selectionOnly: true,
                 })}
             </UIGrid>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        gap: 8,
+    },
+    dateFieldWrapper: {
+        position: "relative",
+        paddingTop: 4,
+    },
+    dateFieldLabel: {
+        position: "absolute",
+        top: -4,
+        left: 12,
+        zIndex: 1,
+        paddingHorizontal: 4,
+        backgroundColor: "#ffffff",
+        color: "#6750a4",
+        fontSize: 12,
+    },
+    dateFieldLabelDark: {
+        backgroundColor: "#151a22",
+        color: "#a5b4fc",
+    },
+    dateFieldLabelError: {
+        color: "#b3261e",
+    },
+    fieldInput: {
+        backgroundColor: "#ffffff",
+    },
+    fieldInputDark: {
+        backgroundColor: "#11161d",
+    },
+});

@@ -5,6 +5,7 @@ import SelectionDialog from "@/src/features/inventory/components/SelectionDialog
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
 import objekttypService from "@/src/features/masterdata/services/objekttypService";
 import modellService from "@/src/features/masterdata/services/modellService";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 interface MasterdataAdminModalProps {
     visible: boolean;
@@ -23,16 +24,19 @@ const HoverRow = ({
     children,
     onPress,
     active = false,
+    isDarkMode,
 }: {
     children: React.ReactNode;
     onPress: () => void;
     active?: boolean;
+    isDarkMode: boolean;
 }) => (
     <Pressable onPress={onPress}>
         {({ hovered, pressed }) => (
             <View
                 style={[
                     styles.rowItem,
+                    isDarkMode && styles.rowItemDark,
                     (hovered || pressed) && styles.rowItemHover,
                     active && styles.rowItemActive,
                 ]}
@@ -53,6 +57,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     addObjectType,
     addModel,
 }) => {
+    const { isDarkMode } = useAppThemeMode();
     const [brandName, setBrandName] = useState("");
     const [objectTypeName, setObjectTypeName] = useState("");
     const [modelName, setModelName] = useState("");
@@ -180,12 +185,12 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         const selectedObjectType = objekttypen.find((entry) => normalize(entry.name) === normalize(selectedObjectTypeName));
 
         if (!selectedBrand) {
-            setError("Bitte zuerst einen Hersteller fuer das Modell auswaehlen.");
+            setError("Bitte zuerst einen Hersteller für das Modell auswählen.");
             return;
         }
 
         if (!selectedObjectType) {
-            setError("Bitte zuerst einen Objekttyp fuer das Modell auswaehlen.");
+            setError("Bitte zuerst einen Objekttyp für das Modell auswählen.");
             return;
         }
 
@@ -198,7 +203,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     entry.id !== editingModelId,
             )
         ) {
-            setError("Dieses Modell existiert fuer den gewaehlten Hersteller und Objekttyp bereits.");
+            setError("Dieses Modell existiert für den gewählten Hersteller und Objekttyp bereits.");
             return;
         }
 
@@ -227,30 +232,30 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     };
 
     return (
-        <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={styles.modal}>
+        <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={[styles.modal, isDarkMode && styles.modalDark]}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
-                    <Text variant="titleLarge">Stammdaten</Text>
-                    <Text variant="bodyMedium" style={styles.subtleText}>
+                    <Text variant="titleLarge" style={isDarkMode ? styles.titleDark : undefined}>Stammdaten</Text>
+                    <Text variant="bodyMedium" style={[styles.subtleText, isDarkMode && styles.subtleTextDark]}>
                         Erste Admin-Version zum Pflegen von Herstellern, Objekttypen und Modellen.
                     </Text>
                 </View>
 
                 <View style={styles.section}>
-                    <Text variant="titleMedium">Hersteller</Text>
+                    <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Hersteller</Text>
                     <View style={styles.formRow}>
                         <TextInput
                             mode="outlined"
                             label={editingBrandId ? "Hersteller bearbeiten" : "Neuer Hersteller"}
                             value={brandName}
                             onChangeText={setBrandName}
-                            style={styles.input}
+                            style={[styles.input, isDarkMode && styles.inputDark]}
                         />
                         <Button mode="contained" onPress={handleCreateBrand} disabled={isSaving}>
                             {editingBrandId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
-                    <ScrollView style={styles.listPanel} contentContainerStyle={styles.list}>
+                    <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
                         {sortedBrands.map((brand) => (
                             <HoverRow
                                 key={brand.id}
@@ -260,8 +265,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                     setEditingBrandId(brand.id);
                                     setError(null);
                                 }}
+                                isDarkMode={isDarkMode}
                             >
-                                <Text variant="bodyMedium" style={styles.rowItemText}>
+                                <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                     {brand.name}
                                 </Text>
                                 <Button
@@ -282,20 +288,20 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 <Divider />
 
                 <View style={styles.section}>
-                    <Text variant="titleMedium">Objekttypen</Text>
+                    <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Objekttypen</Text>
                     <View style={styles.formRow}>
                         <TextInput
                             mode="outlined"
                             label={editingObjectTypeId ? "Objekttyp bearbeiten" : "Neuer Objekttyp"}
                             value={objectTypeName}
                             onChangeText={setObjectTypeName}
-                            style={styles.input}
+                            style={[styles.input, isDarkMode && styles.inputDark]}
                         />
                         <Button mode="contained" onPress={handleCreateObjectType} disabled={isSaving}>
                             {editingObjectTypeId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
-                    <ScrollView style={styles.listPanel} contentContainerStyle={styles.list}>
+                    <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
                         {sortedObjectTypes.map((objectType) => (
                             <HoverRow
                                 key={objectType.id}
@@ -305,8 +311,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                     setEditingObjectTypeId(objectType.id);
                                     setError(null);
                                 }}
+                                isDarkMode={isDarkMode}
                             >
-                                <Text variant="bodyMedium" style={styles.rowItemText}>
+                                <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                     {objectType.name}
                                 </Text>
                                 <Button
@@ -327,13 +334,14 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 <Divider />
 
                 <View style={styles.section}>
-                    <Text variant="titleMedium">Modelle</Text>
+                    <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Modelle</Text>
                     <View style={styles.formColumn}>
                         <TextInput
                             mode="outlined"
                             label={editingModelId ? "Modell bearbeiten" : "Modellname"}
                             value={modelName}
                             onChangeText={setModelName}
+                            style={isDarkMode ? styles.inputDark : undefined}
                         />
                         <TextInput
                             mode="outlined"
@@ -343,6 +351,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             onPressIn={() => setShowBrandDialog(true)}
                             showSoftInputOnFocus={false}
                             right={<TextInput.Icon icon="chevron-down" />}
+                            style={isDarkMode ? styles.inputDark : undefined}
                         />
                         <TextInput
                             mode="outlined"
@@ -352,15 +361,16 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             onPressIn={() => setShowObjectTypeDialog(true)}
                             showSoftInputOnFocus={false}
                             right={<TextInput.Icon icon="chevron-down" />}
+                            style={isDarkMode ? styles.inputDark : undefined}
                         />
                         <Button mode="contained" onPress={handleCreateModel} disabled={isSaving}>
                             {editingModelId ? "Speichern" : "Modell anlegen"}
                         </Button>
                     </View>
-                    <Text variant="bodySmall" style={styles.subtleText}>
-                        Hersteller und Objekttyp werden jetzt ueber die vorhandenen Stammdaten ausgewaehlt.
+                    <Text variant="bodySmall" style={[styles.subtleText, isDarkMode && styles.subtleTextDark]}>
+                        Hersteller und Objekttyp werden jetzt über die vorhandenen Stammdaten ausgewählt.
                     </Text>
-                    <ScrollView style={styles.largeListPanel} contentContainerStyle={styles.list}>
+                    <ScrollView style={[styles.largeListPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
                         {modelRows.map((model) => (
                             <HoverRow
                                 key={model.id}
@@ -380,8 +390,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                     setEditingModelId(currentModel.id);
                                     setError(null);
                                 }}
+                                isDarkMode={isDarkMode}
                             >
-                                <Text variant="bodyMedium" style={styles.rowItemText}>
+                                <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                     {model.label}
                                 </Text>
                                 <Button
@@ -413,7 +424,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 
                 <View style={styles.footer}>
                     <Button mode="outlined" onPress={handleDismiss}>
-                        Schliessen
+                        Schließen
                     </Button>
                 </View>
             </ScrollView>
@@ -421,7 +432,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             <SelectionDialog
                 visible={showBrandDialog}
                 onDismiss={() => setShowBrandDialog(false)}
-                title="Hersteller auswaehlen"
+                title="Hersteller auswählen"
                 searchQuery={brandSearchQuery}
                 onSearchChange={setBrandSearchQuery}
                 items={sortedBrands}
@@ -440,7 +451,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             <SelectionDialog
                 visible={showObjectTypeDialog}
                 onDismiss={() => setShowObjectTypeDialog(false)}
-                title="Objekttyp auswaehlen"
+                title="Objekttyp auswählen"
                 searchQuery={objectTypeSearchQuery}
                 onSearchChange={setObjectTypeSearchQuery}
                 items={sortedObjectTypes}
@@ -466,6 +477,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         maxHeight: "90%",
     },
+    modalDark: {
+        backgroundColor: "#151a22",
+        borderWidth: 1,
+        borderColor: "#263140",
+    },
     content: {
         padding: 20,
         gap: 16,
@@ -475,6 +491,9 @@ const styles = StyleSheet.create({
     },
     section: {
         gap: 12,
+    },
+    titleDark: {
+        color: "#f3f4f6",
     },
     formRow: {
         flexDirection: "row",
@@ -486,6 +505,9 @@ const styles = StyleSheet.create({
     },
     input: {
         flex: 1,
+    },
+    inputDark: {
+        backgroundColor: "#0f141b",
     },
     list: {
         gap: 6,
@@ -505,6 +527,10 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         backgroundColor: "#fafbfc",
     },
+    listPanelDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
     rowItem: {
         flexDirection: "row",
         alignItems: "center",
@@ -517,6 +543,9 @@ const styles = StyleSheet.create({
         borderColor: "transparent",
         backgroundColor: "#ffffff",
     },
+    rowItemDark: {
+        backgroundColor: "#161b22",
+    },
     rowItemHover: {
         backgroundColor: "#f3f7ff",
         borderColor: "#c7dafc",
@@ -528,8 +557,14 @@ const styles = StyleSheet.create({
     rowItemText: {
         flex: 1,
     },
+    rowItemTextDark: {
+        color: "#f3f4f6",
+    },
     subtleText: {
         color: "#5f6368",
+    },
+    subtleTextDark: {
+        color: "#9aa4b2",
     },
     footer: {
         flexDirection: "row",
