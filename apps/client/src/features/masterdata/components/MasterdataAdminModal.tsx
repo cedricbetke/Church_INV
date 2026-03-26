@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Divider, HelperText, Modal, Text, TextInput } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
@@ -67,36 +67,67 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [showObjectTypeDialog, setShowObjectTypeDialog] = useState(false);
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [objectTypeSearchQuery, setObjectTypeSearchQuery] = useState("");
+    const [brandListQuery, setBrandListQuery] = useState("");
+    const [objectTypeListQuery, setObjectTypeListQuery] = useState("");
+    const [modelListQuery, setModelListQuery] = useState("");
     const [editingBrandId, setEditingBrandId] = useState<number | null>(null);
     const [editingObjectTypeId, setEditingObjectTypeId] = useState<number | null>(null);
     const [editingModelId, setEditingModelId] = useState<number | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isContentReady, setIsContentReady] = useState(false);
 
     if (!visible) {
         return null;
     }
 
+    useEffect(() => {
+        setIsContentReady(false);
+        const timer = setTimeout(() => {
+            setIsContentReady(true);
+        }, 0);
+
+        return () => clearTimeout(timer);
+    }, []);
+
     const sortedBrands = useMemo(
-        () => [...brands].sort((left, right) => left.name.localeCompare(right.name, "de")),
-        [brands],
+        () => (isContentReady ? [...brands].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
+        [brands, isContentReady],
     );
     const sortedObjectTypes = useMemo(
-        () => [...objekttypen].sort((left, right) => left.name.localeCompare(right.name, "de")),
-        [objekttypen],
+        () => (isContentReady ? [...objekttypen].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
+        [objekttypen, isContentReady],
     );
-    const modelRows = useMemo(() => {
-        return [...models]
-            .sort((left, right) => left.name.localeCompare(right.name, "de"))
-            .map((model) => {
-                const brand = brands.find((entry) => entry.id === model.hersteller_id)?.name ?? "Unbekannt";
-                const objectType = objekttypen.find((entry) => entry.id === model.objekttyp_id)?.name ?? "Unbekannt";
-                return {
-                    id: model.id,
-                    label: `${model.name} · ${brand} · ${objectType}`,
-                };
-            });
-    }, [brands, models, objekttypen]);
+    const modelRows = useMemo(
+        () => (
+            isContentReady
+                ? [...models]
+                    .sort((left, right) => left.name.localeCompare(right.name, "de"))
+                    .map((model) => {
+                        const brand = brands.find((entry) => entry.id === model.hersteller_id)?.name ?? "Unbekannt";
+                        const objectType = objekttypen.find((entry) => entry.id === model.objekttyp_id)?.name ?? "Unbekannt";
+                        return {
+                            id: model.id,
+                            label: `${model.name} · ${brand} · ${objectType}`,
+                        };
+                    })
+                : []
+        ),
+        [brands, models, objekttypen, isContentReady],
+    );
+
+    const filteredBrands = useMemo(
+        () => sortedBrands.filter((brand) => normalize(brand.name).includes(normalize(brandListQuery))),
+        [sortedBrands, brandListQuery],
+    );
+    const filteredObjectTypes = useMemo(
+        () => sortedObjectTypes.filter((objectType) => normalize(objectType.name).includes(normalize(objectTypeListQuery))),
+        [sortedObjectTypes, objectTypeListQuery],
+    );
+    const filteredModelRows = useMemo(
+        () => modelRows.filter((model) => normalize(model.label).includes(normalize(modelListQuery))),
+        [modelRows, modelListQuery],
+    );
 
     const resetForm = () => {
         setBrandName("");
@@ -108,6 +139,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setShowObjectTypeDialog(false);
         setBrandSearchQuery("");
         setObjectTypeSearchQuery("");
+        setBrandListQuery("");
+        setObjectTypeListQuery("");
+        setModelListQuery("");
         setEditingBrandId(null);
         setEditingObjectTypeId(null);
         setEditingModelId(null);
@@ -245,6 +279,15 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     </Text>
                 </View>
 
+                {!isContentReady ? (
+                    <View style={[styles.loadingState, isDarkMode && styles.loadingStateDark]}>
+                        <Text style={[styles.loadingStateText, isDarkMode && styles.loadingStateTextDark]}>
+                            Stammdaten werden geladen...
+                        </Text>
+                    </View>
+                ) : (
+                    <>
+
                 <View style={styles.section}>
                     <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Hersteller</Text>
                     <View style={styles.formRow}>
@@ -259,8 +302,15 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             {editingBrandId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
+                    <TextInput
+                        mode="outlined"
+                        label="Hersteller suchen"
+                        value={brandListQuery}
+                        onChangeText={setBrandListQuery}
+                        style={isDarkMode ? styles.inputDark : undefined}
+                    />
                     <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
-                        {sortedBrands.map((brand) => (
+                        {filteredBrands.map((brand) => (
                             <HoverRow
                                 key={brand.id}
                                 active={editingBrandId === brand.id}
@@ -286,6 +336,11 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 </Button>
                             </HoverRow>
                         ))}
+                        {filteredBrands.length === 0 && (
+                            <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
+                                Keine Hersteller für diese Suche.
+                            </Text>
+                        )}
                     </ScrollView>
                 </View>
 
@@ -305,8 +360,15 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             {editingObjectTypeId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
+                    <TextInput
+                        mode="outlined"
+                        label="Objekttyp suchen"
+                        value={objectTypeListQuery}
+                        onChangeText={setObjectTypeListQuery}
+                        style={isDarkMode ? styles.inputDark : undefined}
+                    />
                     <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
-                        {sortedObjectTypes.map((objectType) => (
+                        {filteredObjectTypes.map((objectType) => (
                             <HoverRow
                                 key={objectType.id}
                                 active={editingObjectTypeId === objectType.id}
@@ -332,6 +394,11 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 </Button>
                             </HoverRow>
                         ))}
+                        {filteredObjectTypes.length === 0 && (
+                            <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
+                                Keine Objekttypen für diese Suche.
+                            </Text>
+                        )}
                     </ScrollView>
                 </View>
 
@@ -371,11 +438,18 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             {editingModelId ? "Speichern" : "Modell anlegen"}
                         </Button>
                     </View>
+                    <TextInput
+                        mode="outlined"
+                        label="Modelle suchen"
+                        value={modelListQuery}
+                        onChangeText={setModelListQuery}
+                        style={isDarkMode ? styles.inputDark : undefined}
+                    />
                     <Text variant="bodySmall" style={[styles.subtleText, isDarkMode && styles.subtleTextDark]}>
-                        Hersteller und Objekttyp werden jetzt über die vorhandenen Stammdaten ausgewählt.
+                        Hersteller und Objekttyp werden über die vorhandenen Stammdaten ausgewählt.
                     </Text>
                     <ScrollView style={[styles.largeListPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
-                        {modelRows.map((model) => (
+                        {filteredModelRows.map((model) => (
                             <HoverRow
                                 key={model.id}
                                 active={editingModelId === model.id}
@@ -421,6 +495,11 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 </Button>
                             </HoverRow>
                         ))}
+                        {filteredModelRows.length === 0 && (
+                            <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
+                                Keine Modelle für diese Suche.
+                            </Text>
+                        )}
                     </ScrollView>
                 </View>
 
@@ -431,6 +510,8 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         Schließen
                     </Button>
                 </View>
+                    </>
+                )}
             </ScrollView>
 
             <SelectionDialog
@@ -568,6 +649,32 @@ const styles = StyleSheet.create({
         color: "#5f6368",
     },
     subtleTextDark: {
+        color: "#9aa4b2",
+    },
+    loadingState: {
+        paddingVertical: 24,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: "#e3e7ee",
+        borderRadius: 12,
+        backgroundColor: "#fafbfc",
+    },
+    loadingStateDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
+    loadingStateText: {
+        color: "#5f6368",
+    },
+    loadingStateTextDark: {
+        color: "#9aa4b2",
+    },
+    emptyListText: {
+        color: "#5f6368",
+        paddingHorizontal: 8,
+        paddingVertical: 10,
+    },
+    emptyListTextDark: {
         color: "#9aa4b2",
     },
     footer: {

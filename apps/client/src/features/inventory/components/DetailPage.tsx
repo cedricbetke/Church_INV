@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Modal, Portal as PaperPortal, Button, Surface, Text } from "react-native-paper";
+import { Modal, Portal as PaperPortal, Button, Surface, Text, ActivityIndicator } from "react-native-paper";
 import { Alert, Image, ScrollView, View, StyleSheet, Platform, Linking } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
@@ -136,19 +135,6 @@ const DetailModal: React.FC<DetailModalProps> = ({
 
         let isActive = true;
 
-        void geraeteService.getHistory(selectedItem.invNr)
-            .then((entries) => {
-                if (isActive) {
-                    setHistoryEntries(entries);
-                }
-            })
-            .catch((error) => {
-                console.error("Fehler beim Laden des Geräteverlaufs:", error);
-                if (isActive) {
-                    setHistoryEntries([]);
-                }
-            });
-
         void dokumenteService.getAllByGeraetId(selectedItem.invNr)
             .then((items) => {
                 if (!isActive) {
@@ -174,6 +160,34 @@ const DetailModal: React.FC<DetailModalProps> = ({
             isActive = false;
         };
     }, [visible, selectedItem]);
+
+    useEffect(() => {
+        if (!visible || !selectedItem || !isHistoryExpanded) {
+            if (!isHistoryExpanded) {
+                setHistoryEntries([]);
+            }
+            return;
+        }
+
+        let isActive = true;
+
+        void geraeteService.getHistory(selectedItem.invNr)
+            .then((entries) => {
+                if (isActive) {
+                    setHistoryEntries(entries);
+                }
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden des Geräteverlaufs:", error);
+                if (isActive) {
+                    setHistoryEntries([]);
+                }
+            });
+
+        return () => {
+            isActive = false;
+        };
+    }, [visible, selectedItem, isHistoryExpanded]);
 
     const confirmDelete = async (item: InventoryItem) => {
         if (Platform.OS === "web") {
@@ -440,9 +454,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#6a6a6a",
         marginBottom: 18,
-    },
-    subtitleDark: {
-        color: "#9aa4b2",
     },
     heroCard: {
         padding: 20,
