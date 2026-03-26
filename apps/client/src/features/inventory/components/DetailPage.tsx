@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Modal, Portal as PaperPortal, Button, Surface, Text } from "react-native-paper";
 import { Alert, Image, ScrollView, View, StyleSheet, Platform, Linking } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
@@ -112,6 +113,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
     const { isDarkMode } = useAppThemeMode();
     const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+    const [isPhotoLoading, setIsPhotoLoading] = useState(false);
     const groupedHistoryEntries = useMemo(
         () => groupHistoryEntries(historyEntries),
         [historyEntries],
@@ -121,8 +123,11 @@ const DetailModal: React.FC<DetailModalProps> = ({
         if (!visible || !selectedItem) {
             setHistoryEntries([]);
             setIsHistoryExpanded(false);
+            setIsPhotoLoading(false);
             return;
         }
+
+        setIsPhotoLoading(Boolean(selectedItem.geraeteFoto));
 
         let isActive = true;
 
@@ -191,11 +196,24 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                 <View style={styles.heroContent}>
                                     <View style={[styles.imageFrame, isDarkMode && styles.imageFrameDark]}>
                                         {selectedItem.geraeteFoto ? (
-                                            <Image
-                                                source={{ uri: selectedItem.geraeteFoto }}
-                                                style={styles.image}
-                                                resizeMode="contain"
-                                            />
+                                            <View style={styles.imageWrapper}>
+                                                <Image
+                                                    source={{ uri: selectedItem.geraeteFoto }}
+                                                    style={styles.image}
+                                                    resizeMode="contain"
+                                                    onLoadStart={() => setIsPhotoLoading(true)}
+                                                    onLoadEnd={() => setIsPhotoLoading(false)}
+                                                    onError={() => setIsPhotoLoading(false)}
+                                                />
+                                                {isPhotoLoading && (
+                                                    <View style={[styles.imageLoadingOverlay, isDarkMode && styles.imageLoadingOverlayDark]}>
+                                                        <ActivityIndicator animating size="small" color={isDarkMode ? "#dbe6f5" : "#0f5ea8"} />
+                                                        <Text style={[styles.imageLoadingText, isDarkMode && styles.imageLoadingTextDark]}>
+                                                            Foto wird geladen
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                         ) : (
                                             <View style={[styles.imagePlaceholder, isDarkMode && styles.imagePlaceholderDark]}>
                                                 <Text style={[styles.imagePlaceholderText, isDarkMode && styles.imagePlaceholderTextDark]}>Kein Foto hinterlegt</Text>
@@ -431,6 +449,31 @@ const styles = StyleSheet.create({
         height: 220,
         borderRadius: 14,
         backgroundColor: "#ffffff",
+    },
+    imageWrapper: {
+        width: 220,
+        height: 220,
+        borderRadius: 14,
+        overflow: "hidden",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    imageLoadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        backgroundColor: "rgba(255, 255, 255, 0.82)",
+    },
+    imageLoadingOverlayDark: {
+        backgroundColor: "rgba(17, 22, 29, 0.78)",
+    },
+    imageLoadingText: {
+        color: "#5f6b78",
+        fontSize: 12,
+    },
+    imageLoadingTextDark: {
+        color: "#d6dbe3",
     },
     imagePlaceholder: {
         width: 220,

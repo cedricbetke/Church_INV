@@ -50,7 +50,8 @@ Hinweise:
 5. Dokumente importieren
 6. Foto-Import pruefen
 7. Fotos importieren
-8. falls noetig falsch importierte Foto-Dokumente bereinigen
+8. Vorschaubilder fuer bestehende Fotos erzeugen
+9. falls noetig falsch importierte Foto-Dokumente bereinigen
 
 ## 1. Inventar-Import
 
@@ -163,7 +164,32 @@ Bei Erfolg:
 
 - `InvNr 218` kann je nach SharePoint-Zustand ein manueller Restfall bleiben
 
-## 4. Cleanup falsch importierter Foto-Dokumente
+## 4. Thumbnail-Backfill fuer Tabellenvorschau
+
+Bestehende Fotos koennen nachtraeglich kleine Vorschaubilder bekommen, damit die Tabelle nicht immer die Vollbilder laden muss.
+
+Dry run:
+
+```bash
+npm run backfill:photo-thumbs -- --dry-run
+```
+
+Echter Lauf:
+
+```bash
+npm run backfill:photo-thumbs
+```
+
+Report:
+
+- `import/photo-thumbnail-backfill-report.json`
+
+Bei Erfolg:
+
+- Vorschaubilder werden unter `apps/api/uploads/geraete/thumbs` gespeichert
+- die Tabellenansicht nutzt diese kleineren Dateien statt der Vollbilder
+
+## 5. Cleanup falsch importierter Foto-Dokumente
 
 Falls vor dem Fix SharePoint-Bilder irrtuemlich als Dokumente importiert wurden, entfernt der Cleanup diese Dubletten wieder aus:
 

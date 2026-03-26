@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import type { APIRequestContext } from "playwright";
 import { request } from "playwright";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const { ensureThumbnailForStoredPhoto } = require("../apps/api/src/utils/photoThumbnails");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const db = require("../apps/api/src/config/db");
@@ -379,6 +381,7 @@ const main = async () => {
                 const storedAbsolutePath = path.join(uploadDir, storedFileName);
 
                 fs.writeFileSync(storedAbsolutePath, photoBuffer);
+                await ensureThumbnailForStoredPhoto(storedRelativePath);
                 await db.query("UPDATE geraet SET geraetefoto_url = ? WHERE inv_nr = ?", [storedRelativePath, invNr]);
 
                 geraetMap.set(invNr, storedRelativePath);

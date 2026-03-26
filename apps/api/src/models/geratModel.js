@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const db = require('../config/db');
+const { deleteThumbnailForStoredPhoto, getExistingThumbnailRelativePath } = require('../utils/photoThumbnails');
 
 const uploadsRootDir = path.resolve(__dirname, '..', '..', 'uploads');
 
@@ -14,6 +15,10 @@ const deleteUploadedFile = (storedPath) => {
 
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
+    }
+
+    if (storedPath.startsWith('/uploads/geraete/')) {
+        deleteThumbnailForStoredPhoto(storedPath);
     }
 };
 
@@ -44,7 +49,10 @@ const Geraet = {
             LEFT JOIN kategorie k ON g.kategorie_id = k.id
             LEFT JOIN person p ON g.verantwortlicher_id = p.id
         `);
-        return rows;
+        return rows.map((row) => ({
+            ...row,
+            geraetefoto_thumb_url: getExistingThumbnailRelativePath(row.geraetefoto_url),
+        }));
     },
 
     getById: async (id) => {

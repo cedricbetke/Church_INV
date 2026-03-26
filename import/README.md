@@ -111,6 +111,26 @@ Der Foto-Import schreibt einen Report nach:
 
 - `import/photos-import-report.json`
 
+## Thumbnail-Backfill fuer Tabellenvorschau
+
+Fuer eine schnellere Tabellenansicht koennen bestehende Geraetefotos nachtraeglich kleine Vorschaubilder erhalten.
+
+Dry run:
+
+```bash
+npm run backfill:photo-thumbs -- --dry-run
+```
+
+Echter Lauf:
+
+```bash
+npm run backfill:photo-thumbs
+```
+
+Der Backfill schreibt einen Report nach:
+
+- `import/photo-thumbnail-backfill-report.json`
+
 ## Cleanup falsch importierter Foto-Dokumente
 
 Falls der Dokument-Import vor dem Fix schon `Reserved_ImageAttachment_...`-Dateien als normale Dokumente aufgenommen hat, kannst du sie damit gezielt wieder entfernen.
@@ -139,4 +159,5 @@ Der Cleanup schreibt einen Report nach:
 - Bilder und Dokumente werden getrennt importiert.
 - SharePoint-Reservierungsbilder wie `Reserved_ImageAttachment_...jpg` werden im Dokument-Import bewusst uebersprungen, damit sie nicht doppelt als Dokument und Foto landen.
 - Bilder landen unter `apps/api/uploads/geraete`.
+- Vorschaubilder fuer die Tabelle landen unter `apps/api/uploads/geraete/thumbs`.
 - Dokumente landen unter `apps/api/uploads/dokumente`.

@@ -10,6 +10,7 @@ interface InventoryListItemDto {
     einkaufspreis: number | null;
     zustandshinweis: string | null;
     geraetefoto_url: string | null;
+    geraetefoto_thumb_url?: string | null;
     Status: string;
     Hersteller: string | null;
     Objekttyp: string | null;
@@ -56,6 +57,7 @@ const inventoryMapper = {
             bereich: item.Bereich,
             kategorie: item.Kategorie ?? undefined,
             geraeteFoto: item.geraetefoto_url ? apiClient.resolveAssetUrl(item.geraetefoto_url) : undefined,
+            geraeteFotoThumb: item.geraetefoto_thumb_url ? apiClient.resolveAssetUrl(item.geraetefoto_thumb_url) : undefined,
             attachments: attachmentsByGeraet.get(item.inv_nr) ?? [],
         }));
     },

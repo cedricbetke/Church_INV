@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "backfill:photo-thumbs": "npx tsx scripts/backfill-photo-thumbnails.ts",
     "cleanup:photo-documents": "npx tsx scripts/cleanup-photo-documents.ts",
     "import:teams-documents": "npx tsx scripts/import-teams-documents.ts",
     "import:teams-photos": "npx tsx scripts/import-teams-photos.ts",

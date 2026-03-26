@@ -337,13 +337,26 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                 <DataTable.Cell key={column.key} numeric={column.numeric}>
                                     {column.key === "foto" ? (
                                         item.geraeteFoto ? (
-                                            <Image source={{ uri: item.geraeteFoto }} style={styles.image} />
+                                            <View style={[styles.thumbnailFrame, isDarkMode && styles.thumbnailFrameDark]}>
+                                                <Image
+                                                    source={{ uri: item.geraeteFotoThumb ?? item.geraeteFoto }}
+                                                    style={styles.image}
+                                                    resizeMode="cover"
+                                                />
+                                            </View>
                                         ) : (
-                                            <MaterialIcons
-                                                name="image-not-supported"
-                                                size={22}
-                                                color={isDarkMode ? "#7f8b99" : "#888"}
-                                            />
+                                            <View
+                                                style={[
+                                                    styles.photoStatus,
+                                                    isDarkMode && styles.photoStatusDark,
+                                                ]}
+                                            >
+                                                <MaterialIcons
+                                                    name="image-not-supported"
+                                                    size={18}
+                                                    color={isDarkMode ? "#7f8b99" : "#888"}
+                                                />
+                                            </View>
                                         )
                                     ) : (
                                         <Text style={[styles.cellText, isDarkMode && styles.cellTextDark]}>
@@ -607,10 +620,36 @@ const styles = StyleSheet.create({
         backgroundColor: "#1b212c",
         borderTopColor: "#2a3340",
     },
+    photoStatus: {
+        width: 34,
+        height: 34,
+        borderRadius: 10,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f1f3f6",
+        borderWidth: 1,
+        borderColor: "#e2e7ee",
+    },
+    photoStatusDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#2a3340",
+    },
+    thumbnailFrame: {
+        width: 42,
+        height: 42,
+        borderRadius: 10,
+        overflow: "hidden",
+        backgroundColor: "#eef2f6",
+        borderWidth: 1,
+        borderColor: "#dbe3ec",
+    },
+    thumbnailFrameDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#2a3340",
+    },
     image: {
-        width: 50,
-        height: 50,
-        borderRadius: 5,
+        width: "100%",
+        height: "100%",
     },
     emptyState: {
         paddingVertical: 24,

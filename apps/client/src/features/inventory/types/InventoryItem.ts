@@ -5,6 +5,7 @@ interface InventoryItem {
     status: string;
     hersteller?: string;
     geraeteFoto?: string;
+    geraeteFotoThumb?: string;
     modell: string;
     objekttyp?: string;
     seriennummer?: string;

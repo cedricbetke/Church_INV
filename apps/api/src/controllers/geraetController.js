@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Geraet = require('../models/geratModel');
 const GeraetVerlauf = require('../models/geraetVerlaufModel');
+const { ensureThumbnailForStoredPhoto } = require('../utils/photoThumbnails');
 const geraeteUploadDir = path.resolve(__dirname, '..', '..', 'uploads', 'geraete');
 
 const getAllGeraete = async (req, res) => {
@@ -63,6 +64,7 @@ const uploadGeraetFoto = async (req, res) => {
         const finalFileName = `${Date.now()}_${safeBaseName}.${extension}`;
         fs.mkdirSync(geraeteUploadDir, { recursive: true });
         fs.writeFileSync(path.join(geraeteUploadDir, finalFileName), base64Data, 'base64');
+        await ensureThumbnailForStoredPhoto(`/uploads/geraete/${finalFileName}`);
 
         res.status(201).json({
             path: `/uploads/geraete/${finalFileName}`,
