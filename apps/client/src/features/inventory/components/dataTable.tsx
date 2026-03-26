@@ -74,7 +74,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const { width } = useWindowDimensions();
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
-    const isCompactMobile = Platform.OS !== "web" && width < 640;
+    const isCompactMobile = width < 640;
 
     const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();

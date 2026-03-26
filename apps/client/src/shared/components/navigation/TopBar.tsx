@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { router } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
@@ -9,6 +9,8 @@ import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesMod
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 const TopBar = () => {
+    const { width } = useWindowDimensions();
+    const isCompactViewport = width < 640;
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showMasterdataModal, setShowMasterdataModal] = useState(false);
     const [showPatchNotesModal, setShowPatchNotesModal] = useState(false);
@@ -51,12 +53,13 @@ const TopBar = () => {
 
     return (
         <View>
-            <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark]}>
+            <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark, isCompactViewport && styles.headerCompact]}>
                 <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => {}} />
-                <Appbar.Content title="ChurchINV" titleStyle={[styles.title, isDarkMode && styles.titleDark]} />
+                <Appbar.Content title="ChurchINV" titleStyle={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]} />
                 <View
                     style={[
                         styles.adminBadge,
+                        isCompactViewport && styles.adminBadgeCompact,
                         isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive,
                         isDarkMode && (isAdminSessionActive ? styles.adminBadgeActiveDark : styles.adminBadgeInactiveDark),
                     ]}
@@ -64,11 +67,14 @@ const TopBar = () => {
                     <Text
                         style={[
                             styles.adminBadgeText,
+                            isCompactViewport && styles.adminBadgeTextCompact,
                             isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive,
                             isDarkMode && (isAdminSessionActive ? styles.adminBadgeTextActiveDark : styles.adminBadgeTextInactiveDark),
                         ]}
                     >
-                        {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
+                        {isCompactViewport
+                            ? (isAdminSessionActive ? "Admin" : "Lesen")
+                            : (isAdminSessionActive ? "Admin aktiv" : "Nur lesen")}
                     </Text>
                 </View>
                 <Appbar.Action
@@ -194,6 +200,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
         minHeight: 68,
     },
+    headerCompact: {
+        paddingHorizontal: 4,
+        minHeight: 60,
+    },
     headerDark: {
         backgroundColor: "#121722",
         borderBottomColor: "#212938",
@@ -203,6 +213,9 @@ const styles = StyleSheet.create({
         fontSize: 23,
         fontWeight: "700",
         letterSpacing: -0.35,
+    },
+    titleCompact: {
+        fontSize: 19,
     },
     titleDark: {
         color: "#f5f7fb",
@@ -235,6 +248,11 @@ const styles = StyleSheet.create({
         marginRight: 8,
         borderWidth: 1,
     },
+    adminBadgeCompact: {
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        marginRight: 4,
+    },
     adminBadgeActive: {
         backgroundColor: "#eef6ee",
         borderColor: "#cfe5cf",
@@ -255,6 +273,9 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: "600",
         letterSpacing: 0.1,
+    },
+    adminBadgeTextCompact: {
+        fontSize: 10,
     },
     adminBadgeTextActive: {
         color: "#2d6a36",
