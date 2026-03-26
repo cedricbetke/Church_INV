@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Modal, Portal as PaperPortal, Button, Surface, Text, ActivityIndicator } from "react-native-paper";
-import { Alert, Image, ScrollView, View, StyleSheet, Platform, Linking } from "react-native";
+import { Alert, Image, ScrollView, View, StyleSheet, Platform, Linking, useWindowDimensions } from "react-native";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { Column } from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
@@ -42,8 +42,8 @@ const formatCurrency = (value?: number) => {
 const getDisplayValue = (value?: string) => value?.trim() || "Nicht gesetzt";
 const isUnsetValue = (value: string) => value === "Nicht gesetzt";
 
-const DetailRow = ({ label, value, isDarkMode }: { label: string; value: string; isDarkMode: boolean }) => (
-    <View style={styles.detailItem}>
+const DetailRow = ({ label, value, isDarkMode, compact = false }: { label: string; value: string; isDarkMode: boolean; compact?: boolean }) => (
+    <View style={[styles.detailItem, compact && styles.detailItemCompact]}>
         <Surface style={[styles.detailCard, isDarkMode && styles.detailCardDark]}>
             <Text style={[styles.cardLabel, isDarkMode && styles.cardLabelDark]}>{label}</Text>
             <Text style={[styles.cardValue, isDarkMode && styles.cardValueDark, isUnsetValue(value) && styles.cardValueMuted]}>{value}</Text>
@@ -113,6 +113,8 @@ const DetailModal: React.FC<DetailModalProps> = ({
     onDelete,
 }) => {
     const { isDarkMode } = useAppThemeMode();
+    const { width } = useWindowDimensions();
+    const isCompactViewport = width < 760;
     const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
@@ -222,7 +224,11 @@ const DetailModal: React.FC<DetailModalProps> = ({
             <Modal
                 visible={visible}
                 onDismiss={onDismiss}
-                contentContainerStyle={[styles.modalContainer, isDarkMode && styles.modalContainerDark]}
+                contentContainerStyle={[
+                    styles.modalContainer,
+                    isDarkMode && styles.modalContainerDark,
+                    isCompactViewport && styles.modalContainerCompact,
+                ]}
             >
                 <ScrollView>
                     {selectedItem && (
@@ -233,7 +239,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                             <Text style={styles.subtitle}>Inventarübersicht und aktuelle Zuordnung</Text>
 
                             <Surface style={[styles.heroCard, isDarkMode && styles.heroCardDark]}>
-                                <View style={styles.heroContent}>
+                                <View style={[styles.heroContent, isCompactViewport && styles.heroContentCompact]}>
                                     <View style={[styles.imageFrame, isDarkMode && styles.imageFrameDark]}>
                                         {selectedItem.geraeteFoto ? (
                                             <View style={styles.imageWrapper}>
@@ -260,17 +266,17 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                             </View>
                                         )}
                                     </View>
-                                    <View style={styles.heroMeta}>
-                                        <Text style={[styles.heroTitle, isDarkMode && styles.heroTitleDark]}>{selectedItem.modell}</Text>
+                                    <View style={[styles.heroMeta, isCompactViewport && styles.heroMetaCompact]}>
+                                        <Text style={[styles.heroTitle, isDarkMode && styles.heroTitleDark, isCompactViewport && styles.heroTitleCompact]}>{selectedItem.modell}</Text>
                                         <Text style={[styles.heroSubtitle, isDarkMode && styles.heroSubtitleDark]}>
                                             Inventarnummer {selectedItem.invNr}
                                         </Text>
                                         <View style={styles.heroBadgeRow}>
-                                            <View style={[styles.heroBadge, isDarkMode && styles.heroBadgeDark]}>
+                                            <View style={[styles.heroBadge, isDarkMode && styles.heroBadgeDark, isCompactViewport && styles.heroBadgeCompact]}>
                                                 <Text style={[styles.heroBadgeLabel, isDarkMode && styles.heroBadgeLabelDark]}>Status</Text>
                                                 <Text style={[styles.heroBadgeValue, isDarkMode && styles.heroBadgeValueDark]}>{getDisplayValue(selectedItem.status)}</Text>
                                             </View>
-                                            <View style={[styles.heroBadge, isDarkMode && styles.heroBadgeDark]}>
+                                            <View style={[styles.heroBadge, isDarkMode && styles.heroBadgeDark, isCompactViewport && styles.heroBadgeCompact]}>
                                                 <Text style={[styles.heroBadgeLabel, isDarkMode && styles.heroBadgeLabelDark]}>Bereich</Text>
                                                 <Text style={[styles.heroBadgeValue, isDarkMode && styles.heroBadgeValueDark]}>{getDisplayValue(selectedItem.bereich)}</Text>
                                             </View>
@@ -285,14 +291,14 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                 </View>
                                 <View style={styles.detailGrid}>
-                                    <DetailRow label="Status" value={getDisplayValue(selectedItem.status)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Hersteller" value={getDisplayValue(selectedItem.hersteller)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Objekttyp" value={getDisplayValue(selectedItem.objekttyp)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Modell" value={getDisplayValue(selectedItem.modell)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Bereich" value={getDisplayValue(selectedItem.bereich)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Standort" value={getDisplayValue(selectedItem.standort)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Kategorie" value={getDisplayValue(selectedItem.kategorie)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Verantwortlicher" value={getDisplayValue(selectedItem.verantwortlicher)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Status" value={getDisplayValue(selectedItem.status)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Hersteller" value={getDisplayValue(selectedItem.hersteller)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Objekttyp" value={getDisplayValue(selectedItem.objekttyp)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Modell" value={getDisplayValue(selectedItem.modell)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Bereich" value={getDisplayValue(selectedItem.bereich)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Standort" value={getDisplayValue(selectedItem.standort)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Kategorie" value={getDisplayValue(selectedItem.kategorie)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Verantwortlicher" value={getDisplayValue(selectedItem.verantwortlicher)} isDarkMode={isDarkMode} compact={isCompactViewport} />
                                 </View>
                             </View>
 
@@ -302,14 +308,15 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     <View style={[styles.sectionLine, isDarkMode && styles.sectionLineDark]} />
                                 </View>
                                 <View style={styles.detailGrid}>
-                                    <DetailRow label="Kaufdatum" value={formatDate(selectedItem.kaufdatum)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Zustandshinweis" value={getDisplayValue(selectedItem.zustandshinweis)} isDarkMode={isDarkMode} />
-                                    <DetailRow label="Seriennummer" value={getDisplayValue(selectedItem.seriennummer)} isDarkMode={isDarkMode} />
+                                    <DetailRow label="Kaufdatum" value={formatDate(selectedItem.kaufdatum)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Zustandshinweis" value={getDisplayValue(selectedItem.zustandshinweis)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Seriennummer" value={getDisplayValue(selectedItem.seriennummer)} isDarkMode={isDarkMode} compact={isCompactViewport} />
                                     <DetailRow
                                         label="Foto"
                                         value={selectedItem.geraeteFoto ? "Vorhanden" : "Nicht gesetzt"}
                                         isDarkMode={isDarkMode}
+                                        compact={isCompactViewport}
                                     />
                                 </View>
                             </View>
@@ -324,7 +331,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                         <Text style={[styles.emptyAttachmentText, isDarkMode && styles.emptyAttachmentTextDark]}>Noch keine Dokumente hinterlegt.</Text>
                                     ) : (
                                         attachments.map((attachment) => (
-                                            <View key={attachment.id} style={[styles.attachmentRow, isDarkMode && styles.attachmentRowDark]}>
+                                            <View key={attachment.id} style={[styles.attachmentRow, isDarkMode && styles.attachmentRowDark, isCompactViewport && styles.attachmentRowCompact]}>
                                                 <View style={styles.attachmentMeta}>
                                                     <Text style={[styles.attachmentName, isDarkMode && styles.attachmentNameDark]}>{attachment.name}</Text>
                                                     <Text style={[styles.attachmentInfo, isDarkMode && styles.attachmentInfoDark]}>
@@ -363,7 +370,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                         ) : (
                                             groupedHistoryEntries.map((group) => (
                                                 <View key={group.key} style={[styles.historyGroupCard, isDarkMode && styles.historyGroupCardDark]}>
-                                                    <View style={styles.historyGroupHeader}>
+                                                    <View style={[styles.historyGroupHeader, isCompactViewport && styles.historyGroupHeaderCompact]}>
                                                         <Text style={[styles.historyGroupTitle, isDarkMode && styles.historyGroupTitleDark]}>
                                                             {getHistoryGroupTitle(group.aktion, group.entries.length)}
                                                         </Text>
@@ -385,7 +392,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                 )}
                             </View>
 
-                            <View style={styles.buttonRow}>
+                            <View style={[styles.buttonRow, isCompactViewport && styles.buttonRowCompact]}>
                                 {canManageInventory && (
                                     <>
                                         <Button
@@ -441,6 +448,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#151a22",
         borderColor: "#263140",
     },
+    modalContainerCompact: {
+        margin: 8,
+        padding: 14,
+        width: undefined,
+        maxWidth: undefined,
+        alignSelf: "stretch",
+        maxHeight: "94%",
+    },
     title: {
         fontSize: 28,
         fontWeight: "bold",
@@ -472,6 +487,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         gap: 24,
+    },
+    heroContentCompact: {
+        flexDirection: "column",
+        alignItems: "stretch",
+        gap: 16,
     },
     imageFrame: {
         padding: 10,
@@ -541,10 +561,17 @@ const styles = StyleSheet.create({
         flex: 1,
         width: Platform.OS === "web" ? undefined : "100%",
     },
+    heroMetaCompact: {
+        width: "100%",
+    },
     heroTitle: {
         fontSize: 30,
         fontWeight: "bold",
         color: "#222222",
+    },
+    heroTitleCompact: {
+        fontSize: 22,
+        lineHeight: 28,
     },
     heroTitleDark: {
         color: "#f3f4f6",
@@ -571,6 +598,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#e2e5ea",
         minWidth: 140,
+    },
+    heroBadgeCompact: {
+        minWidth: 0,
+        flexBasis: "100%",
     },
     heroBadgeDark: {
         backgroundColor: "#11161d",
@@ -625,6 +656,9 @@ const styles = StyleSheet.create({
     detailItem: {
         width: Platform.OS === "web" ? "49%" : "100%",
         marginBottom: 12,
+    },
+    detailItemCompact: {
+        width: "100%",
     },
     detailCard: {
         padding: 14,
@@ -686,6 +720,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#f0f2f5",
     },
+    attachmentRowCompact: {
+        flexDirection: "column",
+        alignItems: "flex-start",
+    },
     attachmentRowDark: {
         borderBottomColor: "#263140",
     },
@@ -736,6 +774,10 @@ const styles = StyleSheet.create({
         alignItems: Platform.OS === "web" ? "center" : "flex-start",
         gap: 6,
     },
+    historyGroupHeaderCompact: {
+        flexDirection: "column",
+        alignItems: "flex-start",
+    },
     historyGroupTitle: {
         fontSize: 15,
         fontWeight: "600",
@@ -765,6 +807,9 @@ const styles = StyleSheet.create({
     buttonRow: {
         flexDirection: "row",
         gap: 12,
+    },
+    buttonRowCompact: {
+        flexDirection: "column",
     },
     button: {
         marginTop: 8,
