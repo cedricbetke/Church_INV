@@ -1,0 +1,1051 @@
+{
+  "meta": {
+    "generated_at_utc": "2026-03-26T17:37:54.880Z",
+    "service_type_count": 8,
+    "plan_count": 92,
+    "derived_service_type_count": 1,
+    "derived_plan_count": 5,
+    "gbk_series_plan_count": 5
+  },
+  "service_types": [
+    {
+      "id": "227874",
+      "name": "01_Gottesdienst",
+      "updated_at": "2024-11-13T09:17:31Z",
+      "plans": [
+        {
+          "id": "83946316",
+          "title": "Chor",
+          "dates": "29 March 2026",
+          "short_dates": "29 Mar 2026",
+          "sort_date": "2026-03-29T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/83946316",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84457880",
+          "title": "Karfreitag - Abendmahl",
+          "dates": "3 April 2026",
+          "short_dates": "3 Apr 2026",
+          "sort_date": "2026-04-03T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84457880",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089697",
+          "title": "Ostern (9 & 11 Kindermusical)",
+          "dates": "5 April 2026",
+          "short_dates": "5 Apr 2026",
+          "sort_date": "2026-04-05T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089697",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089698",
+          "title": null,
+          "dates": "12 April 2026",
+          "short_dates": "12 Apr 2026",
+          "sort_date": "2026-04-12T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089698",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089699",
+          "title": null,
+          "dates": "19 April 2026",
+          "short_dates": "19 Apr 2026",
+          "sort_date": "2026-04-19T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089699",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089700",
+          "title": null,
+          "dates": "26 April 2026",
+          "short_dates": "26 Apr 2026",
+          "sort_date": "2026-04-26T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089700",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089701",
+          "title": "Abendmahl",
+          "dates": "3 May 2026",
+          "short_dates": "3 May 2026",
+          "sort_date": "2026-05-03T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089701",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089702",
+          "title": null,
+          "dates": "10 May 2026",
+          "short_dates": "10 May 2026",
+          "sort_date": "2026-05-10T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089702",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84457875",
+          "title": null,
+          "dates": "14 May 2026",
+          "short_dates": "14 May 2026",
+          "sort_date": "2026-05-14T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84457875",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089703",
+          "title": null,
+          "dates": "17 May 2026",
+          "short_dates": "17 May 2026",
+          "sort_date": "2026-05-17T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089703",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089704",
+          "title": null,
+          "dates": "24 May 2026",
+          "short_dates": "24 May 2026",
+          "sort_date": "2026-05-24T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089704",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089705",
+          "title": null,
+          "dates": "31 May 2026",
+          "short_dates": "31 May 2026",
+          "sort_date": "2026-05-31T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089705",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089706",
+          "title": null,
+          "dates": "7 June 2026",
+          "short_dates": "7 Jun 2026",
+          "sort_date": "2026-06-07T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089706",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089707",
+          "title": null,
+          "dates": "14 June 2026",
+          "short_dates": "14 Jun 2026",
+          "sort_date": "2026-06-14T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089707",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089708",
+          "title": null,
+          "dates": "21 June 2026",
+          "short_dates": "21 Jun 2026",
+          "sort_date": "2026-06-21T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089708",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089717",
+          "title": null,
+          "dates": "28 June 2026",
+          "short_dates": "28 Jun 2026",
+          "sort_date": "2026-06-28T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089717",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089718",
+          "title": null,
+          "dates": "5 July 2026",
+          "short_dates": "5 Jul 2026",
+          "sort_date": "2026-07-05T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089718",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089719",
+          "title": "Chor",
+          "dates": "12 July 2026",
+          "short_dates": "12 Jul 2026",
+          "sort_date": "2026-07-12T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089719",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089720",
+          "title": null,
+          "dates": "19 July 2026",
+          "short_dates": "19 Jul 2026",
+          "sort_date": "2026-07-19T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089720",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84089721",
+          "title": null,
+          "dates": "26 July 2026",
+          "short_dates": "26 Jul 2026",
+          "sort_date": "2026-07-26T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84089721",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "349570",
+      "name": "05_Sonderveranstaltungen",
+      "updated_at": "2022-09-01T18:48:39Z",
+      "plans": [
+        {
+          "id": "86325696",
+          "title": "Gebets- & Fasttag",
+          "dates": "27 March 2026",
+          "short_dates": "27 Mar 2026",
+          "sort_date": "2026-03-27T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86325696",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86664945",
+          "title": "Kundgebung Heumarkt",
+          "dates": "4 April 2026",
+          "short_dates": "4 Apr 2026",
+          "sort_date": "2026-04-04T14:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86664945",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87752068",
+          "title": "Kinder-Action-Tag",
+          "dates": "25 April 2026",
+          "short_dates": "25 Apr 2026",
+          "sort_date": "2026-04-25T11:15:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87752068",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87563362",
+          "title": "Hochzeit Leon Unruh",
+          "dates": "29 August 2026",
+          "short_dates": "29 Aug 2026",
+          "sort_date": "2026-08-29T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87563362",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "360894",
+      "name": "02_Gebets-/Kennenlernabend/MV",
+      "updated_at": "2025-11-10T07:49:57Z",
+      "plans": [
+        {
+          "id": "84971502",
+          "title": "Gebetsgottesdienst (Ostern)",
+          "dates": "1 April 2026",
+          "short_dates": "1 Apr 2026",
+          "sort_date": "2026-04-01T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971502",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84971503",
+          "title": "Gebetsgottesdienst",
+          "dates": "15 April 2026",
+          "short_dates": "15 Apr 2026",
+          "sort_date": "2026-04-15T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971503",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87717321",
+          "title": "Mitgliederversammlung",
+          "dates": "29 April 2026",
+          "short_dates": "29 Apr 2026",
+          "sort_date": "2026-04-29T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87717321",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84971508",
+          "title": "Gebetsgottesdienst",
+          "dates": "6 May 2026",
+          "short_dates": "6 May 2026",
+          "sort_date": "2026-05-06T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971508",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84971509",
+          "title": "Gebetsgottesdienst",
+          "dates": "20 May 2026",
+          "short_dates": "20 May 2026",
+          "sort_date": "2026-05-20T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971509",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86285756",
+          "title": "Kennenlernabend",
+          "dates": "27 May 2026",
+          "short_dates": "27 May 2026",
+          "sort_date": "2026-05-27T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86285756",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86285757",
+          "title": "Kennenlernabend",
+          "dates": "31 May 2026",
+          "short_dates": "31 May 2026",
+          "sort_date": "2026-05-31T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86285757",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86285759",
+          "title": "Kennenlernabend",
+          "dates": "3 June 2026",
+          "short_dates": "3 Jun 2026",
+          "sort_date": "2026-06-03T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86285759",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84971511",
+          "title": "Gebetsgottesdienst",
+          "dates": "17 June 2026",
+          "short_dates": "17 Jun 2026",
+          "sort_date": "2026-06-17T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971511",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84971512",
+          "title": "Gebetsgottesdienst",
+          "dates": "1 July 2026",
+          "short_dates": "1 Jul 2026",
+          "sort_date": "2026-07-01T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971512",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "84971515",
+          "title": "Gebetsgottesdienst",
+          "dates": "15 July 2026",
+          "short_dates": "15 Jul 2026",
+          "sort_date": "2026-07-15T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/84971515",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86879335",
+          "title": "Kennenlernabend",
+          "dates": "26 August 2026",
+          "short_dates": "26 Aug 2026",
+          "sort_date": "2026-08-26T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86879335",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86879338",
+          "title": "Kennenlernabend",
+          "dates": "30 August 2026",
+          "short_dates": "30 Aug 2026",
+          "sort_date": "2026-08-30T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86879338",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86879341",
+          "title": "Kennenlernabend",
+          "dates": "2 September 2026",
+          "short_dates": "2 Sept 2026",
+          "sort_date": "2026-09-02T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86879341",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86879432",
+          "title": "Kennenlernabend",
+          "dates": "25 November 2026",
+          "short_dates": "25 Nov 2026",
+          "sort_date": "2026-11-25T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86879432",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86879440",
+          "title": "Kennenlernabend",
+          "dates": "29 November 2026",
+          "short_dates": "29 Nov 2026",
+          "sort_date": "2026-11-29T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86879440",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86879453",
+          "title": "Kennenlernabend",
+          "dates": "2 December 2026",
+          "short_dates": "2 Dec 2026",
+          "sort_date": "2026-12-02T19:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86879453",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "597730",
+      "name": "04_Jugend",
+      "updated_at": "2024-01-28T16:40:48Z",
+      "plans": [
+        {
+          "id": "87224181",
+          "title": null,
+          "dates": "27 March 2026",
+          "short_dates": "27 Mar 2026",
+          "sort_date": "2026-03-27T20:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87224181",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87896525",
+          "title": null,
+          "dates": "3 April 2026",
+          "short_dates": "3 Apr 2026",
+          "sort_date": "2026-04-03T20:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87896525",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87896526",
+          "title": null,
+          "dates": "10 April 2026",
+          "short_dates": "10 Apr 2026",
+          "sort_date": "2026-04-10T20:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87896526",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87896527",
+          "title": null,
+          "dates": "17 April 2026",
+          "short_dates": "17 Apr 2026",
+          "sort_date": "2026-04-17T20:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87896527",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87896531",
+          "title": null,
+          "dates": "24 April 2026",
+          "short_dates": "24 Apr 2026",
+          "sort_date": "2026-04-24T20:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87896531",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "1084873",
+      "name": "03_Bibelcafé",
+      "updated_at": "2021-12-29T18:44:57Z",
+      "plans": [
+        {
+          "id": "85531040",
+          "title": null,
+          "dates": "17 April 2026",
+          "short_dates": "17 Apr 2026",
+          "sort_date": "2026-04-17T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531040",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531068",
+          "title": null,
+          "dates": "24 April 2026",
+          "short_dates": "24 Apr 2026",
+          "sort_date": "2026-04-24T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531068",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531082",
+          "title": null,
+          "dates": "8 May 2026",
+          "short_dates": "8 May 2026",
+          "sort_date": "2026-05-08T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531082",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531114",
+          "title": null,
+          "dates": "22 May 2026",
+          "short_dates": "22 May 2026",
+          "sort_date": "2026-05-22T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531114",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531119",
+          "title": null,
+          "dates": "29 May 2026",
+          "short_dates": "29 May 2026",
+          "sort_date": "2026-05-29T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531119",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531144",
+          "title": null,
+          "dates": "12 June 2026",
+          "short_dates": "12 Jun 2026",
+          "sort_date": "2026-06-12T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531144",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531151",
+          "title": null,
+          "dates": "19 June 2026",
+          "short_dates": "19 Jun 2026",
+          "sort_date": "2026-06-19T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531151",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531163",
+          "title": null,
+          "dates": "26 June 2026",
+          "short_dates": "26 Jun 2026",
+          "sort_date": "2026-06-26T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531163",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531194",
+          "title": null,
+          "dates": "3 July 2026",
+          "short_dates": "3 Jul 2026",
+          "sort_date": "2026-07-03T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531194",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531298",
+          "title": null,
+          "dates": "10 July 2026",
+          "short_dates": "10 Jul 2026",
+          "sort_date": "2026-07-10T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531298",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531300",
+          "title": null,
+          "dates": "17 July 2026",
+          "short_dates": "17 Jul 2026",
+          "sort_date": "2026-07-17T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531300",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531469",
+          "title": null,
+          "dates": "4 September 2026",
+          "short_dates": "4 Sept 2026",
+          "sort_date": "2026-09-04T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531469",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531726",
+          "title": null,
+          "dates": "11 September 2026",
+          "short_dates": "11 Sept 2026",
+          "sort_date": "2026-09-11T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531726",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531737",
+          "title": null,
+          "dates": "18 September 2026",
+          "short_dates": "18 Sept 2026",
+          "sort_date": "2026-09-18T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531737",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531749",
+          "title": null,
+          "dates": "25 September 2026",
+          "short_dates": "25 Sept 2026",
+          "sort_date": "2026-09-25T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531749",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531768",
+          "title": null,
+          "dates": "2 October 2026",
+          "short_dates": "2 Oct 2026",
+          "sort_date": "2026-10-02T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531768",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531772",
+          "title": null,
+          "dates": "9 October 2026",
+          "short_dates": "9 Oct 2026",
+          "sort_date": "2026-10-09T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531772",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531790",
+          "title": null,
+          "dates": "16 October 2026",
+          "short_dates": "16 Oct 2026",
+          "sort_date": "2026-10-16T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531790",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531842",
+          "title": null,
+          "dates": "6 November 2026",
+          "short_dates": "6 Nov 2026",
+          "sort_date": "2026-11-06T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531842",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "85531950",
+          "title": null,
+          "dates": "13 November 2026",
+          "short_dates": "13 Nov 2026",
+          "sort_date": "2026-11-13T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/85531950",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "1351872",
+      "name": "08_Russischer Gottesdienst",
+      "updated_at": "2026-02-04T13:15:27Z",
+      "plans": [
+        {
+          "id": "86061599",
+          "title": null,
+          "dates": "29 March 2026",
+          "short_dates": "29 Mar 2026",
+          "sort_date": "2026-03-29T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061599",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061617",
+          "title": "Страстная пятница/Вечеря",
+          "dates": "3 April 2026",
+          "short_dates": "3 Apr 2026",
+          "sort_date": "2026-04-03T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061617",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061642",
+          "title": "Пасха",
+          "dates": "5 April 2026",
+          "short_dates": "5 Apr 2026",
+          "sort_date": "2026-04-05T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061642",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061694",
+          "title": null,
+          "dates": "12 April 2026",
+          "short_dates": "12 Apr 2026",
+          "sort_date": "2026-04-12T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061694",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061695",
+          "title": null,
+          "dates": "19 April 2026",
+          "short_dates": "19 Apr 2026",
+          "sort_date": "2026-04-19T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061695",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061696",
+          "title": null,
+          "dates": "26 April 2026",
+          "short_dates": "26 Apr 2026",
+          "sort_date": "2026-04-26T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061696",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061697",
+          "title": "Вечеря",
+          "dates": "3 May 2026",
+          "short_dates": "3 May 2026",
+          "sort_date": "2026-05-03T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061697",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061698",
+          "title": "День матери",
+          "dates": "10 May 2026",
+          "short_dates": "10 May 2026",
+          "sort_date": "2026-05-10T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061698",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061699",
+          "title": null,
+          "dates": "17 May 2026",
+          "short_dates": "17 May 2026",
+          "sort_date": "2026-05-17T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061699",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86061738",
+          "title": null,
+          "dates": "24 May 2026",
+          "short_dates": "24 May 2026",
+          "sort_date": "2026-05-24T15:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86061738",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "1434361",
+      "name": "06_Jungen Erwachsenen Arbeit",
+      "updated_at": "2024-08-30T16:14:32Z",
+      "plans": [
+        {
+          "id": "86369121",
+          "title": null,
+          "dates": "18 April 2026",
+          "short_dates": "18 Apr 2026",
+          "sort_date": "2026-04-18T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369121",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369122",
+          "title": null,
+          "dates": "16 May 2026",
+          "short_dates": "16 May 2026",
+          "sort_date": "2026-05-16T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369122",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369123",
+          "title": null,
+          "dates": "20 June 2026",
+          "short_dates": "20 Jun 2026",
+          "sort_date": "2026-06-20T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369123",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369124",
+          "title": null,
+          "dates": "18 July 2026",
+          "short_dates": "18 Jul 2026",
+          "sort_date": "2026-07-18T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369124",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369125",
+          "title": null,
+          "dates": "15 August 2026",
+          "short_dates": "15 Aug 2026",
+          "sort_date": "2026-08-15T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369125",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369126",
+          "title": null,
+          "dates": "19 September 2026",
+          "short_dates": "19 Sept 2026",
+          "sort_date": "2026-09-19T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369126",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369127",
+          "title": "Special JET - Gebet und Fasten",
+          "dates": "17 October 2026",
+          "short_dates": "17 Oct 2026",
+          "sort_date": "2026-10-17T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369127",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "87628852",
+          "title": "Generationsübergreifend - Senioren Ü60",
+          "dates": "14 November 2026",
+          "short_dates": "14 Nov 2026",
+          "sort_date": "2026-11-14T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87628852",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369128",
+          "title": null,
+          "dates": "21 November 2026",
+          "short_dates": "21 Nov 2026",
+          "sort_date": "2026-11-21T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369128",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369129",
+          "title": "Weihnachtsfeier",
+          "dates": "19 December 2026",
+          "short_dates": "19 Dec 2026",
+          "sort_date": "2026-12-19T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369129",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "86369130",
+          "title": null,
+          "dates": "16 January 2027",
+          "short_dates": "16 Jan 2027",
+          "sort_date": "2027-01-16T19:30:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/86369130",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    },
+    {
+      "id": "1491609",
+      "name": "07_Teeny",
+      "updated_at": "2024-05-16T21:21:12Z",
+      "plans": [
+        {
+          "id": "87342622",
+          "title": null,
+          "dates": "27 March 2026",
+          "short_dates": "27 Mar 2026",
+          "sort_date": "2026-03-27T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/87342622",
+          "series_title": "Gebets&Fasttag",
+          "series_id": "2959507"
+        },
+        {
+          "id": "88001549",
+          "title": null,
+          "dates": "3 April 2026",
+          "short_dates": "3 Apr 2026",
+          "sort_date": "2026-04-03T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/88001549",
+          "series_title": "Osterferien",
+          "series_id": "2959502"
+        },
+        {
+          "id": "88001579",
+          "title": null,
+          "dates": "10 April 2026",
+          "short_dates": "10 Apr 2026",
+          "sort_date": "2026-04-10T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/88001579",
+          "series_title": "Osterferien",
+          "series_id": "2959502"
+        },
+        {
+          "id": "88001648",
+          "title": null,
+          "dates": "17 April 2026",
+          "short_dates": "17 Apr 2026",
+          "sort_date": "2026-04-17T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/88001648",
+          "series_title": null,
+          "series_id": null
+        },
+        {
+          "id": "88001655",
+          "title": null,
+          "dates": "24 April 2026",
+          "short_dates": "24 Apr 2026",
+          "sort_date": "2026-04-24T18:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/88001655",
+          "series_title": null,
+          "series_id": null
+        }
+      ]
+    }
+  ],
+  "derived_service_types": [
+    {
+      "id": "349570::series::GBK",
+      "name": "05_Sonderveranstaltungen::GBK",
+      "updated_at": "2022-09-01T18:48:39Z",
+      "plans": [
+        {
+          "id": "81617210",
+          "title": "Seelsorge 7. Seminartag",
+          "dates": "11 April 2026",
+          "short_dates": "11 Apr 2026",
+          "sort_date": "2026-04-11T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/81617210",
+          "series_title": "GBK",
+          "series_id": "2491383"
+        },
+        {
+          "id": "81617211",
+          "title": "Seelsorge 8. Seminartag",
+          "dates": "9 May 2026",
+          "short_dates": "9 May 2026",
+          "sort_date": "2026-05-09T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/81617211",
+          "series_title": "GBK",
+          "series_id": "2491383"
+        },
+        {
+          "id": "81617212",
+          "title": "Seelsorge 9. Seminartag",
+          "dates": "6 June 2026",
+          "short_dates": "6 Jun 2026",
+          "sort_date": "2026-06-06T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/81617212",
+          "series_title": "GBK",
+          "series_id": "2491383"
+        },
+        {
+          "id": "81617213",
+          "title": "Seelsorge 10. Seminartag",
+          "dates": "4 July 2026",
+          "short_dates": "4 Jul 2026",
+          "sort_date": "2026-07-04T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/81617213",
+          "series_title": "GBK",
+          "series_id": "2491383"
+        },
+        {
+          "id": "81617269",
+          "title": "GBK Absolvierung",
+          "dates": "5 September 2026",
+          "short_dates": "5 Sept 2026",
+          "sort_date": "2026-09-05T09:00:00Z",
+          "planning_center_url": "https://services.planningcenteronline.com/plans/81617269",
+          "series_title": "GBK",
+          "series_id": "2491383"
+        }
+      ],
+      "virtual": true,
+      "source_service_type_id": "349570",
+      "source_service_type_name": "05_Sonderveranstaltungen",
+      "source_series_title": "GBK"
+    }
+  ]
+}
