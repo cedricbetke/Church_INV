@@ -1,0 +1,10 @@
+.git
+.expo
+node_modules
+apps/client/node_modules
+apps/api/node_modules
+apps/client/dist
+apps/api/dist
+apps/api/uploads
+import
+docs/patch-notes/*.ts

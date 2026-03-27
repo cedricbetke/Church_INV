@@ -12,6 +12,7 @@ Wenn du neu im Projekt bist, lies in dieser Reihenfolge:
 1. [Setup und Betrieb](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/setup.md)
 2. [Funktionen und Workflows](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/features.md)
 3. [Architektur](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/architecture.md)
+4. [Deployment](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/deployment.md)
 
 Wenn du mit echten Bestandsdaten arbeitest:
 
@@ -55,6 +56,9 @@ ChurchINV verwaltet:
 
 - [Patch Notes](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
   Menschenlesbare Aenderungshistorie.
+
+- [Deployment](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/deployment.md)
+  Diese Seite beschreibt den Docker-Deploy auf einem Linux-Server inkl. Upload-Volume.
 
 ## Technischer Kurzueberblick
 
