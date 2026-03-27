@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { router } from "expo-router";
 import { Linking, StyleSheet, View, useWindowDimensions } from "react-native";
-import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
+import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput, Tooltip } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
 import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
@@ -64,6 +64,33 @@ const TopBar = () => {
         void Linking.openURL(FEATURE_ISSUE_URL);
     };
 
+    const renderAction = (
+        icon: string,
+        tooltip: string,
+        onPress: () => void,
+        options?: { style?: object },
+    ) => (
+        <Tooltip
+            title={tooltip}
+            enterTouchDelay={350}
+            leaveTouchDelay={50}
+            theme={{
+                roundness: 10,
+                colors: {
+                    onSurface: isDarkMode ? "#253041" : "#445160",
+                    surface: isDarkMode ? "#dbe6f5" : "#f5f7fb",
+                },
+            }}
+        >
+            <Appbar.Action
+                icon={icon}
+                color={isDarkMode ? "#dbe6f5" : "#445160"}
+                onPress={onPress}
+                style={options?.style}
+            />
+        </Tooltip>
+    );
+
     return (
         <View>
             <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark, isCompactViewport && styles.headerCompact]}>
@@ -74,24 +101,15 @@ const TopBar = () => {
                     </Text>
                     {!isCompactViewport && (
                         <>
-                            <Appbar.Action
-                                icon="text-box-outline"
-                                color={isDarkMode ? "#dbe6f5" : "#445160"}
-                                style={styles.leftClusterAction}
-                                onPress={() => setShowPatchNotesModal(true)}
-                            />
-                            <Appbar.Action
-                                icon="bug-outline"
-                                color={isDarkMode ? "#dbe6f5" : "#445160"}
-                                style={styles.leftClusterAction}
-                                onPress={handleOpenBugReport}
-                            />
-                            <Appbar.Action
-                                icon="lightbulb-outline"
-                                color={isDarkMode ? "#dbe6f5" : "#445160"}
-                                style={styles.leftClusterAction}
-                                onPress={handleOpenFeatureRequest}
-                            />
+                            {renderAction("text-box-outline", "Patch Notes", () => setShowPatchNotesModal(true), {
+                                style: styles.leftClusterAction,
+                            })}
+                            {renderAction("bug-outline", "Bug", handleOpenBugReport, {
+                                style: styles.leftClusterAction,
+                            })}
+                            {renderAction("lightbulb-outline", "Feature", handleOpenFeatureRequest, {
+                                style: styles.leftClusterAction,
+                            })}
                         </>
                     )}
                 </View>
@@ -115,39 +133,25 @@ const TopBar = () => {
                         </Text>
                     </View>
                 )}
-                {canManageInventory && (
-                    <Appbar.Action
-                        icon="calendar-plus"
-                        color={isDarkMode ? "#dbe6f5" : "#445160"}
-                        onPress={() => router.push("/bookings")}
-                    />
-                )}
-                <Appbar.Action
-                    icon={isDarkMode ? "weather-sunny" : "moon-waning-crescent"}
-                    color={isDarkMode ? "#dbe6f5" : "#445160"}
-                    onPress={toggleTheme}
-                />
-                {isAdminLoginConfigured && (
-                    <Appbar.Action
-                        icon={isAdminSessionActive ? "lock-open-outline" : "lock-outline"}
-                        color={isDarkMode ? "#dbe6f5" : "#445160"}
-                        onPress={() => setShowAdminModal(true)}
-                    />
-                )}
-                {canManageInventory && (
-                    <Appbar.Action
-                        icon="database-cog-outline"
-                        color={isDarkMode ? "#dbe6f5" : "#445160"}
-                        onPress={() => setShowMasterdataModal(true)}
-                    />
-                )}
-                {canManageInventory && !isCompactViewport && (
-                    <Appbar.Action
-                        icon="plus"
-                        color={isDarkMode ? "#dbe6f5" : "#445160"}
-                        onPress={() => setIsAddPageVisible(true)}
-                    />
-                )}
+                <View style={styles.rightCluster}>
+                    {canManageInventory && (
+                        renderAction("calendar-plus", "Buchungen", () => router.push("/bookings"))
+                    )}
+                    {renderAction(isDarkMode ? "weather-sunny" : "moon-waning-crescent", isDarkMode ? "Hell" : "Dunkel", toggleTheme)}
+                    {isAdminLoginConfigured && (
+                        renderAction(
+                            isAdminSessionActive ? "lock-open-outline" : "lock-outline",
+                            isAdminSessionActive ? "Admin aus" : "Admin an",
+                            () => setShowAdminModal(true),
+                        )
+                    )}
+                    {canManageInventory && (
+                        renderAction("database-cog-outline", "Stammdaten", () => setShowMasterdataModal(true))
+                    )}
+                    {canManageInventory && !isCompactViewport && (
+                        renderAction("plus", "Neu", () => setIsAddPageVisible(true))
+                    )}
+                </View>
             </Appbar.Header>
 
             <Portal>
@@ -253,6 +257,10 @@ const styles = StyleSheet.create({
     headerSpacer: {
         flex: 1,
         minWidth: 0,
+    },
+    rightCluster: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     title: {
         color: "#111111",
