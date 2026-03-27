@@ -26,6 +26,7 @@ export const patchNotesData: PatchNotesData = {
                 "Patch Notes wurden in der Standard-Webansicht direkt neben dem ChurchINV-Titel platziert",
                 "Bug- und Feature-Buttons oeffnen direkt die passende GitHub-Issue-Maske mit vorbereiteten Labels",
                 "Die wichtigsten Topbar-Symbole haben jetzt unaufdringliche Tooltips fuer bessere Orientierung",
+                "Buchungen zeigen Konflikte mit bestehenden Reservierungen jetzt direkt als sichtbaren Warnblock mit betroffenen Inventarnummern",
             ],
         },
         {
