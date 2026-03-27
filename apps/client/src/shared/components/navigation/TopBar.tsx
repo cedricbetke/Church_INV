@@ -1,12 +1,17 @@
 import * as React from "react";
 import { useState } from "react";
 import { router } from "expo-router";
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { Linking, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
 import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
+
+const BUG_ISSUE_URL =
+    "https://github.com/cedricbetke/Church_INV/issues/new?labels=bug&title=Bug%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20ist%20kaputt%20oder%20unerwartet%3F%0A-%20Wie%20kann%20man%20es%20nachstellen%3F%0A-%20Auf%20welcher%20Ansicht%20oder%20welchem%20Geraet%20passiert%20es%3F%0A";
+const FEATURE_ISSUE_URL =
+    "https://github.com/cedricbetke/Church_INV/issues/new?labels=enhancement&title=Feature%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20wuenschst%20du%20dir%3F%0A-%20Welches%20Problem%20wuerde%20das%20loesen%3F%0A-%20Wie%20sollte%20es%20sich%20verhalten%3F%0A";
 
 const TopBar = () => {
     const { width } = useWindowDimensions();
@@ -51,6 +56,14 @@ const TopBar = () => {
         setShowAdminModal(false);
     };
 
+    const handleOpenBugReport = () => {
+        void Linking.openURL(BUG_ISSUE_URL);
+    };
+
+    const handleOpenFeatureRequest = () => {
+        void Linking.openURL(FEATURE_ISSUE_URL);
+    };
+
     return (
         <View>
             <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark, isCompactViewport && styles.headerCompact]}>
@@ -60,12 +73,26 @@ const TopBar = () => {
                         ChurchINV
                     </Text>
                     {!isCompactViewport && (
-                        <Appbar.Action
-                            icon="text-box-outline"
-                            color={isDarkMode ? "#dbe6f5" : "#445160"}
-                            style={styles.leftClusterAction}
-                            onPress={() => setShowPatchNotesModal(true)}
-                        />
+                        <>
+                            <Appbar.Action
+                                icon="text-box-outline"
+                                color={isDarkMode ? "#dbe6f5" : "#445160"}
+                                style={styles.leftClusterAction}
+                                onPress={() => setShowPatchNotesModal(true)}
+                            />
+                            <Appbar.Action
+                                icon="bug-outline"
+                                color={isDarkMode ? "#dbe6f5" : "#445160"}
+                                style={styles.leftClusterAction}
+                                onPress={handleOpenBugReport}
+                            />
+                            <Appbar.Action
+                                icon="lightbulb-outline"
+                                color={isDarkMode ? "#dbe6f5" : "#445160"}
+                                style={styles.leftClusterAction}
+                                onPress={handleOpenFeatureRequest}
+                            />
+                        </>
                     )}
                 </View>
                 <View style={styles.headerSpacer} />
