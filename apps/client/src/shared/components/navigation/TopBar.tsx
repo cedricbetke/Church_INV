@@ -19,7 +19,6 @@ const TopBar = () => {
     const { isDarkMode, toggleTheme } = useAppThemeMode();
 
     const {
-        setIsAddPageVisible,
         canManageInventory,
         isAdminSessionActive,
         isAdminLoginConfigured,
@@ -77,11 +76,13 @@ const TopBar = () => {
                             : (isAdminSessionActive ? "Admin aktiv" : "Nur lesen")}
                     </Text>
                 </View>
-                <Appbar.Action
-                    icon="history"
-                    color={isDarkMode ? "#dbe6f5" : "#445160"}
-                    onPress={() => setShowPatchNotesModal(true)}
-                />
+                {!isCompactViewport && (
+                    <Appbar.Action
+                        icon="history"
+                        color={isDarkMode ? "#dbe6f5" : "#445160"}
+                        onPress={() => setShowPatchNotesModal(true)}
+                    />
+                )}
                 {canManageInventory && (
                     <Appbar.Action
                         icon="calendar-plus"
@@ -108,7 +109,7 @@ const TopBar = () => {
                         onPress={() => setShowMasterdataModal(true)}
                     />
                 )}
-                {canManageInventory && (
+                {canManageInventory && !isCompactViewport && (
                     <Appbar.Action
                         icon="plus"
                         color={isDarkMode ? "#dbe6f5" : "#445160"}

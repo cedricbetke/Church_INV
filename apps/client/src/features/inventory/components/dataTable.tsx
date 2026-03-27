@@ -68,7 +68,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         setFilters,
         isFilterVisible,
         setIsFilterVisible,
+        setIsAddPageVisible,
         setScannedCode,
+        canManageInventory,
     } = useInventory();
     const { isDarkMode } = useAppThemeMode();
     const { width } = useWindowDimensions();
@@ -174,6 +176,17 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                     style={[styles.searchActionButton, isDarkMode && styles.searchActionButtonDark]}
                                     onPress={() => setIsFilterVisible((prev) => !prev)}
                                 />
+                                {canManageInventory && isCompactMobile ? (
+                                    <IconButton
+                                        icon="plus"
+                                        mode="contained-tonal"
+                                        size={20}
+                                        containerColor={isDarkMode ? "#151c27" : "#ffffff"}
+                                        iconColor={isDarkMode ? "#dbe6f5" : "#445160"}
+                                        style={[styles.searchActionButton, isDarkMode && styles.searchActionButtonDark]}
+                                        onPress={() => setIsAddPageVisible(true)}
+                                    />
+                                ) : null}
                             </View>
                         </View>
                     </View>
@@ -506,6 +519,7 @@ const styles = StyleSheet.create({
     },
     searchToolsRowMobile: {
         width: "100%",
+        gap: 6,
     },
     searchbar: {
         flex: 1,
