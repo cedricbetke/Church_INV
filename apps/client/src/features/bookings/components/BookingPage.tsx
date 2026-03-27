@@ -707,6 +707,52 @@ const BookingPage = () => {
         );
     }, [selectedInvNrs]);
 
+    const currentBookingConflicts = useMemo(() => {
+        const normalizedStart = parseDateInput(startDatum);
+        const normalizedEnd = parseDateInput(endDatum);
+
+        if (!normalizedStart || !normalizedEnd || selectedInvNrs.length === 0) {
+            return [];
+        }
+
+        const startTime = new Date(normalizedStart).getTime();
+        const endTime = new Date(normalizedEnd).getTime();
+
+        if (Number.isNaN(startTime) || Number.isNaN(endTime) || startTime >= endTime) {
+            return [];
+        }
+
+        const selectedSet = new Set(selectedInvNrs);
+
+        return sortedBookings
+            .map((booking) => {
+                const bookingStart = new Date(booking.startDatum).getTime();
+                const bookingEnd = new Date(booking.endDatum).getTime();
+                const overlapsInTime = startTime < bookingEnd && endTime > bookingStart;
+
+                if (!overlapsInTime) {
+                    return null;
+                }
+
+                const overlappingDevices = booking.geraete.filter((geraet) => selectedSet.has(geraet.invNr));
+
+                if (overlappingDevices.length === 0) {
+                    return null;
+                }
+
+                return {
+                    booking,
+                    overlappingDevices,
+                };
+            })
+            .filter(Boolean) as Array<{
+            booking: Booking;
+            overlappingDevices: Booking["geraete"];
+        }>;
+    }, [startDatum, endDatum, selectedInvNrs, sortedBookings]);
+
+    const hasBlockingConflicts = currentBookingConflicts.length > 0;
+
     const bookingListContent = useMemo(() => {
         if (sortedBookings.length === 0 && !isLoading) {
             return (
@@ -866,6 +912,11 @@ const BookingPage = () => {
 
         if (!titel.trim() || !bucherName.trim() || !normalizedStart || !normalizedEnd || selectedInvNrs.length === 0) {
             setFeedback("Titel, Buchen fÃ¼r, Zeitraum und mindestens ein GerÃ¤t sind erforderlich.");
+            return;
+        }
+
+        if (hasBlockingConflicts) {
+            setFeedback("Die Buchung kollidiert mit bestehenden Reservierungen. Bitte Zeitraum oder Geraete anpassen.");
             return;
         }
 
@@ -1207,12 +1258,44 @@ const BookingPage = () => {
                             </Text>
                         )}
 
+                        {hasBlockingConflicts && (
+                            <Surface style={[styles.conflictCard, isDarkMode && styles.conflictCardDark]}>
+                                <Text style={[styles.conflictTitle, isDarkMode && styles.conflictTitleDark]}>
+                                    Konflikte mit bestehenden Buchungen
+                                </Text>
+                                <Text style={[styles.conflictHint, isDarkMode && styles.conflictHintDark]}>
+                                    Diese Kombination aus Zeitraum und Geräten überschneidet sich bereits mit vorhandenen Buchungen.
+                                </Text>
+
+                                <View style={styles.conflictList}>
+                                    {currentBookingConflicts.map(({ booking, overlappingDevices }) => (
+                                        <View key={`conflict-${booking.id}`} style={[styles.conflictItem, isDarkMode && styles.conflictItemDark]}>
+                                            <View style={styles.conflictItemHeader}>
+                                                <Text style={[styles.conflictBookingTitle, isDarkMode && styles.conflictTitleDark]}>
+                                                    {booking.titel}
+                                                </Text>
+                                                <Chip compact style={styles.conflictChip}>
+                                                    {booking.status}
+                                                </Chip>
+                                            </View>
+                                            <Text style={[styles.conflictMeta, isDarkMode && styles.conflictHintDark]}>
+                                                {formatDateRange(booking)}
+                                            </Text>
+                                            <Text style={[styles.conflictMeta, isDarkMode && styles.conflictHintDark]}>
+                                                Betroffene Geräte: {overlappingDevices.map((geraet) => `#${geraet.invNr}`).join(", ")}
+                                            </Text>
+                                        </View>
+                                    ))}
+                                </View>
+                            </Surface>
+                        )}
+
                         <View style={styles.actionRow}>
                             <Button mode="outlined" onPress={resetForm}>
                                 Leeren
                             </Button>
                             {canManageInventory && (
-                                <Button mode="contained" onPress={() => void handleCreateBooking()} loading={isSubmitting}>
+                                <Button mode="contained" onPress={() => void handleCreateBooking()} loading={isSubmitting} disabled={hasBlockingConflicts}>
                                     Buchung anlegen
                                 </Button>
                             )}
@@ -1813,6 +1896,65 @@ const styles = StyleSheet.create({
     },
     feedbackTextDark: {
         color: "#8abfff",
+    },
+    conflictCard: {
+        marginTop: 12,
+        padding: 14,
+        borderRadius: 14,
+        backgroundColor: "#fff4f4",
+        borderWidth: 1,
+        borderColor: "#ef9a9a",
+        gap: 10,
+    },
+    conflictCardDark: {
+        backgroundColor: "#2a1518",
+        borderColor: "#a4474f",
+    },
+    conflictTitle: {
+        fontSize: 15,
+        fontWeight: "700",
+        color: "#9f1d1d",
+    },
+    conflictTitleDark: {
+        color: "#ffb4b4",
+    },
+    conflictHint: {
+        fontSize: 13,
+        color: "#7f1d1d",
+    },
+    conflictHintDark: {
+        color: "#efc6c6",
+    },
+    conflictList: {
+        gap: 10,
+    },
+    conflictItem: {
+        paddingTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: "#f4c7c7",
+        gap: 4,
+    },
+    conflictItemDark: {
+        borderTopColor: "#60333a",
+    },
+    conflictItemHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: 8,
+    },
+    conflictBookingTitle: {
+        flex: 1,
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#7f1d1d",
+    },
+    conflictMeta: {
+        fontSize: 12,
+        color: "#7f1d1d",
+    },
+    conflictChip: {
+        backgroundColor: "#f7dede",
     },
     actionRow: {
         flexDirection: "row",
