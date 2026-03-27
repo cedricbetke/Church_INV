@@ -19,6 +19,7 @@ const TopBar = () => {
     const { isDarkMode, toggleTheme } = useAppThemeMode();
 
     const {
+        setIsAddPageVisible,
         canManageInventory,
         isAdminSessionActive,
         isAdminLoginConfigured,
@@ -54,34 +55,38 @@ const TopBar = () => {
         <View>
             <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark, isCompactViewport && styles.headerCompact]}>
                 <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => {}} />
-                <Appbar.Content title="ChurchINV" titleStyle={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]} />
-                <View
-                    style={[
-                        styles.adminBadge,
-                        isCompactViewport && styles.adminBadgeCompact,
-                        isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive,
-                        isDarkMode && (isAdminSessionActive ? styles.adminBadgeActiveDark : styles.adminBadgeInactiveDark),
-                    ]}
-                >
-                    <Text
+                <View style={styles.leftCluster}>
+                    <Text style={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]}>
+                        ChurchINV
+                    </Text>
+                    {!isCompactViewport && (
+                        <Appbar.Action
+                            icon="text-box-outline"
+                            color={isDarkMode ? "#dbe6f5" : "#445160"}
+                            style={styles.leftClusterAction}
+                            onPress={() => setShowPatchNotesModal(true)}
+                        />
+                    )}
+                </View>
+                <View style={styles.headerSpacer} />
+                {!isCompactViewport && (
+                    <View
                         style={[
-                            styles.adminBadgeText,
-                            isCompactViewport && styles.adminBadgeTextCompact,
-                            isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive,
-                            isDarkMode && (isAdminSessionActive ? styles.adminBadgeTextActiveDark : styles.adminBadgeTextInactiveDark),
+                            styles.adminBadge,
+                            isAdminSessionActive ? styles.adminBadgeActive : styles.adminBadgeInactive,
+                            isDarkMode && (isAdminSessionActive ? styles.adminBadgeActiveDark : styles.adminBadgeInactiveDark),
                         ]}
                     >
-                        {isCompactViewport
-                            ? (isAdminSessionActive ? "Admin" : "Lesen")
-                            : (isAdminSessionActive ? "Admin aktiv" : "Nur lesen")}
-                    </Text>
-                </View>
-                {!isCompactViewport && (
-                    <Appbar.Action
-                        icon="history"
-                        color={isDarkMode ? "#dbe6f5" : "#445160"}
-                        onPress={() => setShowPatchNotesModal(true)}
-                    />
+                        <Text
+                            style={[
+                                styles.adminBadgeText,
+                                isAdminSessionActive ? styles.adminBadgeTextActive : styles.adminBadgeTextInactive,
+                                isDarkMode && (isAdminSessionActive ? styles.adminBadgeTextActiveDark : styles.adminBadgeTextInactiveDark),
+                            ]}
+                        >
+                            {isAdminSessionActive ? "Admin aktiv" : "Nur lesen"}
+                        </Text>
+                    </View>
                 )}
                 {canManageInventory && (
                     <Appbar.Action
@@ -209,6 +214,19 @@ const styles = StyleSheet.create({
         backgroundColor: "#121722",
         borderBottomColor: "#212938",
     },
+    leftCluster: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+    },
+    leftClusterAction: {
+        marginLeft: 2,
+        marginRight: 0,
+    },
+    headerSpacer: {
+        flex: 1,
+        minWidth: 0,
+    },
     title: {
         color: "#111111",
         fontSize: 23,
@@ -216,7 +234,7 @@ const styles = StyleSheet.create({
         letterSpacing: -0.35,
     },
     titleCompact: {
-        fontSize: 19,
+        fontSize: 17,
     },
     titleDark: {
         color: "#f5f7fb",
