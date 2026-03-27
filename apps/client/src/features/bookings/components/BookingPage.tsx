@@ -541,8 +541,8 @@ const BookingPage = () => {
             const data = await pcoPlanSuggestionService.getAll();
             setPcoSuggestions(data);
         } catch (error) {
-            console.error("Fehler beim Laden der PCO-PlanvorschlÃ¤ge:", error);
-            setMappingFeedback("PCO-PlanvorschlÃ¤ge konnten nicht geladen werden.");
+            console.error("Fehler beim Laden der PCO-Planvorschläge:", error);
+            setMappingFeedback("PCO-Planvorschläge konnten nicht geladen werden.");
         } finally {
             setIsLoadingSuggestions(false);
         }
@@ -911,7 +911,7 @@ const BookingPage = () => {
         const normalizedEnd = parseDateInput(endDatum);
 
         if (!titel.trim() || !bucherName.trim() || !normalizedStart || !normalizedEnd || selectedInvNrs.length === 0) {
-            setFeedback("Titel, Buchen fÃ¼r, Zeitraum und mindestens ein GerÃ¤t sind erforderlich.");
+            setFeedback("Titel, Buchen für, Zeitraum und mindestens ein Gerät sind erforderlich.");
             return;
         }
 
@@ -990,7 +990,7 @@ const BookingPage = () => {
     const handleApplySuggestion = (suggestion: PcoPlanSuggestion) => {
         setTitel(suggestion.bookingTitle);
         setZweck(
-            `Aus Planning Center Ã¼bernommen · ${suggestion.serviceTypeName}${suggestion.seriesTitle ? ` · ${suggestion.seriesTitle}` : ""}`,
+            `Aus Planning Center übernommen · ${suggestion.serviceTypeName}${suggestion.seriesTitle ? ` · ${suggestion.seriesTitle}` : ""}`,
         );
         setStartDatum(formatDateForInput(new Date(suggestion.sortDate)));
 
@@ -999,7 +999,7 @@ const BookingPage = () => {
         }
 
         setSelectedInvNrs(suggestion.geraete.map((device) => device.invNr));
-        setFeedback(`PCO-Plan "${suggestion.displayTitle}" wurde ins Formular Ã¼bernommen.`);
+        setFeedback(`PCO-Plan "${suggestion.displayTitle}" wurde ins Formular übernommen.`);
     };
 
     const handleToggleMappingActive = async (mapping: PcoMapping) => {
@@ -1038,7 +1038,7 @@ const BookingPage = () => {
                 <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => router.back()} />
                 <Appbar.Content
                     title="Buchungen"
-                    subtitle="Mehrere GerÃ¤te pro Buchung, sauber nach Zeitraum geplant"
+                    subtitle="Mehrere Geräte pro Buchung, sauber nach Zeitraum geplant"
                     subtitle="Mehrere Geräte pro Buchung, sauber nach Zeitraum geplant"
                     subtitleStyle={[styles.headerSubtitle, isDarkMode && styles.headerSubtitleDark]}
                 />
@@ -1388,17 +1388,17 @@ const BookingPage = () => {
                             <Surface style={[styles.listCard, isDarkMode && styles.listCardDark]}>
                                 <View style={styles.listHeader}>
                                     <View>
-                                        <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>NÃ¤chste PCO-PlÃ¤ne</Text>
+                                        <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Nächste PCO-Pläne</Text>
                                         <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
-                                            Ãœbernehme einen Plan direkt als Buchungsvorschlag mit gemappten GerÃ¤ten.
+                                            Übernehme einen Plan direkt als Buchungsvorschlag mit gemappten Geräten.
                                         </Text>
                                     </View>
-                                    {isLoadingSuggestions ? <Chip compact>lÃ¤dt</Chip> : <Chip compact>{upcomingPcoSuggestions.length} VorschlÃ¤ge</Chip>}
+                                    {isLoadingSuggestions ? <Chip compact>lädt</Chip> : <Chip compact>{upcomingPcoSuggestions.length} Vorschläge</Chip>}
                                 </View>
 
                                 {upcomingPcoSuggestions.length === 0 && !isLoadingSuggestions ? (
                                     <Text style={[styles.emptyStateText, isDarkMode && styles.emptyStateTextDark]}>
-                                        Keine kommenden PCO-PlÃ¤ne gefunden.
+                                        Keine kommenden PCO-Pläne gefunden.
                                     </Text>
                                 ) : (
                                     upcomingPcoSuggestions.map((suggestion, index) => (
@@ -1415,7 +1415,7 @@ const BookingPage = () => {
                                                             </Text>
                                                         </View>
                                                         <Chip compact style={suggestion.hasMapping ? styles.activeChip : styles.inactiveChip}>
-                                                            {suggestion.hasMapping ? `${suggestion.geraete.length} GerÃ¤te` : "Kein Mapping"}
+                                                            {suggestion.hasMapping ? `${suggestion.geraete.length} Geräte` : "Kein Mapping"}
                                                         </Chip>
                                                     </View>
 
@@ -1430,14 +1430,14 @@ const BookingPage = () => {
 
                                                     <View style={styles.bookingActions}>
                                                         <Button mode="text" onPress={() => handleApplySuggestion(suggestion)}>
-                                                            In Formular Ã¼bernehmen
+                                                            In Formular übernehmen
                                                         </Button>
                                                         {suggestion.planningCenterUrl ? (
                                                             <Button
                                                                 mode="text"
                                                                 onPress={() => void Linking.openURL(suggestion.planningCenterUrl ?? "")}
                                                             >
-                                                                PCO Ã¶ffnen
+                                                                PCO öffnen
                                                             </Button>
                                                         ) : null}
                                                     </View>
@@ -1454,10 +1454,10 @@ const BookingPage = () => {
                                     <View>
                                         <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>PCO-Mappings</Text>
                                         <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
-                                            Service Types aus Planning Center mit Standard-GerÃ¤ten verknÃ¼pfen.
+                                            Service Types aus Planning Center mit Standard-Geräten verknüpfen.
                                         </Text>
                                     </View>
-                                    {isLoadingMappings ? <Chip compact>lÃ¤dt</Chip> : <Chip compact>{sortedPcoMappings.length} Typen</Chip>}
+                                    {isLoadingMappings ? <Chip compact>lädt</Chip> : <Chip compact>{sortedPcoMappings.length} Typen</Chip>}
                                 </View>
 
                                 {mappingFeedback ? (
@@ -1495,7 +1495,7 @@ const BookingPage = () => {
                                                         ))
                                                     ) : (
                                                         <Text style={[styles.emptyStateText, isDarkMode && styles.emptyStateTextDark]}>
-                                                            Noch keine Standard-GerÃ¤te zugeordnet.
+                                                            Noch keine Standard-Geräte zugeordnet.
                                                         </Text>
                                                     )}
                                                 </View>
@@ -1506,7 +1506,7 @@ const BookingPage = () => {
                                                             mode="text"
                                                             onPress={() => handleOpenMappingEditor(mapping)}
                                                         >
-                                                            GerÃ¤te zuordnen
+                                                            Geräte zuordnen
                                                         </Button>
                                                         <Button
                                                             mode="text"
@@ -1522,7 +1522,7 @@ const BookingPage = () => {
                                                     <View style={styles.mappingEditor}>
                                                         <TextInput
                                                             mode="outlined"
-                                                            label="GerÃ¤te fÃ¼r dieses Mapping suchen"
+                                                            label="Geräte für dieses Mapping suchen"
                                                             value={mappingSearchQuery}
                                                             onChangeText={setMappingSearchQuery}
                                                             style={styles.searchInput}
@@ -1554,7 +1554,7 @@ const BookingPage = () => {
                                                         </Surface>
 
                                                         <Text style={[styles.selectionInfo, isDarkMode && styles.selectionInfoDark]}>
-                                                            {selectedMappingInvNrs.length} GerÃ¤t(e) fÃ¼r dieses Mapping ausgewählt
+                                                            {selectedMappingInvNrs.length} Gerät(e) für dieses Mapping ausgewählt
                                                         </Text>
 
                                                         <View style={styles.actionRow}>
@@ -1567,7 +1567,7 @@ const BookingPage = () => {
                                                                     setMappingFeedback(null);
                                                                 }}
                                                             >
-                                                                SchlieÃŸen
+                                                                Schließen
                                                             </Button>
                                                             <Button
                                                                 mode="contained"
@@ -2063,5 +2063,7 @@ const styles = StyleSheet.create({
 });
 
 export default BookingPage;
+
+
 
 

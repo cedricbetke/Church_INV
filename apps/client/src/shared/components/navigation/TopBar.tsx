@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { useState } from "react";
 import { router } from "expo-router";
 import { Linking, StyleSheet, View, useWindowDimensions } from "react-native";
@@ -350,3 +350,4 @@ const styles = StyleSheet.create({
 });
 
 export default TopBar;
+
