@@ -1553,7 +1553,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#e7e7ea",
         elevation: 0,
-        shadowOpacity: 0,
     },
     headerDark: {
         backgroundColor: "#121722",

@@ -66,7 +66,6 @@ const DropdownSelect: React.FC<DropdownSelectProps> = ({
                     placeholder={placeholder || label}
                     value={value}
                     editable={false}
-                    pointerEvents="none"
                 />
             </TouchableOpacity>
 

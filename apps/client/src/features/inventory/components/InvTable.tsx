@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import axios from "axios";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
@@ -119,6 +119,13 @@ const InvTable = () => {
     const [visibleModal, setVisibleModal] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
     const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
+    const [isMounted, setIsMounted] = useState(Platform.OS !== "web");
+
+    useEffect(() => {
+        if (Platform.OS === "web") {
+            setIsMounted(true);
+        }
+    }, []);
 
     const refreshInventory = async (selectedInvNr?: number) => {
         const refreshedItems = await fetchItems();
@@ -326,13 +333,15 @@ const InvTable = () => {
                 onSubmit={handleSubmit}
                 editingItem={editingItem}
             />
-            <Snackbar
-                visible={Boolean(feedbackMessage)}
-                onDismiss={() => setFeedbackMessage(null)}
-                duration={3500}
-            >
-                {feedbackMessage ?? ""}
-            </Snackbar>
+            {isMounted ? (
+                <Snackbar
+                    visible={Boolean(feedbackMessage)}
+                    onDismiss={() => setFeedbackMessage(null)}
+                    duration={3500}
+                >
+                    {feedbackMessage ?? ""}
+                </Snackbar>
+            ) : null}
         </View>
     );
 };

@@ -78,6 +78,8 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
     const isCompactMobile = width < 640;
     const showScannerAction = Platform.OS !== "web" || isCompactMobile;
+    const webSearchbarShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.028)" } : null;
+    const webTableShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 10px 24px rgba(0, 0, 0, 0.028)" } : null;
 
     const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -145,7 +147,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                 inputStyle={[styles.searchbarInput, isDarkMode && styles.searchbarInputDark]}
                                 iconColor={isDarkMode ? "#94a3b8" : "#8e8e93"}
                                 elevation={0}
-                                style={[styles.searchbar, isDarkMode && styles.searchbarDark]}
+                                style={[styles.searchbar, webSearchbarShadowStyle, isDarkMode && styles.searchbarDark]}
                             />
                             <View style={styles.searchActions}>
                                 {showScannerAction ? (
@@ -381,7 +383,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                     </ScrollView>
                 </View>
             ) : (
-            <DataTable style={[styles.table, isDarkMode && styles.tableDark]}>
+            <DataTable style={[styles.table, webTableShadowStyle, isDarkMode && styles.tableDark]}>
                 <DataTable.Header style={[styles.tableHeader, isDarkMode && styles.tableHeaderDark]}>
                     {visibleColumns.map((column) => (
                         <DataTable.Title
@@ -528,10 +530,6 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         borderWidth: 1,
         borderColor: "#dfe3e8",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.028,
-        shadowRadius: 12,
     },
     searchbarDark: {
         backgroundColor: "#151922",
@@ -671,10 +669,6 @@ const styles = StyleSheet.create({
         borderColor: "#dfe3e8",
         borderRadius: 20,
         overflow: "hidden",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.028,
-        shadowRadius: 24,
     },
     tableDark: {
         backgroundColor: "#151922",

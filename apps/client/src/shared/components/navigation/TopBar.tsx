@@ -233,7 +233,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: "#e7e7ea",
         elevation: 0,
-        shadowOpacity: 0,
         paddingHorizontal: 8,
         minHeight: 68,
     },
