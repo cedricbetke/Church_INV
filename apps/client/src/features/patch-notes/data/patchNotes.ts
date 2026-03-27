@@ -18,6 +18,17 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.5",
+            date: "2026-03-27",
+            title: "Topbar und Feedback-Flow geschaerft",
+            summary: "Die Web-Topbar wurde klarer sortiert, Patch Notes sitzen jetzt direkt am Titel, und Bugs sowie Feature-Wuensche koennen direkt als GitHub-Issues gemeldet werden.",
+            items: [
+                "Patch Notes wurden in der Standard-Webansicht direkt neben dem ChurchINV-Titel platziert",
+                "Bug- und Feature-Buttons oeffnen direkt die passende GitHub-Issue-Maske mit vorbereiteten Labels",
+                "Die wichtigsten Topbar-Symbole haben jetzt unaufdringliche Tooltips fuer bessere Orientierung",
+            ],
+        },
+        {
             version: "0.7.0",
             date: "2026-03-27",
             title: "Import, Buchungen und mobile Oberflaeche ausgebaut",

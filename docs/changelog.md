@@ -3,6 +3,17 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Ã„nderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausfÃ¼hren.
 
+## 0.7.5
+
+**27.03.2026**  
+**Topbar und Feedback-Flow geschaerft**
+
+Die Web-Topbar wurde klarer sortiert, Patch Notes sitzen jetzt direkt am Titel, und Bugs sowie Feature-Wuensche koennen direkt als GitHub-Issues gemeldet werden.
+
+- Patch Notes wurden in der Standard-Webansicht direkt neben dem ChurchINV-Titel platziert
+- Bug- und Feature-Buttons oeffnen direkt die passende GitHub-Issue-Maske mit vorbereiteten Labels
+- Die wichtigsten Topbar-Symbole haben jetzt unaufdringliche Tooltips fuer bessere Orientierung
+
 ## 0.7.0
 
 **27.03.2026**  
