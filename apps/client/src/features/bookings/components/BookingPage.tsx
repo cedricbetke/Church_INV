@@ -375,12 +375,14 @@ const BookingListPanel = React.memo(
         bookings,
         canManageInventory,
         onDeleteBooking,
+        isCompactViewport,
     }: {
         isDarkMode: boolean;
         isLoading: boolean;
         bookings: Booking[];
         canManageInventory: boolean;
         onDeleteBooking: (bookingId: number) => void;
+        isCompactViewport: boolean;
     }) => {
         const [expandedBookingIds, setExpandedBookingIds] = useState<number[]>([]);
 
@@ -398,15 +400,23 @@ const BookingListPanel = React.memo(
         };
 
         return (
-            <Surface style={[styles.listCard, isDarkMode && styles.listCardDark]}>
+            <Surface
+                style={[
+                    styles.listCard,
+                    isDarkMode && styles.listCardDark,
+                    isCompactViewport && styles.listCardCompact,
+                ]}
+            >
                 <View style={styles.listHeader}>
-                    <View>
+                    <View style={styles.listHeaderText}>
                         <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Bestehende Buchungen</Text>
                         <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
                             Hier ist der Bereich, der spaeter gut an Planning Center andocken kann.
                         </Text>
                     </View>
-                    {isLoading ? <Chip compact>laedt</Chip> : <Chip compact>{bookings.length} Eintraege</Chip>}
+                    <Chip compact style={isCompactViewport ? styles.listHeaderChipCompact : undefined}>
+                        {isLoading ? "laedt" : `${bookings.length} Eintraege`}
+                    </Chip>
                 </View>
 
                 {bookings.length === 0 && !isLoading ? (
@@ -487,6 +497,7 @@ const BookingPage = () => {
     const { isDarkMode, toggleTheme } = useAppThemeMode();
     const { items, canManageInventory } = useInventory();
     const { width } = useWindowDimensions();
+    const isCompactViewport = width < 820;
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMappings, setIsLoadingMappings] = useState(false);
@@ -1029,7 +1040,13 @@ const BookingPage = () => {
                 </View>
 
                 <View style={styles.mainGrid}>
-                    <Surface style={[styles.formCard, isDarkMode && styles.formCardDark]}>
+                    <Surface
+                        style={[
+                            styles.formCard,
+                            isDarkMode && styles.formCardDark,
+                            isCompactViewport && styles.formCardCompact,
+                        ]}
+                    >
                         <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Neue Buchung</Text>
                         <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
                             Der erste Schnitt ist bewusst einfach gehalten und eignet sich gut als Basis für Planning Center.
@@ -1216,13 +1233,16 @@ const BookingPage = () => {
                         </View>
                     </Surface>
 
-                    <BookingListPanel
-                        isDarkMode={isDarkMode}
-                        isLoading={isLoading}
-                        bookings={sortedBookings}
-                        canManageInventory={canManageInventory}
-                        onDeleteBooking={handleDeleteBooking}
-                    />
+                    <View style={isCompactViewport ? styles.listCardCompactWrap : undefined}>
+                        <BookingListPanel
+                            isDarkMode={isDarkMode}
+                            isLoading={isLoading}
+                            bookings={sortedBookings}
+                            canManageInventory={canManageInventory}
+                            onDeleteBooking={handleDeleteBooking}
+                            isCompactViewport={isCompactViewport}
+                        />
+                    </View>
 
                     {false ? (
                     <Surface style={[styles.listCard, isDarkMode && styles.listCardDark]}>
@@ -1613,6 +1633,10 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         backgroundColor: "#ffffff",
     },
+    formCardCompact: {
+        minWidth: 0,
+        width: "100%",
+    },
     formCardDark: {
         backgroundColor: "#151922",
     },
@@ -1622,6 +1646,14 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 18,
         backgroundColor: "#ffffff",
+    },
+    listCardCompact: {
+        minWidth: 0,
+        width: "100%",
+    },
+    listCardCompactWrap: {
+        width: "100%",
+        minWidth: 0,
     },
     listCardDark: {
         backgroundColor: "#151922",
@@ -1805,6 +1837,14 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 12,
         marginBottom: 16,
+    },
+    listHeaderText: {
+        flex: 1,
+        minWidth: 0,
+    },
+    listHeaderChipCompact: {
+        alignSelf: "flex-start",
+        maxWidth: 110,
     },
     emptyStateText: {
         color: "#6b7280",
