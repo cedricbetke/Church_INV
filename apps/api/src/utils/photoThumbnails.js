@@ -17,7 +17,7 @@ const getJimp = () => {
         jimpModule = require('jimp-compact');
         return jimpModule;
     } catch {
-        jimpModule = require(path.resolve(process.cwd(), 'apps', 'client', 'node_modules', 'jimp-compact'));
+        jimpModule = require(path.resolve(__dirname, '..', '..', '..', 'client', 'node_modules', 'jimp-compact'));
         return jimpModule;
     }
 };

@@ -119,9 +119,15 @@ const DetailModal: React.FC<DetailModalProps> = ({
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
     const [isPhotoLoading, setIsPhotoLoading] = useState(false);
+    const [photoSource, setPhotoSource] = useState<string | null>(null);
     const groupedHistoryEntries = useMemo(
         () => groupHistoryEntries(historyEntries),
         [historyEntries],
+    );
+
+    const preferredPhotoSource = useMemo(
+        () => selectedItem?.geraeteFotoThumb ?? selectedItem?.geraeteFoto ?? null,
+        [selectedItem],
     );
 
     useEffect(() => {
@@ -130,10 +136,12 @@ const DetailModal: React.FC<DetailModalProps> = ({
             setAttachments([]);
             setIsHistoryExpanded(false);
             setIsPhotoLoading(false);
+            setPhotoSource(null);
             return;
         }
 
-        setIsPhotoLoading(Boolean(selectedItem.geraeteFoto));
+        setPhotoSource(preferredPhotoSource);
+        setIsPhotoLoading(Boolean(preferredPhotoSource));
 
         let isActive = true;
 
@@ -161,7 +169,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
         return () => {
             isActive = false;
         };
-    }, [visible, selectedItem]);
+    }, [visible, selectedItem, preferredPhotoSource]);
 
     useEffect(() => {
         if (!visible || !selectedItem || !isHistoryExpanded) {
@@ -241,15 +249,22 @@ const DetailModal: React.FC<DetailModalProps> = ({
                             <Surface style={[styles.heroCard, isDarkMode && styles.heroCardDark]}>
                                 <View style={[styles.heroContent, isCompactViewport && styles.heroContentCompact]}>
                                     <View style={[styles.imageFrame, isDarkMode && styles.imageFrameDark]}>
-                                        {selectedItem.geraeteFoto ? (
+                                        {photoSource ? (
                                             <View style={styles.imageWrapper}>
                                                 <Image
-                                                    source={{ uri: selectedItem.geraeteFoto }}
+                                                    source={{ uri: photoSource }}
                                                     style={styles.image}
                                                     resizeMode="contain"
                                                     onLoadStart={() => setIsPhotoLoading(true)}
                                                     onLoadEnd={() => setIsPhotoLoading(false)}
-                                                    onError={() => setIsPhotoLoading(false)}
+                                                    onError={() => {
+                                                        if (photoSource !== selectedItem.geraeteFoto && selectedItem.geraeteFoto) {
+                                                            setPhotoSource(selectedItem.geraeteFoto);
+                                                            return;
+                                                        }
+
+                                                        setIsPhotoLoading(false);
+                                                    }}
                                                 />
                                                 {isPhotoLoading && (
                                                     <View style={[styles.imageLoadingOverlay, isDarkMode && styles.imageLoadingOverlayDark]}>
