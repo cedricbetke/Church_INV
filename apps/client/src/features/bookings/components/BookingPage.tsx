@@ -190,87 +190,157 @@ const BookingDeviceSelector = React.memo(
 
                 {selectionMode === "single" ? (
                     <Surface style={[styles.deviceListCard, isDarkMode && styles.deviceListCardDark]}>
-                        <FlatList
-                            data={filteredItems}
-                            keyExtractor={(item) => String(item.invNr)}
-                            style={styles.deviceList}
-                            initialNumToRender={24}
-                            maxToRenderPerBatch={24}
-                            windowSize={8}
-                            removeClippedSubviews={Platform.OS !== "web"}
-                            renderItem={({ item }) => {
-                                const checked = selectedSet.has(item.invNr);
+                        {Platform.OS === "web" ? (
+                            <ScrollView style={styles.deviceList}>
+                                {filteredItems.map((item) => {
+                                    const checked = selectedSet.has(item.invNr);
 
-                                return (
-                                    <View style={[styles.deviceRow, isDarkMode && styles.deviceRowDark]}>
-                                        <Checkbox
-                                            status={checked ? "checked" : "unchecked"}
-                                            onPress={() => onToggleDevice(item.invNr)}
-                                        />
-                                        <View style={styles.deviceMeta}>
-                                            <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
-                                                {item.invNr} · {item.modell}
-                                            </Text>
-                                            <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                                                {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" · ")}
-                                            </Text>
+                                    return (
+                                        <View key={item.invNr} style={[styles.deviceRow, isDarkMode && styles.deviceRowDark]}>
+                                            <Checkbox
+                                                status={checked ? "checked" : "unchecked"}
+                                                onPress={() => onToggleDevice(item.invNr)}
+                                            />
+                                            <View style={styles.deviceMeta}>
+                                                <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
+                                                    {item.invNr} · {item.modell}
+                                                </Text>
+                                                <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
+                                                    {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" · ")}
+                                                </Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                );
-                            }}
-                        />
+                                    );
+                                })}
+                            </ScrollView>
+                        ) : (
+                            <FlatList
+                                data={filteredItems}
+                                keyExtractor={(item) => String(item.invNr)}
+                                style={styles.deviceList}
+                                initialNumToRender={24}
+                                maxToRenderPerBatch={24}
+                                windowSize={8}
+                                removeClippedSubviews
+                                renderItem={({ item }) => {
+                                    const checked = selectedSet.has(item.invNr);
+
+                                    return (
+                                        <View style={[styles.deviceRow, isDarkMode && styles.deviceRowDark]}>
+                                            <Checkbox
+                                                status={checked ? "checked" : "unchecked"}
+                                                onPress={() => onToggleDevice(item.invNr)}
+                                            />
+                                            <View style={styles.deviceMeta}>
+                                                <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
+                                                    {item.invNr} · {item.modell}
+                                                </Text>
+                                                <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
+                                                    {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" · ")}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    );
+                                }}
+                            />
+                        )}
                     </Surface>
                 ) : (
                     <Surface style={[styles.deviceListCard, isDarkMode && styles.deviceListCardDark]}>
-                        <FlatList
-                            data={groupedModelItems}
-                            keyExtractor={(group) => group.key}
-                            style={styles.deviceList}
-                            initialNumToRender={18}
-                            maxToRenderPerBatch={18}
-                            windowSize={8}
-                            removeClippedSubviews={Platform.OS !== "web"}
-                            renderItem={({ item: group }) => {
-                                const selectedCount = group.items.filter((item) => selectedSet.has(item.invNr)).length;
+                        {Platform.OS === "web" ? (
+                            <ScrollView style={styles.deviceList}>
+                                {groupedModelItems.map((group) => {
+                                    const selectedCount = group.items.filter((item) => selectedSet.has(item.invNr)).length;
 
-                                return (
-                                    <View style={[styles.deviceRow, styles.modelGroupRow, isDarkMode && styles.deviceRowDark]}>
-                                        <View style={styles.deviceMeta}>
-                                            <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
-                                                {group.modell}
-                                            </Text>
-                                            <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                                                {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" · ")}
-                                            </Text>
-                                            <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
-                                                {selectedCount} von {group.items.length} ausgewählt
-                                            </Text>
+                                    return (
+                                        <View key={group.key} style={[styles.deviceRow, styles.modelGroupRow, isDarkMode && styles.deviceRowDark]}>
+                                            <View style={styles.deviceMeta}>
+                                                <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
+                                                    {group.modell}
+                                                </Text>
+                                                <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
+                                                    {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" · ")}
+                                                </Text>
+                                                <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
+                                                    {selectedCount} von {group.items.length} ausgewählt
+                                                </Text>
+                                            </View>
+                                            <View style={styles.quantityControls}>
+                                                <Button
+                                                    compact
+                                                    mode="outlined"
+                                                    onPress={() => onSetModelQuantity(group.key, selectedCount - 1)}
+                                                    disabled={selectedCount === 0}
+                                                >
+                                                    -
+                                                </Button>
+                                                <Text style={[styles.quantityValue, isDarkMode && styles.deviceTitleDark]}>
+                                                    {selectedCount}
+                                                </Text>
+                                                <Button
+                                                    compact
+                                                    mode="outlined"
+                                                    onPress={() => onSetModelQuantity(group.key, selectedCount + 1)}
+                                                    disabled={selectedCount >= group.items.length}
+                                                >
+                                                    +
+                                                </Button>
+                                            </View>
                                         </View>
-                                        <View style={styles.quantityControls}>
-                                            <Button
-                                                compact
-                                                mode="outlined"
-                                                onPress={() => onSetModelQuantity(group.key, selectedCount - 1)}
-                                                disabled={selectedCount === 0}
-                                            >
-                                                -
-                                            </Button>
-                                            <Text style={[styles.quantityValue, isDarkMode && styles.deviceTitleDark]}>
-                                                {selectedCount}
-                                            </Text>
-                                            <Button
-                                                compact
-                                                mode="outlined"
-                                                onPress={() => onSetModelQuantity(group.key, selectedCount + 1)}
-                                                disabled={selectedCount >= group.items.length}
-                                            >
-                                                +
-                                            </Button>
+                                    );
+                                })}
+                            </ScrollView>
+                        ) : (
+                            <FlatList
+                                data={groupedModelItems}
+                                keyExtractor={(group) => group.key}
+                                style={styles.deviceList}
+                                initialNumToRender={18}
+                                maxToRenderPerBatch={18}
+                                windowSize={8}
+                                removeClippedSubviews
+                                renderItem={({ item: group }) => {
+                                    const selectedCount = group.items.filter((item) => selectedSet.has(item.invNr)).length;
+
+                                    return (
+                                        <View style={[styles.deviceRow, styles.modelGroupRow, isDarkMode && styles.deviceRowDark]}>
+                                            <View style={styles.deviceMeta}>
+                                                <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
+                                                    {group.modell}
+                                                </Text>
+                                                <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
+                                                    {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" · ")}
+                                                </Text>
+                                                <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
+                                                    {selectedCount} von {group.items.length} ausgewählt
+                                                </Text>
+                                            </View>
+                                            <View style={styles.quantityControls}>
+                                                <Button
+                                                    compact
+                                                    mode="outlined"
+                                                    onPress={() => onSetModelQuantity(group.key, selectedCount - 1)}
+                                                    disabled={selectedCount === 0}
+                                                >
+                                                    -
+                                                </Button>
+                                                <Text style={[styles.quantityValue, isDarkMode && styles.deviceTitleDark]}>
+                                                    {selectedCount}
+                                                </Text>
+                                                <Button
+                                                    compact
+                                                    mode="outlined"
+                                                    onPress={() => onSetModelQuantity(group.key, selectedCount + 1)}
+                                                    disabled={selectedCount >= group.items.length}
+                                                >
+                                                    +
+                                                </Button>
+                                            </View>
                                         </View>
-                                    </View>
-                                );
-                            }}
-                        />
+                                    );
+                                }}
+                            />
+                        )}
                     </Surface>
                 )}
 
@@ -513,7 +583,7 @@ const BookingPage = () => {
     const [endDatum, setEndDatum] = useState("");
     const [activeDateField, setActiveDateField] = useState<"start" | "end" | null>(null);
     const [selectedInvNrs, setSelectedInvNrs] = useState<number[]>([]);
-    const [selectionMode, setSelectionMode] = useState<SelectionMode>("model");
+    const [selectionMode, setSelectionMode] = useState<SelectionMode>("single");
     const [pcoMappings, setPcoMappings] = useState<PcoMapping[]>([]);
     const [pcoSuggestions, setPcoSuggestions] = useState<PcoPlanSuggestion[]>([]);
     const [activeMappingId, setActiveMappingId] = useState<number | null>(null);
