@@ -11,6 +11,7 @@ ChurchINV kann aktuell:
 - Fotos und Dokumente je Geraet ablegen
 - per QR zur Detailansicht springen
 - Aenderungen pro Geraet im Verlauf anzeigen
+- mehrere Geraete in einer Buchung reservieren
 
 ## Geraeteverwaltung
 
@@ -58,6 +59,22 @@ Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 - QR-Scan oeffnet das passende Geraet
 - Grundlage ist die Inventarnummer
 - kein separates QR-Feld in der Datenbank noetig
+- auf der Buchungsseite kann ein QR-Code direkt ein einzelnes Geraet in die aktuelle Auswahl uebernehmen
+
+## Buchungen
+
+- eine Buchung kann mehrere Geraete enthalten
+- Buchungen haben Titel, Bucher, optionalen Zweck und einen Zeitraum
+- beim Anlegen wird auf einfache Zeitueberschneidungen geprueft
+- bestehende Buchungen koennen angezeigt und geloescht werden
+- die Geraeteauswahl kennt sowohl Einzelgeraete als auch Auswahl nach Modellmenge
+
+## Import und Medienmigration
+
+- CSV-Import fuer Inventar aus Teams/Microsoft Lists
+- Dokument-Import aus SharePoint-Attachments
+- Foto-Import aus SharePoint-Bildfeldern und reservierten Bild-Anhaengen
+- vorhandene Team-Fotos koennen als Thumbnails nacherzeugt werden
 
 ## Verlauf
 
@@ -79,6 +96,12 @@ Mehrere Aenderungen eines Speichervorgangs werden in der Oberflaeche als gemeins
 - optional ueber die Topbar umschaltbar
 - Hauptansicht, Detailseite, Add/Edit und grosse Teile des Admin-Bereichs sind bereits angepasst
 - sollte im Alltag weiter auf kleineren Screens mitgeprueft werden
+
+## Mobile und Responsive Verhalten
+
+- die Hauptseite nutzt auf schmalen Screens eine kompakte Kartenansicht statt der Desktop-Tabelle
+- Detailansicht und Buchungsseite sind fuer kleinere Browser- und App-Screens nachgeschaerft
+- einige Topbar-Aktionen sind auf mobilen Breiten bewusst kompakter angeordnet
 
 ## Patch Notes
 

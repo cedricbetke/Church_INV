@@ -30,6 +30,7 @@ ChurchINV verwaltet:
 - Geraetefotos und Dokumente
 - Verlauf pro Geraet
 - QR-Scan auf die Detailansicht
+- QR-Scan direkt in Buchungen fuer einzelne Geraete
 - Mehrgeraete-Buchungen mit Zeitraum
 
 ## Welche Seite Fuer Was

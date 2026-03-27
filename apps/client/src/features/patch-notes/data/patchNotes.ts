@@ -18,6 +18,20 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.0",
+            date: "2026-03-27",
+            title: "Import, Buchungen und mobile Oberflaeche ausgebaut",
+            summary: "Der Bestand kann jetzt aus Teams/SharePoint uebernommen werden, Buchungen sind als eigener Workflow verfuegbar, und Haupt- sowie Detailansicht wurden fuer kleinere Screens deutlich nachgeschaerft.",
+            items: [
+                "CSV-, Dokument- und Foto-Import aus Teams/SharePoint sind als wiederverwendbare Scripts vorhanden",
+                "Teams-Fotos erzeugen jetzt zusaetzlich Vorschaubilder fuer schnellere Listenansichten",
+                "Mehrgeraete-Buchungen mit Zeitraum, Konfliktpruefung und Loeschen sind verfuegbar",
+                "QR-Scan kann in der Buchung direkt einzelne Geraete in die Auswahl uebernehmen",
+                "Die Hauptansicht hat fuer schmale Screens eine kompakte mobile Kartenansicht erhalten",
+                "Detailansicht und Buchungsseite wurden fuer kleinere Displays und bessere Reaktionszeit ueberarbeitet",
+            ],
+        },
+        {
             version: "0.6.0",
             date: "2026-03-26",
             title: "Inventar-Workflow deutlich erweitert",

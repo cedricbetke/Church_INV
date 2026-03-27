@@ -1,24 +1,37 @@
-# Patch Notes
+﻿# Patch Notes
 
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
-> Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
+> Ã„nderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausfÃ¼hren.
 
+## 0.7.0
+
+**27.03.2026**  
+**Import, Buchungen und mobile Oberflaeche ausgebaut**
+
+Der Bestand kann jetzt aus Teams/SharePoint uebernommen werden, Buchungen sind als eigener Workflow verfuegbar, und Haupt- sowie Detailansicht wurden fuer kleinere Screens deutlich nachgeschaerft.
+
+- CSV-, Dokument- und Foto-Import aus Teams/SharePoint sind als wiederverwendbare Scripts vorhanden
+- Teams-Fotos erzeugen jetzt zusaetzlich Vorschaubilder fuer schnellere Listenansichten
+- Mehrgeraete-Buchungen mit Zeitraum, Konfliktpruefung und Loeschen sind verfuegbar
+- QR-Scan kann in der Buchung direkt einzelne Geraete in die Auswahl uebernehmen
+- Die Hauptansicht hat fuer schmale Screens eine kompakte mobile Kartenansicht erhalten
+- Detailansicht und Buchungsseite wurden fuer kleinere Displays und bessere Reaktionszeit ueberarbeitet
 ## 0.6.0
 
 **26.03.2026**  
 **Inventar-Workflow deutlich erweitert**
 
-Geräteverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.
+GerÃ¤teverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.
 
-- Geräte können angelegt, bearbeitet und gelöscht werden
-- Dokumente pro Gerät sind integriert
-- QR-Scan öffnet direkt die Detailansicht
-- Geräteverlauf ist sichtbar
-- Admin-Panel für erste Stammdatenpflege ist vorhanden
-- Zustandshinweis ist als eigenes Gerätefeld verfügbar
+- GerÃ¤te kÃ¶nnen angelegt, bearbeitet und gelÃ¶scht werden
+- Dokumente pro GerÃ¤t sind integriert
+- QR-Scan Ã¶ffnet direkt die Detailansicht
+- GerÃ¤teverlauf ist sichtbar
+- Admin-Panel fÃ¼r erste Stammdatenpflege ist vorhanden
+- Zustandshinweis ist als eigenes GerÃ¤tefeld verfÃ¼gbar
 - Swagger-Dokumentation wurde verbessert
-- Optionaler Dark Mode wurde ergänzt
-- Patch Notes sind als read-only Ansicht in der App verfügbar
+- Optionaler Dark Mode wurde ergÃ¤nzt
+- Patch Notes sind als read-only Ansicht in der App verfÃ¼gbar
 
 ## 0.5.0
 
@@ -28,16 +41,18 @@ Geräteverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesen
 Die Detailansicht wurde ausgebaut und der Edit-Flow auf eine gemeinsame Formularbasis gestellt.
 
 - Detailansicht deutlich erweitert
-- Add- und Edit-Formular zusammengeführt
+- Add- und Edit-Formular zusammengefÃ¼hrt
 - Foto-Upload integriert
-- Erste Admin-Logik ergänzt
+- Erste Admin-Logik ergÃ¤nzt
 
 ## 0.4.0
 
 **18.03.2026**  
 **Inventarliste und Grundnavigation stehen**
 
-Die erste funktionsfähige Inventaransicht und der Basis-Flow zum Anlegen von Geräten wurden aufgebaut.
+Die erste funktionsfÃ¤hige Inventaransicht und der Basis-Flow zum Anlegen von GerÃ¤ten wurden aufgebaut.
 
-- Geräte können angelegt werden
+- GerÃ¤te kÃ¶nnen angelegt werden
 - Inventarliste und Grundnavigation stehen
+
+
