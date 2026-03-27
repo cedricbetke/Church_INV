@@ -75,6 +75,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
     const isCompactMobile = width < 640;
+    const showScannerAction = Platform.OS !== "web" || isCompactMobile;
 
     const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -145,15 +146,17 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                 style={[styles.searchbar, isDarkMode && styles.searchbarDark]}
                             />
                             <View style={styles.searchActions}>
-                                <IconButton
-                                    icon="qrcode-scan"
-                                    mode="contained-tonal"
-                                    size={20}
-                                    containerColor={isDarkMode ? "#151c27" : "#ffffff"}
-                                    iconColor={isDarkMode ? "#dbe6f5" : "#445160"}
-                                    style={[styles.searchActionButton, isDarkMode && styles.searchActionButtonDark]}
-                                    onPress={() => setIsScannerVisible(true)}
-                                />
+                                {showScannerAction ? (
+                                    <IconButton
+                                        icon="qrcode-scan"
+                                        mode="contained-tonal"
+                                        size={20}
+                                        containerColor={isDarkMode ? "#151c27" : "#ffffff"}
+                                        iconColor={isDarkMode ? "#dbe6f5" : "#445160"}
+                                        style={[styles.searchActionButton, isDarkMode && styles.searchActionButtonDark]}
+                                        onPress={() => setIsScannerVisible(true)}
+                                    />
+                                ) : null}
                                 <IconButton
                                     icon="filter"
                                     mode="contained-tonal"

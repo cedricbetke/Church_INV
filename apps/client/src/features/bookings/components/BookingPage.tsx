@@ -1,8 +1,8 @@
 ﻿import React, { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
-import { FlatList, Linking, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { FlatList, Linking, Platform, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import { router } from "expo-router";
 import axios from "axios";
-import { Appbar, Button, Card, Chip, Checkbox, Divider, Surface, Text, TextInput } from "react-native-paper";
+import { Appbar, Button, Card, Chip, Checkbox, Divider, IconButton, Modal, Portal, Surface, Text, TextInput } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
@@ -13,6 +13,7 @@ import { PcoMapping } from "@/src/features/bookings/types/PcoMapping";
 import pcoPlanSuggestionService from "@/src/features/bookings/services/pcoPlanSuggestionService";
 import { PcoPlanSuggestion } from "@/src/features/bookings/types/PcoPlanSuggestion";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
+import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
 
 const parseDateInput = (value: string) => {
     const normalized = value.trim().replace(" ", "T");
@@ -95,6 +96,24 @@ const WebDateTimeField = ({
 const formatDateRange = (booking: Booking) =>
     `${formatBookingDate(booking.startDatum)} bis ${formatBookingDate(booking.endDatum)}`;
 
+const normalizeInventoryCodeCandidates = (rawValue: string) => {
+    const trimmed = rawValue.trim();
+    const upperTrimmed = trimmed.toUpperCase();
+    const withoutPrefix = upperTrimmed.startsWith("INV-") ? upperTrimmed.slice(4) : upperTrimmed;
+    const numericOnly = withoutPrefix.replace(/\D/g, "");
+    const normalizedNumeric = numericOnly ? String(Number(numericOnly)) : null;
+
+    return new Set(
+        [
+            trimmed,
+            upperTrimmed,
+            withoutPrefix,
+            numericOnly || null,
+            normalizedNumeric && normalizedNumeric !== "NaN" ? normalizedNumeric : null,
+        ].filter(Boolean) as string[],
+    );
+};
+
 const isPcoEnabled = process.env.EXPO_PUBLIC_ENABLE_PCO === "true";
 type SelectionMode = "single" | "model";
 type ModelGroup = {
@@ -119,6 +138,8 @@ const BookingDeviceSelector = React.memo(
         onToggleDevice,
         onSetModelQuantity,
         selectedInvChipSummary,
+        showScannerAction,
+        onOpenScanner,
     }: {
         isDarkMode: boolean;
         searchQuery: string;
@@ -131,18 +152,33 @@ const BookingDeviceSelector = React.memo(
         onToggleDevice: (invNr: number) => void;
         onSetModelQuantity: (groupKey: string, quantity: number) => void;
         selectedInvChipSummary: React.ReactNode;
+        showScannerAction: boolean;
+        onOpenScanner: () => void;
     }) => {
         const selectedSet = useMemo(() => new Set(selectedInvNrs), [selectedInvNrs]);
 
         return (
             <>
-                <TextInput
-                    mode="outlined"
-                    label="Geräte suchen"
-                    value={searchQuery}
-                    onChangeText={onSearchQueryChange}
-                    style={styles.searchInput}
-                />
+                <View style={styles.searchActionRow}>
+                    <TextInput
+                        mode="outlined"
+                        label="Geräte suchen"
+                        value={searchQuery}
+                        onChangeText={onSearchQueryChange}
+                        style={[styles.searchInput, styles.searchInputCompact]}
+                    />
+                    {showScannerAction ? (
+                        <IconButton
+                            icon="qrcode-scan"
+                            mode="contained-tonal"
+                            size={20}
+                            containerColor={isDarkMode ? "#151c27" : "#ffffff"}
+                            iconColor={isDarkMode ? "#dbe6f5" : "#445160"}
+                            style={[styles.searchScannerButton, isDarkMode && styles.searchScannerButtonDark]}
+                            onPress={onOpenScanner}
+                        />
+                    ) : null}
+                </View>
                 <View style={styles.selectionModeRow}>
                     <Chip compact selected={selectionMode === "single"} onPress={() => onSelectionModeChange("single")}>
                         Einzelgeräte
@@ -450,6 +486,7 @@ const BookingListPanel = React.memo(
 const BookingPage = () => {
     const { isDarkMode, toggleTheme } = useAppThemeMode();
     const { items, canManageInventory } = useInventory();
+    const { width } = useWindowDimensions();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMappings, setIsLoadingMappings] = useState(false);
@@ -472,6 +509,8 @@ const BookingPage = () => {
     const [selectedMappingInvNrs, setSelectedMappingInvNrs] = useState<number[]>([]);
     const [feedback, setFeedback] = useState<string | null>(null);
     const [mappingFeedback, setMappingFeedback] = useState<string | null>(null);
+    const [isScannerVisible, setIsScannerVisible] = useState(false);
+    const showScannerAction = Platform.OS !== "web" || width < 768;
 
     const loadBookings = async () => {
         setIsLoading(true);
@@ -765,6 +804,36 @@ const BookingPage = () => {
         ]);
     }, [groupedModelItems]);
 
+    const handleScannedBookingCode = useCallback((scannedValue: string) => {
+        const normalizedCode = scannedValue.trim();
+
+        if (!normalizedCode) {
+            return;
+        }
+
+        const codeCandidates = normalizeInventoryCodeCandidates(normalizedCode);
+
+        const matchedItem = items.find((item) => {
+            const normalizedInvNr = String(item.invNr).trim();
+            return codeCandidates.has(normalizedInvNr) || codeCandidates.has(`INV-${normalizedInvNr}`);
+        });
+
+        if (!matchedItem) {
+            setFeedback(`Kein Gerät zu QR-Code "${normalizedCode}" gefunden.`);
+            return;
+        }
+
+        setSelectedInvNrs((current) => {
+            if (current.includes(matchedItem.invNr)) {
+                return current;
+            }
+
+            return [...current, matchedItem.invNr];
+        });
+
+        setFeedback(`Gerät ${matchedItem.invNr} zur Buchung hinzugefügt.`);
+    }, [items]);
+
     const handleOpenMappingEditor = (mapping: PcoMapping) => {
         setActiveMappingId(mapping.id);
         setSelectedMappingInvNrs(mapping.geraete.map((device) => device.invNr));
@@ -873,7 +942,7 @@ const BookingPage = () => {
     const handleApplySuggestion = (suggestion: PcoPlanSuggestion) => {
         setTitel(suggestion.bookingTitle);
         setZweck(
-            `Aus Planning Center Ã¼bernommen Â· ${suggestion.serviceTypeName}${suggestion.seriesTitle ? ` Â· ${suggestion.seriesTitle}` : ""}`,
+            `Aus Planning Center Ã¼bernommen · ${suggestion.serviceTypeName}${suggestion.seriesTitle ? ` · ${suggestion.seriesTitle}` : ""}`,
         );
         setStartDatum(formatDateForInput(new Date(suggestion.sortDate)));
 
@@ -932,7 +1001,12 @@ const BookingPage = () => {
                 />
             </Appbar.Header>
 
-            <ScrollView contentContainerStyle={styles.content}>
+            <FlatList
+                data={[{ key: "booking-page" }]}
+                renderItem={() => null}
+                contentContainerStyle={styles.content}
+                ListHeaderComponent={(
+                    <>
                 <View style={styles.summaryRow}>
                     <Card style={[styles.summaryCard, isDarkMode && styles.summaryCardDark]}>
                         <Card.Content>
@@ -1022,6 +1096,8 @@ const BookingPage = () => {
                             onToggleDevice={handleToggleDevice}
                             onSetModelQuantity={handleSetModelQuantity}
                             selectedInvChipSummary={selectedInvChipSummary}
+                            showScannerAction={showScannerAction}
+                            onOpenScanner={() => setIsScannerVisible(true)}
                         />
 
                         {false ? (
@@ -1312,7 +1388,7 @@ const BookingPage = () => {
                                                         </Text>
                                                         <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
                                                             {mapping.isVirtual
-                                                                ? `Virtuell aus ${mapping.sourceServiceTypeName ?? "Service Type"}${mapping.sourceSeriesTitle ? ` Â· ${mapping.sourceSeriesTitle}` : ""}`
+                                                                ? `Virtuell aus ${mapping.sourceServiceTypeName ?? "Service Type"}${mapping.sourceSeriesTitle ? ` · ${mapping.sourceSeriesTitle}` : ""}`
                                                                 : `PCO Service Type ${mapping.pcoServiceTypeId}`}
                                                         </Text>
                                                     </View>
@@ -1376,10 +1452,10 @@ const BookingPage = () => {
                                                                             />
                                                                             <View style={styles.deviceMeta}>
                                                                                 <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
-                                                                                    {item.invNr} Â· {item.modell}
+                                                                                    {item.invNr} · {item.modell}
                                                                                 </Text>
                                                                                 <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                                                                                    {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" Â· ")}
+                                                                                    {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" · ")}
                                                                                 </Text>
                                                                             </View>
                                                                         </View>
@@ -1389,7 +1465,7 @@ const BookingPage = () => {
                                                         </Surface>
 
                                                         <Text style={[styles.selectionInfo, isDarkMode && styles.selectionInfoDark]}>
-                                                            {selectedMappingInvNrs.length} GerÃ¤t(e) fÃ¼r dieses Mapping ausgewÃ¤hlt
+                                                            {selectedMappingInvNrs.length} GerÃ¤t(e) fÃ¼r dieses Mapping ausgewählt
                                                         </Text>
 
                                                         <View style={styles.actionRow}>
@@ -1423,7 +1499,20 @@ const BookingPage = () => {
                         </>
                     ) : null}
                 </View>
-            </ScrollView>
+                    </>
+                )}
+            />
+
+            <Portal>
+                <Modal visible={isScannerVisible} onDismiss={() => setIsScannerVisible(false)}>
+                    <View style={styles.scannerModal}>
+                        <QrCodeScanner
+                            setShowModal={setIsScannerVisible}
+                            onScan={handleScannedBookingCode}
+                        />
+                    </View>
+                </Modal>
+            </Portal>
 
             {Platform.OS !== "web" && (
                 <DateTimePickerModal
@@ -1445,6 +1534,13 @@ const styles = StyleSheet.create({
     },
     pageDark: {
         backgroundColor: "#0f1115",
+    },
+    scannerModal: {
+        marginHorizontal: 20,
+        height: 420,
+        borderRadius: 20,
+        overflow: "hidden",
+        backgroundColor: "#000000",
     },
     header: {
         backgroundColor: "#f7f7f8",
@@ -1587,6 +1683,26 @@ const styles = StyleSheet.create({
     searchInput: {
         marginTop: 16,
         marginBottom: 12,
+    },
+    searchActionRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        marginTop: 16,
+        marginBottom: 12,
+    },
+    searchInputCompact: {
+        flex: 1,
+        marginTop: 0,
+        marginBottom: 0,
+    },
+    searchScannerButton: {
+        margin: 0,
+        borderWidth: 1,
+        borderColor: "#dbe0e6",
+    },
+    searchScannerButtonDark: {
+        borderColor: "#2a3344",
     },
     selectionModeRow: {
         flexDirection: "row",
@@ -1777,4 +1893,5 @@ const styles = StyleSheet.create({
 });
 
 export default BookingPage;
+
 

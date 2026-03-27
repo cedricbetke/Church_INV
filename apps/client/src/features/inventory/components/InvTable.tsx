@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Snackbar } from "react-native-paper";
 import axios from "axios";
@@ -42,11 +42,11 @@ const compareValues = (
 
 const getMutationErrorMessage = (error: unknown) => {
     if (!axios.isAxiosError(error)) {
-        return error instanceof Error ? error.message : "Aktion konnte nicht ausgeführt werden.";
+        return error instanceof Error ? error.message : "Aktion konnte nicht ausgefÃ¼hrt werden.";
     }
 
     if (!error.response) {
-        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL prüfen.";
+        return "Der Server ist nicht erreichbar. Bitte Verbindung und API-URL prÃ¼fen.";
     }
 
     const { status, data } = error.response;
@@ -75,9 +75,26 @@ const getMutationErrorMessage = (error: unknown) => {
         return backendMessage ?? "Serverfehler beim Speichern.";
     }
 
-    return backendMessage ?? "Aktion konnte nicht ausgeführt werden.";
+    return backendMessage ?? "Aktion konnte nicht ausgefÃ¼hrt werden.";
 };
 
+const normalizeInventoryCodeCandidates = (rawValue: string) => {
+    const trimmed = rawValue.trim();
+    const upperTrimmed = trimmed.toUpperCase();
+    const withoutPrefix = upperTrimmed.startsWith("INV-") ? upperTrimmed.slice(4) : upperTrimmed;
+    const numericOnly = withoutPrefix.replace(/\D/g, "");
+    const normalizedNumeric = numericOnly ? String(Number(numericOnly)) : null;
+
+    return new Set(
+        [
+            trimmed,
+            upperTrimmed,
+            withoutPrefix,
+            numericOnly || null,
+            normalizedNumeric && normalizedNumeric !== "NaN" ? normalizedNumeric : null,
+        ].filter(Boolean) as string[],
+    );
+};
 const InvTable = () => {
     const {
         numberOfItemsPerPageList,
@@ -143,15 +160,16 @@ const InvTable = () => {
         }
 
         const normalizedCode = scannedCode.trim();
+        const codeCandidates = normalizeInventoryCodeCandidates(normalizedCode);
         const matchedItem = items.find((item) => {
             const normalizedInvNr = String(item.invNr).trim();
-            return normalizedInvNr === normalizedCode || `INV-${normalizedInvNr}` === normalizedCode;
+            return codeCandidates.has(normalizedInvNr) || codeCandidates.has(`INV-${normalizedInvNr}`);
         });
 
         if (matchedItem) {
             openDetailModal(matchedItem);
         } else {
-            setFeedbackMessage(`Kein Gerät zu QR-Code "${normalizedCode}" gefunden.`);
+            setFeedbackMessage(`Kein GerÃ¤t zu QR-Code "${normalizedCode}" gefunden.`);
         }
 
         setScannedCode(null);
@@ -199,13 +217,13 @@ const InvTable = () => {
         try {
             if (editingItem) {
                 if (!canManageInventory) {
-                    throw new Error("Nur Admins dürfen Geräte bearbeiten.");
+                    throw new Error("Nur Admins dÃ¼rfen GerÃ¤te bearbeiten.");
                 }
 
                 await geraeteService.update(editingItem.invNr, itemData);
             } else {
                 if (!canManageInventory) {
-                    throw new Error("Nur Admins dürfen Geräte anlegen.");
+                    throw new Error("Nur Admins dÃ¼rfen GerÃ¤te anlegen.");
                 }
 
                 await geraeteService.create(itemData);
@@ -213,7 +231,7 @@ const InvTable = () => {
 
             await refreshInventory(editingItem?.invNr);
         } catch (error) {
-            console.error("Fehler beim Speichern des Geräts:", error);
+            console.error("Fehler beim Speichern des GerÃ¤ts:", error);
             setFeedbackMessage(getMutationErrorMessage(error));
             throw error;
         }
@@ -221,7 +239,7 @@ const InvTable = () => {
 
     const handleDelete = async (item: InventoryItem) => {
         if (!canManageInventory) {
-            throw new Error("Nur Admins dürfen Geräte löschen.");
+            throw new Error("Nur Admins dÃ¼rfen GerÃ¤te lÃ¶schen.");
         }
 
         try {
@@ -232,7 +250,7 @@ const InvTable = () => {
             }
             await fetchItems();
         } catch (error) {
-            console.error("Fehler beim Löschen des Geräts:", error);
+            console.error("Fehler beim LÃ¶schen des GerÃ¤ts:", error);
             setFeedbackMessage(getMutationErrorMessage(error));
             throw error;
         }
@@ -330,3 +348,4 @@ const styles = StyleSheet.create({
 });
 
 export default InvTable;
+

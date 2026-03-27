@@ -1,4 +1,4 @@
-import { CameraView, useCameraPermissions } from "expo-camera";
+﻿import { CameraView, useCameraPermissions } from "expo-camera";
 import { Platform, StyleSheet, View } from "react-native";
 import { useMemo, useState } from "react";
 import { Button, Text } from "react-native-paper";
@@ -41,13 +41,13 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
     if (!isSecureWebContext) {
         return (
             <View style={styles.stateContainer}>
-                <Text variant="titleMedium">Kamera im Browser nicht verfügbar</Text>
+                <Text variant="titleMedium">Kamera im Browser nicht verfÃ¼gbar</Text>
                 <Text style={styles.stateText}>
                     Auf mobilen Browsern funktioniert der Scanner meist nur in einem sicheren Kontext
-                    wie HTTPS oder localhost. Über eine normale LAN-HTTP-URL wird die Kamera oft blockiert.
+                    wie HTTPS oder localhost. Ãœber eine normale LAN-HTTP-URL wird die Kamera oft blockiert.
                 </Text>
                 <Button mode="contained" onPress={() => setShowModal(false)}>
-                    Schließen
+                    SchlieÃŸen
                 </Button>
             </View>
         );
@@ -67,7 +67,7 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
             <View style={styles.stateContainer}>
                 <Text variant="titleMedium">Kamerazugriff erforderlich</Text>
                 <Text style={styles.stateText}>
-                    Für den QR-Scanner muss der Browser Zugriff auf die Kamera erhalten.
+                    Für den QR-/Barcode-Scanner muss der Browser Zugriff auf die Kamera erhalten.
                 </Text>
                 <View style={styles.actions}>
                     <Button mode="outlined" onPress={() => setShowModal(false)}>
@@ -111,3 +111,4 @@ const styles = StyleSheet.create({
 });
 
 export default QrCodeScanner;
+
