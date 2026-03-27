@@ -43,6 +43,11 @@ interface AddPageProps {
     editingItem?: InventoryItem | null;
 }
 
+interface PendingPhotoUpload {
+    dataUrl: string;
+    fileName: string;
+}
+
 const AddPage: React.FC<AddPageProps> = ({
     visible,
     onDismiss,
@@ -83,6 +88,7 @@ const AddPage: React.FC<AddPageProps> = ({
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [selectedPhotoDataUrl, setSelectedPhotoDataUrl] = useState<string | null>(null);
     const [uploadedPhotoPath, setUploadedPhotoPath] = useState<string | null>(null);
+    const [pendingPhotoUpload, setPendingPhotoUpload] = useState<PendingPhotoUpload | null>(null);
     const [attachments, setAttachments] = useState<EditableAttachment[]>([]);
     const isEditMode = editingItem !== null;
 
@@ -140,6 +146,7 @@ const AddPage: React.FC<AddPageProps> = ({
             setPendingModel(null);
             setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
             setUploadedPhotoPath(toStoredAssetPath(editingItem.geraeteFoto));
+            setPendingPhotoUpload(null);
             setAttachments(editingItem.attachments.map((attachment) => ({ ...attachment })));
             return;
         }
@@ -172,6 +179,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setPendingModel(null);
         setSelectedPhotoDataUrl(null);
         setUploadedPhotoPath(null);
+        setPendingPhotoUpload(null);
         setAttachments([]);
     };
 
@@ -358,14 +366,11 @@ const AddPage: React.FC<AddPageProps> = ({
             }
 
             setSelectedPhotoDataUrl(pickedImage.dataUrl);
-            setError(null);
-
-            const uploadResponse = await apiClient.create<{ path: string }>("geraet/upload-photo", {
-                fileName: pickedImage.fileName,
+            setPendingPhotoUpload({
                 dataUrl: pickedImage.dataUrl,
+                fileName: pickedImage.fileName,
             });
-
-            setUploadedPhotoPath(uploadResponse.path);
+            setError(null);
         } catch (photoError) {
             console.error("Fehler beim Hochladen des Gerätefotos:", photoError);
             setError(getErrorMessage(photoError));
@@ -517,6 +522,15 @@ const AddPage: React.FC<AddPageProps> = ({
                 return;
             }
 
+            let finalUploadedPhotoPath = uploadedPhotoPath ?? undefined;
+            if (pendingPhotoUpload) {
+                const uploadResponse = await apiClient.create<{ path: string }>("geraet/upload-photo", {
+                    fileName: pendingPhotoUpload.fileName,
+                    dataUrl: pendingPhotoUpload.dataUrl,
+                });
+                finalUploadedPhotoPath = uploadResponse.path;
+            }
+
             const payload: CreateGeraetPayload = {
                 inv_nr: Number(formData.invNr),
                 modell_id: selectedModel.id,
@@ -529,7 +543,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 kaufdatum: formData.kaufdatum || undefined,
                 einkaufspreis: formData.einkaufspreis ? parsePrice(formData.einkaufspreis.trim()) : undefined,
                 zustandshinweis: formData.zustandshinweis.trim() || undefined,
-                geraetefoto_url: uploadedPhotoPath ?? undefined,
+                geraetefoto_url: finalUploadedPhotoPath,
             };
 
             await onSubmit(payload);
