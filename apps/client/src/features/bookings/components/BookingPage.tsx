@@ -2170,12 +2170,13 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 18,
-        gap: 18,
+        paddingBottom: 24,
     },
     summaryRow: {
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 12,
+        marginBottom: 18,
     },
     summaryCard: {
         flex: 1,
@@ -2206,6 +2207,7 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         gap: 16,
         alignItems: "flex-start",
+        marginTop: 2,
     },
     formCard: {
         flex: 1,
