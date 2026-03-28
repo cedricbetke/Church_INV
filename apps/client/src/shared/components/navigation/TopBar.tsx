@@ -98,14 +98,25 @@ const TopBar = () => {
             <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark, isCompactViewport && styles.headerCompact]}>
                 <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => {}} />
                 <View style={styles.leftCluster}>
-                    <Text style={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]}>
-                        ChurchINV
-                    </Text>
-                    <View style={[styles.betaBadge, isDarkMode && styles.betaBadgeDark]}>
-                        <Text style={[styles.betaBadgeText, isDarkMode && styles.betaBadgeTextDark]}>
-                            Beta {CURRENT_VERSION}
+                    <View style={styles.titleStack}>
+                        <Text style={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]}>
+                            ChurchINV
                         </Text>
+                        {isCompactViewport ? (
+                            <View style={[styles.betaBadge, styles.betaBadgeBelowTitle, isDarkMode && styles.betaBadgeDark]}>
+                                <Text style={[styles.betaBadgeText, styles.betaBadgeTextCompact, isDarkMode && styles.betaBadgeTextDark]}>
+                                    Beta
+                                </Text>
+                            </View>
+                        ) : null}
                     </View>
+                    {!isCompactViewport && (
+                        <View style={[styles.betaBadge, isDarkMode && styles.betaBadgeDark]}>
+                            <Text style={[styles.betaBadgeText, isDarkMode && styles.betaBadgeTextDark]}>
+                                {`Beta ${CURRENT_VERSION}`}
+                            </Text>
+                        </View>
+                    )}
                     {!isCompactViewport && (
                         <>
                             {renderAction("text-box-outline", "Patch Notes", () => setShowPatchNotesModal(true), {
@@ -256,6 +267,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 6,
     },
+    titleStack: {
+        justifyContent: "center",
+        gap: 2,
+    },
     leftClusterAction: {
         marginLeft: 2,
         marginRight: 0,
@@ -268,6 +283,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#d9e0ff",
     },
+    betaBadgeBelowTitle: {
+        alignSelf: "flex-start",
+        paddingHorizontal: 6,
+        paddingVertical: 1,
+    },
     betaBadgeDark: {
         backgroundColor: "#1b2740",
         borderColor: "#334c79",
@@ -278,6 +298,9 @@ const styles = StyleSheet.create({
         color: "#4f46e5",
         letterSpacing: 0.3,
         textTransform: "uppercase",
+    },
+    betaBadgeTextCompact: {
+        fontSize: 10,
     },
     betaBadgeTextDark: {
         color: "#a5b4fc",
