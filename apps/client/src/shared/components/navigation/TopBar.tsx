@@ -5,6 +5,7 @@ import { Linking, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput, Tooltip } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
+import { patchNotesData } from "@/src/features/patch-notes/data/patchNotes";
 import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
@@ -12,6 +13,7 @@ const BUG_ISSUE_URL =
     "https://github.com/cedricbetke/Church_INV/issues/new?labels=bug&title=Bug%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20ist%20kaputt%20oder%20unerwartet%3F%0A-%20Wie%20kann%20man%20es%20nachstellen%3F%0A-%20Auf%20welcher%20Ansicht%20oder%20welchem%20Geraet%20passiert%20es%3F%0A";
 const FEATURE_ISSUE_URL =
     "https://github.com/cedricbetke/Church_INV/issues/new?labels=enhancement&title=Feature%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20wuenschst%20du%20dir%3F%0A-%20Welches%20Problem%20wuerde%20das%20loesen%3F%0A-%20Wie%20sollte%20es%20sich%20verhalten%3F%0A";
+const CURRENT_VERSION = patchNotesData.entries[0]?.version ?? "0.0.0";
 
 const TopBar = () => {
     const { width } = useWindowDimensions();
@@ -99,6 +101,11 @@ const TopBar = () => {
                     <Text style={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]}>
                         ChurchINV
                     </Text>
+                    <View style={[styles.betaBadge, isDarkMode && styles.betaBadgeDark]}>
+                        <Text style={[styles.betaBadgeText, isDarkMode && styles.betaBadgeTextDark]}>
+                            Beta {CURRENT_VERSION}
+                        </Text>
+                    </View>
                     {!isCompactViewport && (
                         <>
                             {renderAction("text-box-outline", "Patch Notes", () => setShowPatchNotesModal(true), {
@@ -247,11 +254,33 @@ const styles = StyleSheet.create({
     leftCluster: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 2,
+        gap: 6,
     },
     leftClusterAction: {
         marginLeft: 2,
         marginRight: 0,
+    },
+    betaBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 999,
+        backgroundColor: "#eef2ff",
+        borderWidth: 1,
+        borderColor: "#d9e0ff",
+    },
+    betaBadgeDark: {
+        backgroundColor: "#1b2740",
+        borderColor: "#334c79",
+    },
+    betaBadgeText: {
+        fontSize: 11,
+        fontWeight: "700",
+        color: "#4f46e5",
+        letterSpacing: 0.3,
+        textTransform: "uppercase",
+    },
+    betaBadgeTextDark: {
+        color: "#a5b4fc",
     },
     headerSpacer: {
         flex: 1,
