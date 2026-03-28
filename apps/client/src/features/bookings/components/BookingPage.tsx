@@ -598,6 +598,7 @@ const BookingDeviceSelector = React.memo(
         selectedInvChipSummary,
         showScannerAction,
         onOpenScanner,
+        onClearSelection,
     }: {
         isDarkMode: boolean;
         searchQuery: string;
@@ -612,6 +613,7 @@ const BookingDeviceSelector = React.memo(
         selectedInvChipSummary: React.ReactNode;
         showScannerAction: boolean;
         onOpenScanner: () => void;
+        onClearSelection: () => void;
     }) => {
         const selectedSet = useMemo(() => new Set(selectedInvNrs), [selectedInvNrs]);
 
@@ -687,6 +689,14 @@ const BookingDeviceSelector = React.memo(
                 <Text style={[styles.selectionInfo, isDarkMode && styles.selectionInfoDark]}>
                     {selectedInvNrs.length} Gerät(e) ausgewählt
                 </Text>
+
+                {selectedInvNrs.length > 0 ? (
+                    <View style={styles.selectionActionRow}>
+                        <Button mode="text" compact onPress={onClearSelection}>
+                            Geräteauswahl leeren
+                        </Button>
+                    </View>
+                ) : null}
 
                 {selectedInvChipSummary}
             </>
@@ -1274,14 +1284,9 @@ const BookingPage = () => {
         ));
     }, [sortedBookings, isLoading, isDarkMode, canManageInventory]);
 
-    const resetForm = () => {
-        setTitel("");
-        setBucherName("");
-        setZweck("");
-        setStartDatum("");
-        setEndDatum("");
+    const clearSelectedDevices = useCallback(() => {
         setSelectedInvNrs([]);
-    };
+    }, []);
 
     const handleToggleDevice = useCallback((invNr: number) => {
         setSelectedInvNrs((current) =>
@@ -1428,7 +1433,12 @@ const BookingPage = () => {
                 geraete_inv_nr: selectedInvNrs,
             });
 
-            resetForm();
+            setTitel("");
+            setBucherName("");
+            setZweck("");
+            setStartDatum("");
+            setEndDatum("");
+            setSelectedInvNrs([]);
             setFeedback("Buchung erfolgreich angelegt.");
             await loadBookings();
         } catch (error) {
@@ -1649,6 +1659,7 @@ const BookingPage = () => {
                             selectedInvChipSummary={selectedInvChipSummary}
                             showScannerAction={showScannerAction}
                             onOpenScanner={handleOpenScanner}
+                            onClearSelection={clearSelectedDevices}
                         />
 
                         {false ? (
@@ -1788,9 +1799,6 @@ const BookingPage = () => {
                         )}
 
                         <View style={styles.actionRow}>
-                            <Button mode="outlined" onPress={resetForm}>
-                                Leeren
-                            </Button>
                             {canManageInventory && (
                                 <Button mode="contained" onPress={() => void handleCreateBooking()} loading={isSubmitting} disabled={hasBlockingConflicts}>
                                     Buchung anlegen
@@ -2411,6 +2419,10 @@ const styles = StyleSheet.create({
     },
     selectionInfoDark: {
         color: "#b5c0cf",
+    },
+    selectionActionRow: {
+        marginTop: 4,
+        alignItems: "flex-start",
     },
     selectedInvChipRow: {
         flexDirection: "row",
