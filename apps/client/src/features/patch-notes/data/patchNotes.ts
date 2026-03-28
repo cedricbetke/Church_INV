@@ -32,6 +32,7 @@ export const patchNotesData: PatchNotesData = {
                 "Desktop und breitere Webansichten behalten den Umschalter zwischen Liste und Kalender",
                 "Im Buchungsformular gibt es jetzt nur noch eine gezielte Aktion zum Leeren der Geraeteauswahl statt eines kompletten Formular-Resets",
                 "Die Auswahldialoge auf der AddPage unterscheiden jetzt sauber zwischen Feldern mit echter Neuanlage und reinen Auswahlfeldern",
+                "Modell und Kategorie werden in der AddPage erst freigegeben, wenn die jeweils benoetigten Felder vorher gesetzt sind",
             ],
         },
         {

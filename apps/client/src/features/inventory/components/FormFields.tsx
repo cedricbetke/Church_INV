@@ -20,6 +20,8 @@ interface FormFieldsProps {
     loading: boolean;
     error: string | null;
     invNrDisabled?: boolean;
+    isModelSelectionEnabled: boolean;
+    isKategorieSelectionEnabled: boolean;
     setShowStatusDialog: (show: boolean) => void;
     setShowObjekttypDialog: (show: boolean) => void;
     setShowBrandDialog: (show: boolean) => void;
@@ -51,6 +53,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     loading,
     error,
     invNrDisabled = false,
+    isModelSelectionEnabled,
+    isKategorieSelectionEnabled,
     setShowStatusDialog,
     setShowObjekttypDialog,
     setShowBrandDialog,
@@ -110,6 +114,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             rightIcon?: string;
             selectionOnly?: boolean;
             placeholder?: string;
+            helperText?: string;
         } = {},
     ) => (
         <View>
@@ -129,6 +134,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 style={[styles.fieldInput, isDarkMode && styles.fieldInputDark]}
             />
             {errors[name] && <HelperText type="error">{errors[name]}</HelperText>}
+            {!errors[name] && options.helperText && <HelperText type="info">{options.helperText}</HelperText>}
             {name === "invNr" && loading && (
                 <HelperText type="info">Lade Inventarnummer...</HelperText>
             )}
@@ -153,10 +159,12 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     selectionOnly: true,
                 })}
                 {renderField("modell", "Modell", {
-                    onFocus: () => setShowModelDialog(true),
-                    onPressIn: () => setShowModelDialog(true),
+                    disabled: !isModelSelectionEnabled,
+                    onFocus: isModelSelectionEnabled ? () => setShowModelDialog(true) : undefined,
+                    onPressIn: isModelSelectionEnabled ? () => setShowModelDialog(true) : undefined,
                     rightIcon: "chevron-down",
                     selectionOnly: true,
+                    helperText: !isModelSelectionEnabled ? "Bitte zuerst Hersteller und Objekttyp wählen" : undefined,
                 })}
                 {renderField("serien_nr", "Seriennummer")}
                 {Platform.OS === "web"
@@ -186,10 +194,12 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     selectionOnly: true,
                 })}
                 {renderField("kategorie", "Kategorie", {
-                    onFocus: () => setShowKategorieDialog(true),
-                    onPressIn: () => setShowKategorieDialog(true),
+                    disabled: !isKategorieSelectionEnabled,
+                    onFocus: isKategorieSelectionEnabled ? () => setShowKategorieDialog(true) : undefined,
+                    onPressIn: isKategorieSelectionEnabled ? () => setShowKategorieDialog(true) : undefined,
                     rightIcon: "chevron-down",
                     selectionOnly: true,
+                    helperText: !isKategorieSelectionEnabled ? "Bitte zuerst einen Bereich wählen" : undefined,
                 })}
                 {renderField("status", "Status", {
                     onFocus: () => setShowStatusDialog(true),

@@ -39,6 +39,8 @@ Beim Anlegen eines Geraets gilt aktuell:
 
 - Hersteller, Objekttyp und Modell koennen direkt aus dem Auswahldialog neu angelegt werden
 - Status, Standort, Bereich, Kategorie und Person sind dort reine Auswahlfelder und suggerieren keine direkte Neuanlage
+- Modell wird erst verfuegbar, wenn Hersteller und Objekttyp gesetzt sind
+- Kategorie wird erst verfuegbar, wenn ein Bereich gesetzt ist
 
 ## Medien
 

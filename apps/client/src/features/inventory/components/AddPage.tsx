@@ -101,6 +101,8 @@ const AddPage: React.FC<AddPageProps> = ({
     });
 
     const filteredKategorien = getFilteredKategorien(formData, bereiche, kategorien);
+    const isModelSelectionEnabled = Boolean(formData.hersteller.trim() && formData.objekttyp.trim());
+    const isKategorieSelectionEnabled = Boolean(formData.bereich.trim());
 
     const resetDialogState = () => {
         setShowStatusDialog(false);
@@ -574,6 +576,8 @@ const AddPage: React.FC<AddPageProps> = ({
                             loading={loading}
                             error={error}
                             invNrDisabled={isEditMode}
+                            isModelSelectionEnabled={isModelSelectionEnabled}
+                            isKategorieSelectionEnabled={isKategorieSelectionEnabled}
                             setShowStatusDialog={setShowStatusDialog}
                             setShowObjekttypDialog={setShowObjekttypDialog}
                             setShowBrandDialog={setShowBrandDialog}
