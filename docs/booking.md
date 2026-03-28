@@ -49,6 +49,8 @@ CREATE TABLE geraet_buchung_geraet (
 - die Kalenderansicht ist der aktuelle Standard beim Oeffnen der Buchungsseite
 - vorhandene Buchungen starten in der Listenansicht eingeklappt
 - Geraete koennen einzeln oder nach Modellmenge ausgewaehlt werden
+- beim Setzen des Startdatums wird das Enddatum in typischen Faellen sinnvoll mitgezogen
+- leere Datumsfelder starten beim Oeffnen des nativen Pickers mit 00:00 fuer `Von` und 23:59 fuer `Bis`
 - QR-Scan kann einzelne Geraete direkt in die Auswahl uebernehmen
 
 ## Kalenderansicht

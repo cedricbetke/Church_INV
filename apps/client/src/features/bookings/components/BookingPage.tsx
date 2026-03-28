@@ -99,6 +99,32 @@ const formatDateRange = (booking: Booking) =>
 const getCalendarDateKey = (date: Date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 
+const withStartOfDay = (date: Date) => {
+    const result = new Date(date);
+    result.setHours(0, 0, 0, 0);
+    return result;
+};
+
+const withBookingDayEnd = (date: Date) => {
+    const result = new Date(date);
+    result.setHours(23, 59, 0, 0);
+    return result;
+};
+
+const getBookingPickerDate = (value: string, field: "start" | "end") => {
+    const parsedValue = parseDateInput(value);
+
+    if (parsedValue) {
+        return new Date(parsedValue);
+    }
+
+    const now = new Date();
+    return field === "end" ? withBookingDayEnd(now) : withStartOfDay(now);
+};
+
+const getDefaultBookingDateValue = (field: "start" | "end") =>
+    formatDateForInput(field === "end" ? withBookingDayEnd(new Date()) : withStartOfDay(new Date()));
+
 const alignEndDateWithStart = ({
     previousStartValue,
     nextStartValue,
@@ -118,7 +144,7 @@ const alignEndDateWithStart = ({
     const currentEndRaw = parseDateInput(currentEndValue);
 
     if (!currentEndRaw) {
-        return formatDateForInput(nextStartDate);
+        return formatDateForInput(withBookingDayEnd(nextStartDate));
     }
 
     const currentEndDate = new Date(currentEndRaw);
@@ -136,7 +162,7 @@ const alignEndDateWithStart = ({
     shiftedEndDate.setFullYear(nextStartDate.getFullYear(), nextStartDate.getMonth(), nextStartDate.getDate());
 
     if (shiftedEndDate.getTime() < nextStartDate.getTime()) {
-        return formatDateForInput(nextStartDate);
+        return formatDateForInput(withBookingDayEnd(nextStartDate));
     }
 
     return formatDateForInput(shiftedEndDate);
@@ -477,6 +503,84 @@ type ModelGroup = {
     items: InventoryItem[];
 };
 
+const BookingDeviceRow = React.memo(
+    ({
+        item,
+        checked,
+        isDarkMode,
+        onToggleDevice,
+    }: {
+        item: InventoryItem;
+        checked: boolean;
+        isDarkMode: boolean;
+        onToggleDevice: (invNr: number) => void;
+    }) => (
+        <View style={[styles.deviceRow, isDarkMode && styles.deviceRowDark]}>
+            <Checkbox
+                status={checked ? "checked" : "unchecked"}
+                onPress={() => onToggleDevice(item.invNr)}
+            />
+            <View style={styles.deviceMeta}>
+                <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
+                    {item.invNr} · {item.modell}
+                </Text>
+                <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
+                    {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" · ")}
+                </Text>
+            </View>
+        </View>
+    ),
+);
+
+const BookingModelGroupRow = React.memo(
+    ({
+        group,
+        selectedCount,
+        isDarkMode,
+        onSetModelQuantity,
+    }: {
+        group: ModelGroup;
+        selectedCount: number;
+        isDarkMode: boolean;
+        onSetModelQuantity: (groupKey: string, quantity: number) => void;
+    }) => (
+        <View key={group.key} style={[styles.deviceRow, styles.modelGroupRow, isDarkMode && styles.deviceRowDark]}>
+            <View style={styles.deviceMeta}>
+                <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
+                    {group.modell}
+                </Text>
+                <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
+                    {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" · ")}
+                </Text>
+                <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
+                    {selectedCount} von {group.items.length} ausgewählt
+                </Text>
+            </View>
+            <View style={styles.quantityControls}>
+                <Button
+                    compact
+                    mode="outlined"
+                    onPress={() => onSetModelQuantity(group.key, selectedCount - 1)}
+                    disabled={selectedCount === 0}
+                >
+                    -
+                </Button>
+                <Text style={[styles.quantityValue, isDarkMode && styles.deviceTitleDark]}>
+                    {selectedCount}
+                </Text>
+                <Button
+                    compact
+                    mode="outlined"
+                    onPress={() => onSetModelQuantity(group.key, selectedCount + 1)}
+                    disabled={selectedCount >= group.items.length}
+                >
+                    +
+                </Button>
+            </View>
+        </View>
+    ),
+);
+
 const BookingDeviceSelector = React.memo(
     ({
         isDarkMode,
@@ -547,20 +651,13 @@ const BookingDeviceSelector = React.memo(
                                 const checked = selectedSet.has(item.invNr);
 
                                 return (
-                                    <View key={item.invNr} style={[styles.deviceRow, isDarkMode && styles.deviceRowDark]}>
-                                        <Checkbox
-                                            status={checked ? "checked" : "unchecked"}
-                                            onPress={() => onToggleDevice(item.invNr)}
-                                        />
-                                        <View style={styles.deviceMeta}>
-                                            <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
-                                                {item.invNr} · {item.modell}
-                                            </Text>
-                                            <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                                                {[item.hersteller, item.standort, item.bereich].filter(Boolean).join(" · ")}
-                                            </Text>
-                                        </View>
-                                    </View>
+                                    <BookingDeviceRow
+                                        key={item.invNr}
+                                        item={item}
+                                        checked={checked}
+                                        isDarkMode={isDarkMode}
+                                        onToggleDevice={onToggleDevice}
+                                    />
                                 );
                             })}
                         </ScrollView>
@@ -572,40 +669,13 @@ const BookingDeviceSelector = React.memo(
                                 const selectedCount = group.items.filter((item) => selectedSet.has(item.invNr)).length;
 
                                 return (
-                                    <View key={group.key} style={[styles.deviceRow, styles.modelGroupRow, isDarkMode && styles.deviceRowDark]}>
-                                        <View style={styles.deviceMeta}>
-                                            <Text style={[styles.deviceTitle, isDarkMode && styles.deviceTitleDark]}>
-                                                {group.modell}
-                                            </Text>
-                                            <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                                                {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" · ")}
-                                            </Text>
-                                            <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
-                                                {selectedCount} von {group.items.length} ausgewählt
-                                            </Text>
-                                        </View>
-                                        <View style={styles.quantityControls}>
-                                            <Button
-                                                compact
-                                                mode="outlined"
-                                                onPress={() => onSetModelQuantity(group.key, selectedCount - 1)}
-                                                disabled={selectedCount === 0}
-                                            >
-                                                -
-                                            </Button>
-                                            <Text style={[styles.quantityValue, isDarkMode && styles.deviceTitleDark]}>
-                                                {selectedCount}
-                                            </Text>
-                                            <Button
-                                                compact
-                                                mode="outlined"
-                                                onPress={() => onSetModelQuantity(group.key, selectedCount + 1)}
-                                                disabled={selectedCount >= group.items.length}
-                                            >
-                                                +
-                                            </Button>
-                                        </View>
-                                    </View>
+                                    <BookingModelGroupRow
+                                        key={group.key}
+                                        group={group}
+                                        selectedCount={selectedCount}
+                                        isDarkMode={isDarkMode}
+                                        onSetModelQuantity={onSetModelQuantity}
+                                    />
                                 );
                             })}
                         </ScrollView>
@@ -880,6 +950,7 @@ const BookingPage = () => {
     const [startDatum, setStartDatum] = useState("");
     const [endDatum, setEndDatum] = useState("");
     const [activeDateField, setActiveDateField] = useState<"start" | "end" | null>(null);
+    const [pickerDate, setPickerDate] = useState(() => withStartOfDay(new Date()));
     const [selectedInvNrs, setSelectedInvNrs] = useState<number[]>([]);
     const [selectionMode, setSelectionMode] = useState<SelectionMode>("single");
     const [bookingViewMode, setBookingViewMode] = useState<BookingViewMode>("calendar");
@@ -1295,15 +1366,33 @@ const BookingPage = () => {
         });
     }, []);
 
-    const handleDateConfirm = (date: Date) => {
-        const formattedDate = formatDateForInput(date);
+    const handleOpenDateField = useCallback(
+        (field: "start" | "end") => {
+            const currentValue = field === "end" ? endDatum : startDatum;
+            const nextPickerDate = getBookingPickerDate(currentValue, field);
 
+            setPickerDate(nextPickerDate);
+
+            if (field === "start" && !startDatum.trim()) {
+                handleStartDateChange(getDefaultBookingDateValue("start"));
+            }
+
+            if (field === "end" && !endDatum.trim()) {
+                setEndDatum(getDefaultBookingDateValue("end"));
+            }
+
+            setActiveDateField(field);
+        },
+        [endDatum, handleStartDateChange, startDatum],
+    );
+
+    const handleDateConfirm = (date: Date) => {
         if (activeDateField === "start") {
-            handleStartDateChange(formattedDate);
+            handleStartDateChange(formatDateForInput(withStartOfDay(date)));
         }
 
         if (activeDateField === "end") {
-            setEndDatum(formattedDate);
+            setEndDatum(formatDateForInput(withBookingDayEnd(date)));
         }
 
         setActiveDateField(null);
@@ -1510,7 +1599,7 @@ const BookingPage = () => {
                                     value={startDatum ? formatDateForDisplayInput(startDatum) : ""}
                                     onChangeText={handleStartDateChange}
                                     style={styles.input}
-                                    right={<TextInput.Icon icon="calendar" onPress={() => setActiveDateField("start")} />}
+                                    right={<TextInput.Icon icon="calendar" onPress={() => handleOpenDateField("start")} />}
                                 />
                             )}
                             {Platform.OS === "web" ? (
@@ -1528,7 +1617,7 @@ const BookingPage = () => {
                                     value={endDatum ? formatDateForDisplayInput(endDatum) : ""}
                                     onChangeText={setEndDatum}
                                     style={styles.input}
-                                    right={<TextInput.Icon icon="calendar" onPress={() => setActiveDateField("end")} />}
+                                    right={<TextInput.Icon icon="calendar" onPress={() => handleOpenDateField("end")} />}
                                 />
                             )}
                             <TextInput
@@ -2028,9 +2117,10 @@ const BookingPage = () => {
 
             {Platform.OS !== "web" && (
                 <DateTimePickerModal
+                    key={`${activeDateField ?? "none"}-${pickerDate.getTime()}`}
                     isVisible={activeDateField !== null}
                     mode="datetime"
-                    date={new Date(parseDateInput(activeDateField === "end" ? endDatum : startDatum) ?? Date.now())}
+                    date={pickerDate}
                     onConfirm={handleDateConfirm}
                     onCancel={() => setActiveDateField(null)}
                 />

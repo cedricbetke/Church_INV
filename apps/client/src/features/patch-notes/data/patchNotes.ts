@@ -20,6 +20,21 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.8",
+            date: "2026-03-28",
+            title: "Buchungsformular und Patch Notes nachgeschaerft",
+            summary: "Das Buchungsformular reagiert beim Datum sinnvoller und startet mit alltagstauglichen Tageszeiten, die Patch Notes koennen direkt auf Issues verlinken, und die Topbar zeigt den Beta-Status jetzt sichtbarer an.",
+            issueUrl: "https://github.com/cedricbetke/Church_INV/issues/5",
+            issueLabel: "#5",
+            items: [
+                "Beim Aendern des Startdatums wird das Enddatum in typischen Standardfaellen automatisch passend mitgezogen (Issue #5)",
+                "Leere Datumsfelder starten beim Oeffnen des Pickers jetzt sinnvoll mit 00:00 fuer den Anfang und 23:59 fuer das Ende",
+                "Die Patch-Notes-Ansicht in der App kann jetzt direkt auf verknuepfte GitHub-Issues verlinken",
+                "Die Topbar zeigt den aktuellen Beta-Status jetzt direkt am ChurchINV-Titel",
+                "Auf mobilen Breiten wurde das Beta-Badge kompakter unter den Titel gezogen, damit die Aktionsbuttons sichtbar bleiben",
+            ],
+        },
+        {
             version: "0.7.7",
             date: "2026-03-28",
             title: "Buchungskalender als zweite Ansicht",

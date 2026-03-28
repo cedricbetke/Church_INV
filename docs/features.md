@@ -73,6 +73,8 @@ Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 - die Geraeteauswahl kennt sowohl Einzelgeraete als auch Auswahl nach Modellmenge
 - bestehende Buchungen haben eine umschaltbare Listen- und Kalenderansicht
 - die Kalenderansicht startet standardmaessig und zeigt Monatsuebersicht plus Tagesagenda
+- beim Aendern des Startdatums wird das Enddatum in typischen Standardfaellen direkt mit angepasst
+- leere Datumsfelder im nativen Picker starten fuer Buchungsbeginn bei 00:00 und fuer das Ende bei 23:59
 
 ## Import und Medienmigration
 
@@ -114,6 +116,12 @@ Mehrere Aenderungen eines Speichervorgangs werden in der Oberflaeche als gemeins
 - strukturierte Datenbasis in `docs/patch-notes/patch-notes.json`
 - Markdown-Uebersicht in [changelog.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
 - read-only Anzeige direkt in der App ueber die Topbar
+- Patch-Notes-Eintraege koennen optional direkt auf zugehoerige GitHub-Issues verlinken
+
+## Topbar
+
+- die Topbar kennzeichnet den aktuellen Stand sichtbar als Beta
+- auf breiten Ansichten wird die aktuelle Versionsnummer direkt neben dem Titel angezeigt
 
 ## Bekannte fachliche Grenzen
 
