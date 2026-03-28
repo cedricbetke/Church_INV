@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const Geraet = require('../models/geratModel');
 const GeraetVerlauf = require('../models/geraetVerlaufModel');
-const { ensureThumbnailForStoredPhoto } = require('../utils/photoThumbnails');
+const { optimizePhotoToStoredPath, ensureThumbnailForStoredPhoto } = require('../utils/photoThumbnails');
 const geraeteUploadDir = path.resolve(__dirname, '..', '..', 'uploads', 'geraete');
 
 const getAllGeraete = async (req, res) => {
@@ -55,15 +55,14 @@ const uploadGeraetFoto = async (req, res) => {
             return res.status(400).json({ error: 'Ungueltiges Bildformat' });
         }
 
-        const mimeType = match[1];
         const base64Data = match[2];
-        const extension = mimeType.split('/')[1] || 'jpg';
         const safeBaseName = (fileName || 'geraetefoto')
             .replace(/\.[^.]+$/, '')
             .replace(/[^a-zA-Z0-9_-]/g, '_');
-        const finalFileName = `${Date.now()}_${safeBaseName}.${extension}`;
+        const finalFileName = `${Date.now()}_${safeBaseName}.jpg`;
+        const finalAbsolutePath = path.join(geraeteUploadDir, finalFileName);
         fs.mkdirSync(geraeteUploadDir, { recursive: true });
-        fs.writeFileSync(path.join(geraeteUploadDir, finalFileName), base64Data, 'base64');
+        await optimizePhotoToStoredPath(Buffer.from(base64Data, 'base64'), finalAbsolutePath);
         await ensureThumbnailForStoredPhoto(`/uploads/geraete/${finalFileName}`);
 
         res.status(201).json({

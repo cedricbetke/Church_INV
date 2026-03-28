@@ -1,0 +1,32 @@
+{
+  "dryRun": false,
+  "processed": 559,
+  "optimized": 294,
+  "updatedPaths": 62,
+  "skippedMissing": 260,
+  "skippedInvalid": 0,
+  "savedBytes": 630060552,
+  "errors": [
+    {
+      "invNr": 466,
+      "message": "JPEG error: unknown marker ffc3"
+    },
+    {
+      "invNr": 467,
+      "message": "JPEG error: unknown marker ffc3"
+    },
+    {
+      "invNr": 468,
+      "message": "JPEG error: unknown marker ffc3"
+    },
+    {
+      "invNr": 469,
+      "message": "JPEG error: unknown marker ffc3"
+    },
+    {
+      "invNr": 470,
+      "message": "JPEG error: unknown marker ffc3"
+    }
+  ],
+  "savedMb": 600.87
+}

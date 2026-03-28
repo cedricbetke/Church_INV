@@ -5,6 +5,8 @@ const uploadsRootDir = path.resolve(__dirname, '..', '..', 'uploads');
 const geraeteUploadDir = path.join(uploadsRootDir, 'geraete');
 const geraeteThumbsDir = path.join(geraeteUploadDir, 'thumbs');
 const THUMBNAIL_SIZE = 240;
+const OPTIMIZED_MAX_SIZE = 1400;
+const OPTIMIZED_QUALITY = 82;
 
 let jimpModule = null;
 
@@ -82,6 +84,17 @@ const writeJpeg = (image, targetPath) =>
         });
     });
 
+const optimizePhotoToStoredPath = async (source, targetPath) => {
+    const Jimp = getJimp();
+    const image = await Jimp.read(source);
+
+    image.quality(OPTIMIZED_QUALITY).scaleToFit(OPTIMIZED_MAX_SIZE, OPTIMIZED_MAX_SIZE);
+
+    const targetDir = path.dirname(targetPath);
+    fs.mkdirSync(targetDir, { recursive: true });
+    await writeJpeg(image, targetPath);
+};
+
 const ensureThumbnailForStoredPhoto = async (storedPath) => {
     const sourceAbsolutePath = getStoredAbsolutePath(storedPath);
     const thumbnailAbsolutePath = getThumbnailAbsolutePath(storedPath);
@@ -126,8 +139,10 @@ const deleteThumbnailForStoredPhoto = (storedPath) => {
 };
 
 module.exports = {
+    optimizePhotoToStoredPath,
     ensureThumbnailForStoredPhoto,
     getExistingThumbnailRelativePath,
+    getStoredAbsolutePath,
     getThumbnailAbsolutePath,
     getThumbnailRelativePath,
     deleteThumbnailForStoredPhoto,

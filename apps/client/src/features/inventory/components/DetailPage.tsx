@@ -141,7 +141,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
         }
 
         setPhotoSource(preferredPhotoSource);
-        setIsPhotoLoading(Boolean(preferredPhotoSource));
+        setIsPhotoLoading(false);
 
         let isActive = true;
 
@@ -170,6 +170,18 @@ const DetailModal: React.FC<DetailModalProps> = ({
             isActive = false;
         };
     }, [visible, selectedItem, preferredPhotoSource]);
+
+    useEffect(() => {
+        if (!isPhotoLoading || !photoSource) {
+            return;
+        }
+
+        const timeout = setTimeout(() => {
+            setIsPhotoLoading(false);
+        }, 5000);
+
+        return () => clearTimeout(timeout);
+    }, [isPhotoLoading, photoSource]);
 
     useEffect(() => {
         if (!visible || !selectedItem || !isHistoryExpanded) {
@@ -252,10 +264,12 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                         {photoSource ? (
                                             <View style={styles.imageWrapper}>
                                                 <Image
+                                                    key={photoSource}
                                                     source={{ uri: photoSource }}
                                                     style={styles.image}
                                                     resizeMode="contain"
                                                     onLoadStart={() => setIsPhotoLoading(true)}
+                                                    onLoad={() => setIsPhotoLoading(false)}
                                                     onLoadEnd={() => setIsPhotoLoading(false)}
                                                     onError={() => {
                                                         if (photoSource !== selectedItem.geraeteFoto && selectedItem.geraeteFoto) {

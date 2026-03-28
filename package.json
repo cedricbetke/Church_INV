@@ -2,6 +2,7 @@
   "scripts": {
     "backfill:photo-thumbs": "npx tsx scripts/backfill-photo-thumbnails.ts",
     "cleanup:photo-documents": "npx tsx scripts/cleanup-photo-documents.ts",
+    "optimize:stored-photos": "npx tsx scripts/optimize-stored-photos.ts",
     "sync:pco-bookings": "npx tsx scripts/sync-pco-bookings.ts",
     "sync:pco-mappings": "npx tsx scripts/sync-pco-mappings.ts",
     "import:teams-documents": "npx tsx scripts/import-teams-documents.ts",

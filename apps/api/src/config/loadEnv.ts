@@ -35,20 +35,28 @@ const parseEnvLine = (line: string) => {
 };
 
 export const loadEnv = () => {
-    const envPath = path.resolve(process.cwd(), ".env");
-    if (!fs.existsSync(envPath)) {
-        return;
-    }
+    const candidatePaths = [
+        path.resolve(process.cwd(), ".env"),
+        path.resolve(process.cwd(), "apps", "api", ".env"),
+    ];
 
-    const fileContents = fs.readFileSync(envPath, "utf8");
-    for (const line of fileContents.split(/\r?\n/)) {
-        const parsed = parseEnvLine(line);
-        if (!parsed) {
+    for (const envPath of candidatePaths) {
+        if (!fs.existsSync(envPath)) {
             continue;
         }
 
-        if (process.env[parsed.key] === undefined) {
-            process.env[parsed.key] = parsed.value;
+        const fileContents = fs.readFileSync(envPath, "utf8");
+        for (const line of fileContents.split(/\r?\n/)) {
+            const parsed = parseEnvLine(line);
+            if (!parsed) {
+                continue;
+            }
+
+            if (process.env[parsed.key] === undefined) {
+                process.env[parsed.key] = parsed.value;
+            }
         }
+
+        return;
     }
 };
