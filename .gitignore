@@ -15,6 +15,12 @@ npm-debug.*
 web-build/
 import/sharepoint-cookie.txt
 import/sharepoint-storage-state.json
+apps/client/app/*.js
+apps/client/src/**/*.js
+scripts/*.js
+apps/api/src/app.js
+apps/api/src/server.js
+apps/api/src/config/loadEnv.js
 
 # macOS
 .DS_Store

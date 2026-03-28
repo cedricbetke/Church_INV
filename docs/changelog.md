@@ -3,6 +3,18 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.7
+
+**28.03.2026**  
+**Buchungskalender als zweite Ansicht**
+
+Bestehende Buchungen koennen jetzt nicht nur als Liste, sondern auch in einer Kalenderansicht mit Tagesagenda betrachtet werden. Der Buchungsbereich startet dabei standardmaessig im Kalender.
+
+- Bestehende Buchungen haben jetzt einen Umschalter zwischen Liste und Kalender
+- Die neue Kalenderansicht zeigt eine Monatsuebersicht direkt auf der Buchungsseite
+- Ein gewaehlter Kalendertag blendet darunter die passende Tagesagenda ein
+- Der rechte Buchungsbereich startet jetzt standardmaessig in der Kalenderansicht
+
 ## 0.7.6
 
 **28.03.2026**  

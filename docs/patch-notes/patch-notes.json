@@ -2,6 +2,18 @@
   "app": "ChurchINV",
   "entries": [
     {
+      "version": "0.7.7",
+      "date": "2026-03-28",
+      "title": "Buchungskalender als zweite Ansicht",
+      "summary": "Bestehende Buchungen koennen jetzt nicht nur als Liste, sondern auch in einer Kalenderansicht mit Tagesagenda betrachtet werden. Der Buchungsbereich startet dabei standardmaessig im Kalender.",
+      "items": [
+        "Bestehende Buchungen haben jetzt einen Umschalter zwischen Liste und Kalender",
+        "Die neue Kalenderansicht zeigt eine Monatsuebersicht direkt auf der Buchungsseite",
+        "Ein gewaehlter Kalendertag blendet darunter die passende Tagesagenda ein",
+        "Der rechte Buchungsbereich startet jetzt standardmaessig in der Kalenderansicht"
+      ]
+    },
+    {
       "version": "0.7.6",
       "date": "2026-03-28",
       "title": "Foto- und Dev-Workflow gestrafft",

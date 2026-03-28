@@ -45,9 +45,18 @@ CREATE TABLE geraet_buchung_geraet (
 ## Oberflaeche
 
 - eigene Buchungsseite statt Modal
-- vorhandene Buchungen starten eingeklappt
+- der rechte Buchungsbereich kennt jetzt eine umschaltbare Listen- und Kalenderansicht
+- die Kalenderansicht ist der aktuelle Standard beim Oeffnen der Buchungsseite
+- vorhandene Buchungen starten in der Listenansicht eingeklappt
 - Geraete koennen einzeln oder nach Modellmenge ausgewaehlt werden
 - QR-Scan kann einzelne Geraete direkt in die Auswahl uebernehmen
+
+## Kalenderansicht
+
+- Monatsansicht fuer bestehende Buchungen direkt auf der Buchungsseite
+- Tagesauswahl zeigt darunter die Agenda fuer den gewaehlten Tag
+- Monatswechsel ist moeglich, ohne den restlichen Buchungs-Workflow zu verlassen
+- die Listenansicht bleibt parallel als zweite Ansicht erhalten
 
 ## Optionale PCO-Erweiterung
 
@@ -62,6 +71,5 @@ Wenn Buchungen spaeter doch direkt aus Planning Center synchronisiert werden sol
 
 ## Erste Grenzen
 
-- noch keine Kalenderansicht
 - noch keine Sammelbearbeitung bestehender Buchungen
 - noch kein automatischer Geraetestatus-Wechsel

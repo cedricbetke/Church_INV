@@ -96,6 +96,312 @@ const WebDateTimeField = ({
 const formatDateRange = (booking: Booking) =>
     `${formatBookingDate(booking.startDatum)} bis ${formatBookingDate(booking.endDatum)}`;
 
+const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
+
+const endOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+const startOfWeek = (date: Date) => {
+    const result = new Date(date);
+    const day = result.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
+    result.setDate(result.getDate() + diff);
+    result.setHours(0, 0, 0, 0);
+    return result;
+};
+
+const endOfWeek = (date: Date) => {
+    const result = startOfWeek(date);
+    result.setDate(result.getDate() + 6);
+    result.setHours(23, 59, 59, 999);
+    return result;
+};
+
+const addDays = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+};
+
+const addMonths = (date: Date, months: number) => new Date(date.getFullYear(), date.getMonth() + months, 1);
+
+const getDayKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+};
+
+const isSameDay = (left: Date, right: Date) => getDayKey(left) === getDayKey(right);
+
+const weekdayLabels = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+
+type BookingViewMode = "list" | "calendar";
+
+const BookingCalendarPanel = React.memo(
+    ({
+        isDarkMode,
+        isLoading,
+        bookings,
+        canManageInventory,
+        onDeleteBooking,
+        isCompactViewport,
+        bookingViewMode,
+        onChangeViewMode,
+    }: {
+        isDarkMode: boolean;
+        isLoading: boolean;
+        bookings: Booking[];
+        canManageInventory: boolean;
+        onDeleteBooking: (bookingId: number) => void;
+        isCompactViewport: boolean;
+        bookingViewMode: BookingViewMode;
+        onChangeViewMode: (mode: BookingViewMode) => void;
+    }) => {
+        const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(new Date()));
+        const [selectedDate, setSelectedDate] = useState(() => new Date());
+
+        const monthLabel = useMemo(
+            () =>
+                visibleMonth.toLocaleDateString("de-DE", {
+                    month: "long",
+                    year: "numeric",
+                }),
+            [visibleMonth],
+        );
+
+        const calendarDays = useMemo(() => {
+            const monthStart = startOfMonth(visibleMonth);
+            const monthEnd = endOfMonth(visibleMonth);
+            const gridStart = startOfWeek(monthStart);
+            const gridEnd = endOfWeek(monthEnd);
+            const days: Date[] = [];
+
+            for (let cursor = new Date(gridStart); cursor <= gridEnd; cursor = addDays(cursor, 1)) {
+                days.push(new Date(cursor));
+            }
+
+            return days;
+        }, [visibleMonth]);
+
+        const bookingsByDay = useMemo(() => {
+            const map = new Map<string, Booking[]>();
+
+            bookings.forEach((booking) => {
+                const start = new Date(booking.startDatum);
+                const end = new Date(booking.endDatum);
+                const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+                const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+                while (cursor <= last) {
+                    const key = getDayKey(cursor);
+                    const current = map.get(key) ?? [];
+                    current.push(booking);
+                    map.set(key, current);
+                    cursor.setDate(cursor.getDate() + 1);
+                }
+            });
+
+            return map;
+        }, [bookings]);
+
+        const selectedDayBookings = useMemo(() => {
+            const selectedKey = getDayKey(selectedDate);
+            return (bookingsByDay.get(selectedKey) ?? []).slice().sort((left, right) => {
+                return new Date(left.startDatum).getTime() - new Date(right.startDatum).getTime();
+            });
+        }, [bookingsByDay, selectedDate]);
+
+        useEffect(() => {
+            const visibleKeys = new Set(calendarDays.map(getDayKey));
+            if (!visibleKeys.has(getDayKey(selectedDate))) {
+                setSelectedDate(calendarDays[0] ?? new Date());
+            }
+        }, [calendarDays, selectedDate]);
+
+        return (
+            <Surface
+                style={[
+                    styles.listCard,
+                    isDarkMode && styles.listCardDark,
+                    isCompactViewport && styles.listCardCompact,
+                ]}
+            >
+                <View style={styles.listHeader}>
+                    <View style={styles.listHeaderText}>
+                        <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Buchungskalender</Text>
+                        <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
+                            Monatliche Übersicht über Zeiträume und Überschneidungen.
+                        </Text>
+                    </View>
+                    <View style={styles.listHeaderControls}>
+                        <View style={styles.bookingViewModeSwitch}>
+                            <Button
+                                compact
+                                mode={bookingViewMode === "list" ? "contained-tonal" : "text"}
+                                onPress={() => onChangeViewMode("list")}
+                                style={[
+                                    styles.bookingViewModeButton,
+                                    bookingViewMode === "list" && styles.bookingViewModeButtonActive,
+                                ]}
+                            >
+                                Liste
+                            </Button>
+                            <Button
+                                compact
+                                mode={bookingViewMode === "calendar" ? "contained-tonal" : "text"}
+                                onPress={() => onChangeViewMode("calendar")}
+                                style={[
+                                    styles.bookingViewModeButton,
+                                    bookingViewMode === "calendar" && styles.bookingViewModeButtonActive,
+                                ]}
+                            >
+                                Kalender
+                            </Button>
+                        </View>
+                        <Chip compact style={isCompactViewport ? styles.listHeaderChipCompact : undefined}>
+                            {isLoading ? "laedt" : `${bookings.length} Eintraege`}
+                        </Chip>
+                    </View>
+                </View>
+
+                <View style={styles.calendarToolbar}>
+                    <Button compact mode="text" onPress={() => setVisibleMonth((current) => addMonths(current, -1))}>
+                        Zurück
+                    </Button>
+                    <Text style={[styles.calendarMonthLabel, isDarkMode && styles.calendarMonthLabelDark]}>{monthLabel}</Text>
+                    <Button compact mode="text" onPress={() => setVisibleMonth((current) => addMonths(current, 1))}>
+                        Weiter
+                    </Button>
+                </View>
+
+                <ScrollView horizontal={isCompactViewport} showsHorizontalScrollIndicator={false}>
+                    <View style={isCompactViewport ? styles.calendarScrollContent : undefined}>
+                        <View style={styles.calendarWeekdayRow}>
+                            {weekdayLabels.map((label) => (
+                                <Text key={label} style={[styles.calendarWeekday, isDarkMode && styles.calendarWeekdayDark]}>
+                                    {label}
+                                </Text>
+                            ))}
+                        </View>
+
+                        <View style={styles.calendarGrid}>
+                            {calendarDays.map((day) => {
+                                const dayKey = getDayKey(day);
+                                const dayBookings = bookingsByDay.get(dayKey) ?? [];
+                                const isOutsideMonth = day.getMonth() !== visibleMonth.getMonth();
+                                const isSelected = isSameDay(day, selectedDate);
+
+                                return (
+                                    <Card
+                                        key={dayKey}
+                                        onPress={() => setSelectedDate(day)}
+                                        style={[
+                                            styles.calendarDayCell,
+                                            isDarkMode && styles.calendarDayCellDark,
+                                            isOutsideMonth && styles.calendarDayCellMuted,
+                                            isDarkMode && isOutsideMonth && styles.calendarDayCellMutedDark,
+                                            isSelected && styles.calendarDayCellSelected,
+                                        ]}
+                                    >
+                                        <Card.Content style={styles.calendarDayContent}>
+                                            <Text
+                                                style={[
+                                                    styles.calendarDayNumber,
+                                                    isDarkMode && styles.calendarDayNumberDark,
+                                                    isOutsideMonth && styles.calendarDayNumberMuted,
+                                                    isSelected && styles.calendarDayNumberSelected,
+                                                ]}
+                                            >
+                                                {day.getDate()}
+                                            </Text>
+                                            <View style={styles.calendarDayIndicators}>
+                                                {dayBookings.slice(0, 3).map((booking) => (
+                                                    <View
+                                                        key={`${dayKey}-${booking.id}`}
+                                                        style={[styles.calendarDayDot, isDarkMode && styles.calendarDayDotDark]}
+                                                    />
+                                                ))}
+                                            </View>
+                                            {dayBookings.length > 0 ? (
+                                                <Text style={[styles.calendarDayCount, isDarkMode && styles.calendarDayCountDark]}>
+                                                    {dayBookings.length} Buchung{dayBookings.length === 1 ? "" : "en"}
+                                                </Text>
+                                            ) : null}
+                                        </Card.Content>
+                                    </Card>
+                                );
+                            })}
+                        </View>
+                    </View>
+                </ScrollView>
+
+                <View style={styles.calendarAgendaHeader}>
+                    <Text style={[styles.sectionTitle, styles.calendarAgendaTitle, isDarkMode && styles.sectionTitleDark]}>
+                        {selectedDate.toLocaleDateString("de-DE", { dateStyle: "full" })}
+                    </Text>
+                </View>
+
+                {selectedDayBookings.length === 0 ? (
+                    <Text style={[styles.emptyStateText, isDarkMode && styles.emptyStateTextDark]}>
+                        Keine Buchungen an diesem Tag.
+                    </Text>
+                ) : (
+                    selectedDayBookings.map((booking, index) => (
+                        <View key={`agenda-${booking.id}`}>
+                            <Card style={[styles.bookingCard, isDarkMode && styles.bookingCardDark]}>
+                                <Card.Content>
+                                    <View style={styles.bookingCardHeader}>
+                                        <View style={styles.bookingCardMeta}>
+                                            <Text style={[styles.bookingTitle, isDarkMode && styles.bookingTitleDark]}>
+                                                {booking.titel}
+                                            </Text>
+                                            <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
+                                                Für {booking.bucherName}
+                                            </Text>
+                                        </View>
+                                        <Chip compact>{booking.status}</Chip>
+                                    </View>
+
+                                    <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
+                                        {formatDateRange(booking)}
+                                    </Text>
+
+                                    {booking.zweck ? (
+                                        <Text style={[styles.bookingPurpose, isDarkMode && styles.bookingPurposeDark]}>
+                                            {booking.zweck}
+                                        </Text>
+                                    ) : null}
+
+                                    <View style={styles.bookingDeviceChipRow}>
+                                        {booking.geraete.map((geraet) => (
+                                            <Chip key={`${booking.id}-${geraet.invNr}`} compact style={styles.deviceChip}>
+                                                {geraet.invNr} {geraet.modell}
+                                            </Chip>
+                                        ))}
+                                    </View>
+
+                                    {canManageInventory ? (
+                                        <View style={styles.bookingActions}>
+                                            <Button
+                                                mode="text"
+                                                onPress={() => onDeleteBooking(booking.id)}
+                                                textColor="#b3261e"
+                                            >
+                                                Löschen
+                                            </Button>
+                                        </View>
+                                    ) : null}
+                                </Card.Content>
+                            </Card>
+                            {index < selectedDayBookings.length - 1 ? <Divider style={styles.listDivider} /> : null}
+                        </View>
+                    ))
+                )}
+            </Surface>
+        );
+    },
+);
+
 const normalizeInventoryCodeCandidates = (rawValue: string) => {
     const trimmed = rawValue.trim();
     const upperTrimmed = trimmed.toUpperCase();
@@ -362,6 +668,8 @@ const BookingListPanel = React.memo(
         canManageInventory,
         onDeleteBooking,
         isCompactViewport,
+        bookingViewMode,
+        onChangeViewMode,
     }: {
         isDarkMode: boolean;
         isLoading: boolean;
@@ -369,6 +677,8 @@ const BookingListPanel = React.memo(
         canManageInventory: boolean;
         onDeleteBooking: (bookingId: number) => void;
         isCompactViewport: boolean;
+        bookingViewMode: BookingViewMode;
+        onChangeViewMode: (mode: BookingViewMode) => void;
     }) => {
         const [expandedBookingIds, setExpandedBookingIds] = useState<number[]>([]);
 
@@ -400,9 +710,35 @@ const BookingListPanel = React.memo(
                             Hier ist der Bereich, der spaeter gut an Planning Center andocken kann.
                         </Text>
                     </View>
-                    <Chip compact style={isCompactViewport ? styles.listHeaderChipCompact : undefined}>
-                        {isLoading ? "laedt" : `${bookings.length} Eintraege`}
-                    </Chip>
+                    <View style={styles.listHeaderControls}>
+                        <View style={styles.bookingViewModeSwitch}>
+                            <Button
+                                compact
+                                mode={bookingViewMode === "list" ? "contained-tonal" : "text"}
+                                onPress={() => onChangeViewMode("list")}
+                                style={[
+                                    styles.bookingViewModeButton,
+                                    bookingViewMode === "list" && styles.bookingViewModeButtonActive,
+                                ]}
+                            >
+                                Liste
+                            </Button>
+                            <Button
+                                compact
+                                mode={bookingViewMode === "calendar" ? "contained-tonal" : "text"}
+                                onPress={() => onChangeViewMode("calendar")}
+                                style={[
+                                    styles.bookingViewModeButton,
+                                    bookingViewMode === "calendar" && styles.bookingViewModeButtonActive,
+                                ]}
+                            >
+                                Kalender
+                            </Button>
+                        </View>
+                        <Chip compact style={isCompactViewport ? styles.listHeaderChipCompact : undefined}>
+                            {isLoading ? "laedt" : `${bookings.length} Eintraege`}
+                        </Chip>
+                    </View>
                 </View>
 
                 {bookings.length === 0 && !isLoading ? (
@@ -500,6 +836,7 @@ const BookingPage = () => {
     const [activeDateField, setActiveDateField] = useState<"start" | "end" | null>(null);
     const [selectedInvNrs, setSelectedInvNrs] = useState<number[]>([]);
     const [selectionMode, setSelectionMode] = useState<SelectionMode>("single");
+    const [bookingViewMode, setBookingViewMode] = useState<BookingViewMode>("calendar");
     const [pcoMappings, setPcoMappings] = useState<PcoMapping[]>([]);
     const [pcoSuggestions, setPcoSuggestions] = useState<PcoPlanSuggestion[]>([]);
     const [activeMappingId, setActiveMappingId] = useState<number | null>(null);
@@ -1302,15 +1639,35 @@ const BookingPage = () => {
                         </View>
                     </Surface>
 
-                    <View style={isCompactViewport ? styles.listCardCompactWrap : undefined}>
-                        <BookingListPanel
-                            isDarkMode={isDarkMode}
-                            isLoading={isLoading}
-                            bookings={sortedBookings}
-                            canManageInventory={canManageInventory}
-                            onDeleteBooking={handleDeleteBooking}
-                            isCompactViewport={isCompactViewport}
-                        />
+                    <View
+                        style={[
+                            styles.listPanelWrap,
+                            isCompactViewport && styles.listCardCompactWrap,
+                        ]}
+                    >
+                        {bookingViewMode === "list" ? (
+                            <BookingListPanel
+                                isDarkMode={isDarkMode}
+                                isLoading={isLoading}
+                                bookings={sortedBookings}
+                                canManageInventory={canManageInventory}
+                                onDeleteBooking={handleDeleteBooking}
+                                isCompactViewport={isCompactViewport}
+                                bookingViewMode={bookingViewMode}
+                                onChangeViewMode={setBookingViewMode}
+                            />
+                        ) : (
+                            <BookingCalendarPanel
+                                isDarkMode={isDarkMode}
+                                isLoading={isLoading}
+                                bookings={sortedBookings}
+                                canManageInventory={canManageInventory}
+                                onDeleteBooking={handleDeleteBooking}
+                                isCompactViewport={isCompactViewport}
+                                bookingViewMode={bookingViewMode}
+                                onChangeViewMode={setBookingViewMode}
+                            />
+                        )}
                     </View>
 
                     {false ? (
@@ -1715,6 +2072,10 @@ const styles = StyleSheet.create({
         borderRadius: 18,
         backgroundColor: "#ffffff",
     },
+    listPanelWrap: {
+        flex: 1.2,
+        minWidth: 360,
+    },
     listCardCompact: {
         minWidth: 0,
         width: "100%",
@@ -1722,6 +2083,7 @@ const styles = StyleSheet.create({
     listCardCompactWrap: {
         width: "100%",
         minWidth: 0,
+        flex: 0,
     },
     listCardDark: {
         backgroundColor: "#151922",
@@ -1808,6 +2170,18 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 8,
         marginBottom: 12,
+    },
+    bookingViewModeSwitch: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+    },
+    bookingViewModeButton: {
+        margin: 0,
+        borderRadius: 10,
+    },
+    bookingViewModeButtonActive: {
+        borderRadius: 10,
     },
     deviceListCard: {
         borderRadius: 14,
@@ -1972,9 +2346,128 @@ const styles = StyleSheet.create({
         flex: 1,
         minWidth: 0,
     },
+    listHeaderControls: {
+        alignItems: "flex-end",
+        gap: 8,
+    },
     listHeaderChipCompact: {
         alignSelf: "flex-start",
         maxWidth: 110,
+    },
+    calendarToolbar: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+        marginBottom: 14,
+    },
+    calendarMonthLabel: {
+        flex: 1,
+        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "700",
+        color: "#111827",
+        textTransform: "capitalize",
+    },
+    calendarMonthLabelDark: {
+        color: "#f5f7fb",
+    },
+    calendarWeekdayRow: {
+        flexDirection: "row",
+        marginBottom: 8,
+        justifyContent: "space-between",
+    },
+    calendarScrollContent: {
+        minWidth: 760,
+    },
+    calendarWeekday: {
+        width: "14%",
+        textAlign: "center",
+        fontSize: 12,
+        fontWeight: "700",
+        color: "#6b7280",
+    },
+    calendarWeekdayDark: {
+        color: "#9aa4b2",
+    },
+    calendarGrid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+        rowGap: 8,
+    },
+    calendarDayCell: {
+        width: "14%",
+        minWidth: 0,
+        minHeight: 74,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: "#e3e6eb",
+        backgroundColor: "#fbfbfc",
+        margin: 0,
+        paddingHorizontal: 0,
+    },
+    calendarDayCellDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#2a3344",
+    },
+    calendarDayCellMuted: {
+        opacity: 0.55,
+    },
+    calendarDayCellMutedDark: {
+        opacity: 0.5,
+    },
+    calendarDayCellSelected: {
+        borderColor: "#7c5cff",
+        backgroundColor: "#f5f1ff",
+    },
+    calendarDayContent: {
+        flex: 1,
+        padding: 8,
+        gap: 4,
+    },
+    calendarDayNumber: {
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#111827",
+    },
+    calendarDayNumberDark: {
+        color: "#f5f7fb",
+    },
+    calendarDayNumberMuted: {
+        color: "#7b8391",
+    },
+    calendarDayNumberSelected: {
+        color: "#5b33d6",
+    },
+    calendarDayIndicators: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        minHeight: 10,
+    },
+    calendarDayDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 999,
+        backgroundColor: "#4f7cff",
+    },
+    calendarDayDotDark: {
+        backgroundColor: "#8abfff",
+    },
+    calendarDayCount: {
+        fontSize: 11,
+        color: "#5f6877",
+    },
+    calendarDayCountDark: {
+        color: "#aab4c2",
+    },
+    calendarAgendaHeader: {
+        marginTop: 18,
+        marginBottom: 12,
+    },
+    calendarAgendaTitle: {
+        fontSize: 16,
     },
     emptyStateText: {
         color: "#6b7280",
