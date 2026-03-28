@@ -73,6 +73,7 @@ Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 - die Geraeteauswahl kennt sowohl Einzelgeraete als auch Auswahl nach Modellmenge
 - bestehende Buchungen haben eine umschaltbare Listen- und Kalenderansicht
 - die Kalenderansicht startet standardmaessig und zeigt Monatsuebersicht plus Tagesagenda
+- auf mobilen Breiten wird aktuell nur die stabilere Listenansicht gezeigt
 - beim Aendern des Startdatums wird das Enddatum in typischen Standardfaellen direkt mit angepasst
 - leere Datumsfelder im nativen Picker starten fuer Buchungsbeginn bei 00:00 und fuer das Ende bei 23:59
 

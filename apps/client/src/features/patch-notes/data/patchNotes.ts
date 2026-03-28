@@ -20,6 +20,19 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.9",
+            date: "2026-03-28",
+            title: "Mobile Buchungsansicht stabilisiert",
+            summary: "Auf schmalen Breiten bleibt der Buchungsbereich vorerst bewusst bei der Listenansicht, damit die mobile Darstellung stabil und lesbar bleibt.",
+            issueUrl: undefined,
+            issueLabel: undefined,
+            items: [
+                "Die Kalenderansicht fuer bestehende Buchungen ist auf mobilen Breiten vorerst deaktiviert",
+                "Mobile Geraete zeigen im rechten Buchungsbereich nur noch die stabilere Listenansicht",
+                "Desktop und breitere Webansichten behalten den Umschalter zwischen Liste und Kalender",
+            ],
+        },
+        {
             version: "0.7.8",
             date: "2026-03-28",
             title: "Buchungsformular und Patch Notes nachgeschaerft",

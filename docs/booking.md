@@ -48,6 +48,7 @@ CREATE TABLE geraet_buchung_geraet (
 - der rechte Buchungsbereich kennt jetzt eine umschaltbare Listen- und Kalenderansicht
 - die Kalenderansicht ist der aktuelle Standard beim Oeffnen der Buchungsseite
 - vorhandene Buchungen starten in der Listenansicht eingeklappt
+- auf mobilen Breiten bleibt der rechte Buchungsbereich vorerst bei der Listenansicht, damit die Darstellung stabil bleibt
 - Geraete koennen einzeln oder nach Modellmenge ausgewaehlt werden
 - beim Setzen des Startdatums wird das Enddatum in typischen Faellen sinnvoll mitgezogen
 - leere Datumsfelder starten beim Oeffnen des nativen Pickers mit 00:00 fuer `Von` und 23:59 fuer `Bis`
@@ -59,6 +60,7 @@ CREATE TABLE geraet_buchung_geraet (
 - Tagesauswahl zeigt darunter die Agenda fuer den gewaehlten Tag
 - Monatswechsel ist moeglich, ohne den restlichen Buchungs-Workflow zu verlassen
 - die Listenansicht bleibt parallel als zweite Ansicht erhalten
+- auf mobilen Breiten ist die Kalenderansicht vorerst ausgeblendet
 
 ## Optionale PCO-Erweiterung
 

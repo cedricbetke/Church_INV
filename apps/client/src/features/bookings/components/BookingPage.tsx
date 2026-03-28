@@ -298,38 +298,40 @@ const BookingCalendarPanel = React.memo(
                     isCompactViewport && styles.listCardCompact,
                 ]}
             >
-                <View style={styles.listHeader}>
+                <View style={[styles.listHeader, isCompactViewport && styles.listHeaderCompact]}>
                     <View style={styles.listHeaderText}>
                         <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Buchungskalender</Text>
                         <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
                             Monatliche Übersicht über Zeiträume und Überschneidungen.
                         </Text>
                     </View>
-                    <View style={styles.listHeaderControls}>
-                        <View style={styles.bookingViewModeSwitch}>
-                            <Button
-                                compact
-                                mode={bookingViewMode === "list" ? "contained-tonal" : "text"}
-                                onPress={() => onChangeViewMode("list")}
-                                style={[
-                                    styles.bookingViewModeButton,
-                                    bookingViewMode === "list" && styles.bookingViewModeButtonActive,
-                                ]}
-                            >
-                                Liste
-                            </Button>
-                            <Button
-                                compact
-                                mode={bookingViewMode === "calendar" ? "contained-tonal" : "text"}
-                                onPress={() => onChangeViewMode("calendar")}
-                                style={[
-                                    styles.bookingViewModeButton,
-                                    bookingViewMode === "calendar" && styles.bookingViewModeButtonActive,
-                                ]}
-                            >
-                                Kalender
-                            </Button>
-                        </View>
+                    <View style={[styles.listHeaderControls, isCompactViewport && styles.listHeaderControlsCompact]}>
+                        {!isCompactViewport ? (
+                            <View style={styles.bookingViewModeSwitch}>
+                                <Button
+                                    compact
+                                    mode={bookingViewMode === "list" ? "contained-tonal" : "text"}
+                                    onPress={() => onChangeViewMode("list")}
+                                    style={[
+                                        styles.bookingViewModeButton,
+                                        bookingViewMode === "list" && styles.bookingViewModeButtonActive,
+                                    ]}
+                                >
+                                    Liste
+                                </Button>
+                                <Button
+                                    compact
+                                    mode={bookingViewMode === "calendar" ? "contained-tonal" : "text"}
+                                    onPress={() => onChangeViewMode("calendar")}
+                                    style={[
+                                        styles.bookingViewModeButton,
+                                        bookingViewMode === "calendar" && styles.bookingViewModeButtonActive,
+                                    ]}
+                                >
+                                    Kalender
+                                </Button>
+                            </View>
+                        ) : null}
                         <Chip compact style={isCompactViewport ? styles.listHeaderChipCompact : undefined}>
                             {isLoading ? "laedt" : `${bookings.length} Eintraege`}
                         </Chip>
@@ -819,38 +821,40 @@ const BookingListPanel = React.memo(
                     isCompactViewport && styles.listCardCompact,
                 ]}
             >
-                <View style={styles.listHeader}>
+                <View style={[styles.listHeader, isCompactViewport && styles.listHeaderCompact]}>
                     <View style={styles.listHeaderText}>
                         <Text style={[styles.sectionTitle, isDarkMode && styles.sectionTitleDark]}>Bestehende Buchungen</Text>
                         <Text style={[styles.sectionHint, isDarkMode && styles.sectionHintDark]}>
                             Hier ist der Bereich, der spaeter gut an Planning Center andocken kann.
                         </Text>
                     </View>
-                    <View style={styles.listHeaderControls}>
-                        <View style={styles.bookingViewModeSwitch}>
-                            <Button
-                                compact
-                                mode={bookingViewMode === "list" ? "contained-tonal" : "text"}
-                                onPress={() => onChangeViewMode("list")}
-                                style={[
-                                    styles.bookingViewModeButton,
-                                    bookingViewMode === "list" && styles.bookingViewModeButtonActive,
-                                ]}
-                            >
-                                Liste
-                            </Button>
-                            <Button
-                                compact
-                                mode={bookingViewMode === "calendar" ? "contained-tonal" : "text"}
-                                onPress={() => onChangeViewMode("calendar")}
-                                style={[
-                                    styles.bookingViewModeButton,
-                                    bookingViewMode === "calendar" && styles.bookingViewModeButtonActive,
-                                ]}
-                            >
-                                Kalender
-                            </Button>
-                        </View>
+                    <View style={[styles.listHeaderControls, isCompactViewport && styles.listHeaderControlsCompact]}>
+                        {!isCompactViewport ? (
+                            <View style={styles.bookingViewModeSwitch}>
+                                <Button
+                                    compact
+                                    mode={bookingViewMode === "list" ? "contained-tonal" : "text"}
+                                    onPress={() => onChangeViewMode("list")}
+                                    style={[
+                                        styles.bookingViewModeButton,
+                                        bookingViewMode === "list" && styles.bookingViewModeButtonActive,
+                                    ]}
+                                >
+                                    Liste
+                                </Button>
+                                <Button
+                                    compact
+                                    mode={bookingViewMode === "calendar" ? "contained-tonal" : "text"}
+                                    onPress={() => onChangeViewMode("calendar")}
+                                    style={[
+                                        styles.bookingViewModeButton,
+                                        bookingViewMode === "calendar" && styles.bookingViewModeButtonActive,
+                                    ]}
+                                >
+                                    Kalender
+                                </Button>
+                            </View>
+                        ) : null}
                         <Chip compact style={isCompactViewport ? styles.listHeaderChipCompact : undefined}>
                             {isLoading ? "laedt" : `${bookings.length} Eintraege`}
                         </Chip>
@@ -936,6 +940,7 @@ const BookingPage = () => {
     const { items, canManageInventory } = useInventory();
     const { width } = useWindowDimensions();
     const isCompactViewport = width < 820;
+    const effectiveBookingViewMode: BookingViewMode = isCompactViewport ? "list" : bookingViewMode;
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMappings, setIsLoadingMappings] = useState(false);
@@ -1568,7 +1573,7 @@ const BookingPage = () => {
                     </Card>
                 </View>
 
-                <View style={styles.mainGrid}>
+                <View style={[styles.mainGrid, isCompactViewport && styles.mainGridCompact]}>
                     <Surface
                         style={[
                             styles.formCard,
@@ -1800,7 +1805,7 @@ const BookingPage = () => {
                             isCompactViewport && styles.listCardCompactWrap,
                         ]}
                     >
-                        {bookingViewMode === "list" ? (
+                        {effectiveBookingViewMode === "list" ? (
                             <BookingListPanel
                                 isDarkMode={isDarkMode}
                                 isLoading={isLoading}
@@ -1808,7 +1813,7 @@ const BookingPage = () => {
                                 canManageInventory={canManageInventory}
                                 onDeleteBooking={handleDeleteBooking}
                                 isCompactViewport={isCompactViewport}
-                                bookingViewMode={bookingViewMode}
+                                bookingViewMode={effectiveBookingViewMode}
                                 onChangeViewMode={setBookingViewMode}
                             />
                         ) : (
@@ -1819,7 +1824,7 @@ const BookingPage = () => {
                                 canManageInventory={canManageInventory}
                                 onDeleteBooking={handleDeleteBooking}
                                 isCompactViewport={isCompactViewport}
-                                bookingViewMode={bookingViewMode}
+                                bookingViewMode={effectiveBookingViewMode}
                                 onChangeViewMode={setBookingViewMode}
                             />
                         )}
@@ -2209,6 +2214,10 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         marginTop: 2,
     },
+    mainGridCompact: {
+        flexDirection: "column",
+        flexWrap: "nowrap",
+    },
     formCard: {
         flex: 1,
         minWidth: 360,
@@ -2332,7 +2341,13 @@ const styles = StyleSheet.create({
     bookingViewModeSwitch: {
         flexDirection: "row",
         alignItems: "center",
+        flexWrap: "wrap",
         gap: 6,
+        maxWidth: "100%",
+    },
+    bookingViewModeSwitchCompact: {
+        flexWrap: "wrap",
+        alignSelf: "flex-start",
     },
     bookingViewModeButton: {
         margin: 0,
@@ -2495,18 +2510,31 @@ const styles = StyleSheet.create({
     },
     listHeader: {
         flexDirection: "row",
+        flexWrap: "wrap",
         justifyContent: "space-between",
         alignItems: "flex-start",
         gap: 12,
         marginBottom: 16,
     },
+    listHeaderCompact: {
+        flexDirection: "column",
+        alignItems: "stretch",
+    },
     listHeaderText: {
         flex: 1,
+        flexShrink: 1,
+        maxWidth: "100%",
         minWidth: 0,
     },
     listHeaderControls: {
+        flexShrink: 1,
         alignItems: "flex-end",
         gap: 8,
+        maxWidth: "100%",
+    },
+    listHeaderControlsCompact: {
+        alignItems: "flex-start",
+        width: "100%",
     },
     listHeaderChipCompact: {
         alignSelf: "flex-start",
@@ -2714,7 +2742,3 @@ const styles = StyleSheet.create({
 });
 
 export default BookingPage;
-
-
-
-

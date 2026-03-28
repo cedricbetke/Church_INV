@@ -3,6 +3,17 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.9
+
+**28.03.2026**  
+**Mobile Buchungsansicht stabilisiert**
+
+Auf schmalen Breiten bleibt der Buchungsbereich vorerst bewusst bei der Listenansicht, damit die mobile Darstellung stabil und lesbar bleibt.
+
+- Die Kalenderansicht fuer bestehende Buchungen ist auf mobilen Breiten vorerst deaktiviert
+- Mobile Geraete zeigen im rechten Buchungsbereich nur noch die stabilere Listenansicht
+- Desktop und breitere Webansichten behalten den Umschalter zwischen Liste und Kalender
+
 ## 0.7.8
 
 **28.03.2026**  
