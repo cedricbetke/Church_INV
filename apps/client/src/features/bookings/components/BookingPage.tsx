@@ -209,6 +209,47 @@ const weekdayLabels = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
 type BookingViewMode = "list" | "calendar";
 
+type CalendarBookingEntry = {
+    booking: Booking;
+    isStart: boolean;
+    isEnd: boolean;
+};
+
+const getCalendarEntryLabel = (entries: CalendarBookingEntry[]) => {
+    if (entries.length === 0) {
+        return null;
+    }
+
+    const startCount = entries.filter((entry) => entry.isStart).length;
+    const continuingCount = entries.length - startCount;
+
+    if (startCount === 0) {
+        return `${entries.length} laufend`;
+    }
+
+    if (continuingCount === 0) {
+        return `${entries.length} Buchung${entries.length === 1 ? "" : "en"}`;
+    }
+
+    return `${startCount} neu · ${continuingCount} laufend`;
+};
+
+const getAgendaStatusText = (entry: CalendarBookingEntry) => {
+    if (entry.isStart && entry.isEnd) {
+        return "Findet komplett an diesem Tag statt";
+    }
+
+    if (entry.isStart) {
+        return "Startet an diesem Tag";
+    }
+
+    if (entry.isEnd) {
+        return "Endet an diesem Tag";
+    }
+
+    return "Läuft an diesem Tag weiter";
+};
+
 const BookingCalendarPanel = React.memo(
     ({
         isDarkMode,
@@ -255,19 +296,35 @@ const BookingCalendarPanel = React.memo(
             return days;
         }, [visibleMonth]);
 
+        const calendarWeeks = useMemo(() => {
+            const weeks: Date[][] = [];
+
+            for (let index = 0; index < calendarDays.length; index += 7) {
+                weeks.push(calendarDays.slice(index, index + 7));
+            }
+
+            return weeks;
+        }, [calendarDays]);
+
         const bookingsByDay = useMemo(() => {
-            const map = new Map<string, Booking[]>();
+            const map = new Map<string, CalendarBookingEntry[]>();
 
             bookings.forEach((booking) => {
                 const start = new Date(booking.startDatum);
                 const end = new Date(booking.endDatum);
                 const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
                 const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+                const startKey = getDayKey(start);
+                const endKey = getDayKey(end);
 
                 while (cursor <= last) {
                     const key = getDayKey(cursor);
                     const current = map.get(key) ?? [];
-                    current.push(booking);
+                    current.push({
+                        booking,
+                        isStart: key === startKey,
+                        isEnd: key === endKey,
+                    });
                     map.set(key, current);
                     cursor.setDate(cursor.getDate() + 1);
                 }
@@ -279,7 +336,7 @@ const BookingCalendarPanel = React.memo(
         const selectedDayBookings = useMemo(() => {
             const selectedKey = getDayKey(selectedDate);
             return (bookingsByDay.get(selectedKey) ?? []).slice().sort((left, right) => {
-                return new Date(left.startDatum).getTime() - new Date(right.startDatum).getTime();
+                return new Date(left.booking.startDatum).getTime() - new Date(right.booking.startDatum).getTime();
             });
         }, [bookingsByDay, selectedDate]);
 
@@ -359,52 +416,49 @@ const BookingCalendarPanel = React.memo(
                         </View>
 
                         <View style={styles.calendarGrid}>
-                            {calendarDays.map((day) => {
-                                const dayKey = getDayKey(day);
-                                const dayBookings = bookingsByDay.get(dayKey) ?? [];
-                                const isOutsideMonth = day.getMonth() !== visibleMonth.getMonth();
-                                const isSelected = isSameDay(day, selectedDate);
+                            {calendarWeeks.map((week, weekIndex) => (
+                                <View key={`week-${weekIndex}`} style={styles.calendarWeekRow}>
+                                    {week.map((day) => {
+                                        const dayKey = getDayKey(day);
+                                        const dayBookings = bookingsByDay.get(dayKey) ?? [];
+                                        const dayLabel = getCalendarEntryLabel(dayBookings);
+                                        const isOutsideMonth = day.getMonth() !== visibleMonth.getMonth();
+                                        const isSelected = isSameDay(day, selectedDate);
 
-                                return (
-                                    <Card
-                                        key={dayKey}
-                                        onPress={() => setSelectedDate(day)}
-                                        style={[
-                                            styles.calendarDayCell,
-                                            isDarkMode && styles.calendarDayCellDark,
-                                            isOutsideMonth && styles.calendarDayCellMuted,
-                                            isDarkMode && isOutsideMonth && styles.calendarDayCellMutedDark,
-                                            isSelected && styles.calendarDayCellSelected,
-                                        ]}
-                                    >
-                                        <Card.Content style={styles.calendarDayContent}>
-                                            <Text
+                                        return (
+                                            <Card
+                                                key={dayKey}
+                                                onPress={() => setSelectedDate(day)}
                                                 style={[
-                                                    styles.calendarDayNumber,
-                                                    isDarkMode && styles.calendarDayNumberDark,
-                                                    isOutsideMonth && styles.calendarDayNumberMuted,
-                                                    isSelected && styles.calendarDayNumberSelected,
+                                                    styles.calendarDayCell,
+                                                    isDarkMode && styles.calendarDayCellDark,
+                                                    isOutsideMonth && styles.calendarDayCellMuted,
+                                                    isDarkMode && isOutsideMonth && styles.calendarDayCellMutedDark,
+                                                    isSelected && styles.calendarDayCellSelected,
                                                 ]}
                                             >
-                                                {day.getDate()}
-                                            </Text>
-                                            <View style={styles.calendarDayIndicators}>
-                                                {dayBookings.slice(0, 3).map((booking) => (
-                                                    <View
-                                                        key={`${dayKey}-${booking.id}`}
-                                                        style={[styles.calendarDayDot, isDarkMode && styles.calendarDayDotDark]}
-                                                    />
-                                                ))}
-                                            </View>
-                                            {dayBookings.length > 0 ? (
-                                                <Text style={[styles.calendarDayCount, isDarkMode && styles.calendarDayCountDark]}>
-                                                    {dayBookings.length} Buchung{dayBookings.length === 1 ? "" : "en"}
-                                                </Text>
-                                            ) : null}
-                                        </Card.Content>
-                                    </Card>
-                                );
-                            })}
+                                                <Card.Content style={styles.calendarDayContent}>
+                                                    <Text
+                                                        style={[
+                                                            styles.calendarDayNumber,
+                                                            isDarkMode && styles.calendarDayNumberDark,
+                                                            isOutsideMonth && styles.calendarDayNumberMuted,
+                                                            isSelected && styles.calendarDayNumberSelected,
+                                                        ]}
+                                                    >
+                                                        {day.getDate()}
+                                                    </Text>
+                                                    {dayLabel ? (
+                                                        <Text style={[styles.calendarDayCount, isDarkMode && styles.calendarDayCountDark]}>
+                                                            {dayLabel}
+                                                        </Text>
+                                                    ) : null}
+                                                </Card.Content>
+                                            </Card>
+                                        );
+                                    })}
+                                </View>
+                            ))}
                         </View>
                     </View>
                 </ScrollView>
@@ -420,35 +474,38 @@ const BookingCalendarPanel = React.memo(
                         Keine Buchungen an diesem Tag.
                     </Text>
                 ) : (
-                    selectedDayBookings.map((booking, index) => (
-                        <View key={`agenda-${booking.id}`}>
+                    selectedDayBookings.map((entry, index) => (
+                        <View key={`agenda-${entry.booking.id}`}>
                             <Card style={[styles.bookingCard, isDarkMode && styles.bookingCardDark]}>
                                 <Card.Content>
                                     <View style={styles.bookingCardHeader}>
                                         <View style={styles.bookingCardMeta}>
                                             <Text style={[styles.bookingTitle, isDarkMode && styles.bookingTitleDark]}>
-                                                {booking.titel}
+                                                {entry.booking.titel}
                                             </Text>
                                             <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
-                                                Für {booking.bucherName}
+                                                Für {entry.booking.bucherName}
                                             </Text>
                                         </View>
-                                        <Chip compact>{booking.status}</Chip>
+                                        <Chip compact>{entry.booking.status}</Chip>
                                     </View>
 
                                     <Text style={[styles.bookingInfo, isDarkMode && styles.bookingInfoDark]}>
-                                        {formatDateRange(booking)}
+                                        {formatDateRange(entry.booking)}
+                                    </Text>
+                                    <Text style={[styles.bookingInfo, styles.bookingDayStatus, isDarkMode && styles.bookingInfoDark]}>
+                                        {getAgendaStatusText(entry)}
                                     </Text>
 
-                                    {booking.zweck ? (
+                                    {entry.booking.zweck ? (
                                         <Text style={[styles.bookingPurpose, isDarkMode && styles.bookingPurposeDark]}>
-                                            {booking.zweck}
+                                            {entry.booking.zweck}
                                         </Text>
                                     ) : null}
 
                                     <View style={styles.bookingDeviceChipRow}>
-                                        {booking.geraete.map((geraet) => (
-                                            <Chip key={`${booking.id}-${geraet.invNr}`} compact style={styles.deviceChip}>
+                                        {entry.booking.geraete.map((geraet) => (
+                                            <Chip key={`${entry.booking.id}-${geraet.invNr}`} compact style={styles.deviceChip}>
                                                 {geraet.invNr} {geraet.modell}
                                             </Chip>
                                         ))}
@@ -458,7 +515,7 @@ const BookingCalendarPanel = React.memo(
                                         <View style={styles.bookingActions}>
                                             <Button
                                                 mode="text"
-                                                onPress={() => onDeleteBooking(booking.id)}
+                                                onPress={() => onDeleteBooking(entry.booking.id)}
                                                 textColor="#b3261e"
                                             >
                                                 Löschen
@@ -2579,7 +2636,7 @@ const styles = StyleSheet.create({
         minWidth: 760,
     },
     calendarWeekday: {
-        width: "14%",
+        flex: 1,
         textAlign: "center",
         fontSize: 12,
         fontWeight: "700",
@@ -2589,14 +2646,14 @@ const styles = StyleSheet.create({
         color: "#9aa4b2",
     },
     calendarGrid: {
+        gap: 8,
+    },
+    calendarWeekRow: {
         flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-        rowGap: 8,
+        gap: 8,
     },
     calendarDayCell: {
-        width: "14%",
-        minWidth: 0,
+        flex: 1,
         minHeight: 74,
         borderRadius: 14,
         borderWidth: 1,
@@ -2604,6 +2661,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fbfbfc",
         margin: 0,
         paddingHorizontal: 0,
+        overflow: "visible",
     },
     calendarDayCellDark: {
         backgroundColor: "#11161d",
@@ -2623,6 +2681,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 8,
         gap: 4,
+        overflow: "visible",
     },
     calendarDayNumber: {
         fontSize: 13,
@@ -2637,21 +2696,6 @@ const styles = StyleSheet.create({
     },
     calendarDayNumberSelected: {
         color: "#5b33d6",
-    },
-    calendarDayIndicators: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 4,
-        minHeight: 10,
-    },
-    calendarDayDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 999,
-        backgroundColor: "#4f7cff",
-    },
-    calendarDayDotDark: {
-        backgroundColor: "#8abfff",
     },
     calendarDayCount: {
         fontSize: 11,
@@ -2714,6 +2758,9 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: "#374151",
         fontSize: 13,
+    },
+    bookingDayStatus: {
+        marginTop: 4,
     },
     bookingPurposeDark: {
         color: "#d6dbe3",

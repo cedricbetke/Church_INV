@@ -16,6 +16,7 @@ Auf schmalen Breiten bleibt der Buchungsbereich vorerst bewusst bei der Listenan
 - Im Buchungsformular gibt es jetzt nur noch eine gezielte Aktion zum Leeren der Geraeteauswahl statt eines kompletten Formular-Resets
 - Die Auswahldialoge auf der AddPage unterscheiden jetzt sauber zwischen Feldern mit echter Neuanlage und reinen Auswahlfeldern
 - Modell und Kategorie werden in der AddPage erst freigegeben, wenn die jeweils benoetigten Felder vorher gesetzt sind
+- Mehrtaegige Buchungen im Kalender werden derzeit ueber Tagesstatus wie 'laufend' statt ueber starke Blockgrafiken kenntlich gemacht
 
 ## 0.7.8
 

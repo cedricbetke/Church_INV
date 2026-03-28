@@ -81,6 +81,7 @@ Beim Anlegen eines Geraets gilt aktuell:
 - die Geraeteauswahl kann separat geleert werden, ohne Titel, Zeitraum und Zweck zurueckzusetzen
 - bestehende Buchungen haben eine umschaltbare Listen- und Kalenderansicht
 - die Kalenderansicht startet standardmaessig und zeigt Monatsuebersicht plus Tagesagenda
+- mehrtaegige Buchungen werden im Kalender derzeit bewusst eher textuell ueber Tagesstatus wie "laufend" statt ueber starke Blockgrafiken markiert
 - auf mobilen Breiten wird aktuell nur die stabilere Listenansicht gezeigt
 - beim Aendern des Startdatums wird das Enddatum in typischen Standardfaellen direkt mit angepasst
 - leere Datumsfelder im nativen Picker starten fuer Buchungsbeginn bei 00:00 und fuer das Ende bei 23:59
