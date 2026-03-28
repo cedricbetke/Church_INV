@@ -17,6 +17,11 @@ npm install
 ```env
 PORT=3000
 ADMIN_PASSWORD=admin
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=churchinv
+DB_PASSWORD=secret
+DB_NAME=church_Inv_Sql
 ```
 
 3. Client konfigurieren
@@ -28,23 +33,23 @@ EXPO_PUBLIC_API_BASE_URL=http://localhost:3000
 EXPO_PUBLIC_ADMIN_PASSWORD=admin
 ```
 
-4. API starten
+4. API und Client gemeinsam starten
 
 ```bash
-npx tsx apps/api/src/server.ts
+npm run dev
 ```
 
-5. Client starten
+Fuer Web:
 
 ```bash
-cd apps/client
-npx expo start
+npm run dev:web
 ```
 
 ## Doku
 
 - Projektdoku: [docs/README.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/README.md)
 - Setup und Betrieb: [docs/setup.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/setup.md)
+- Deployment: [docs/deployment.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/deployment.md)
 - Funktionen und Workflows: [docs/features.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/features.md)
 - Architekturüberblick: [docs/architecture.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/architecture.md)
 - Patch Notes: [docs/changelog.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)

@@ -1,5 +1,10 @@
 {
   "scripts": {
+    "dev": "concurrently -n api,client -c blue,green \"npm run dev:api\" \"npm run dev:client\"",
+    "dev:api": "npm --prefix apps/api run dev",
+    "dev:client": "npm --prefix apps/client run start",
+    "dev:web": "concurrently -n api,client-web -c blue,green \"npm run dev:api\" \"npm run dev:client:web\"",
+    "dev:client:web": "npm --prefix apps/client run web",
     "backfill:photo-thumbs": "npx tsx scripts/backfill-photo-thumbnails.ts",
     "cleanup:photo-documents": "npx tsx scripts/cleanup-photo-documents.ts",
     "optimize:stored-photos": "npx tsx scripts/optimize-stored-photos.ts",
@@ -12,6 +17,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
+    "concurrently": "^9.2.1",
     "playwright": "^1.55.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"

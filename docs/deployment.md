@@ -59,6 +59,20 @@ rsync -av apps/api/uploads/ user@server:/srv/churchinv/uploads/
 
 Danach bleiben neue Uploads persistent, weil der Host-Ordner in den API-Container gemountet wird.
 
+## Portainer
+
+Wenn du bereits Portainer nutzt, kannst du den Stack auch dort deployen. Der pragmatische Weg ist:
+
+1. Repo auf dem Server aktualisieren
+2. `apps/api/.env` auf dem Server anlegen
+3. Upload-Ordner unter `/srv/churchinv/uploads` bereitstellen
+4. Stack entweder ueber Portainer oder direkt per `docker compose` starten
+
+Wichtig:
+
+- `apps/api/.env` kommt bewusst nicht aus Git
+- Uploads liegen ebenfalls ausserhalb des Images als Host-Ordner
+
 ## Starten
 
 Im Repo auf dem Server:
@@ -73,6 +87,8 @@ Danach:
 - Client: `http://SERVER:8080`
 - API: `http://SERVER:3000`
 - Swagger: `http://SERVER:3000/api/docs`
+
+Wenn der API-Port extern bereits belegt ist, kann der Host-Port im Compose-Setup abweichend gemappt werden, zum Beispiel `3001:3000`.
 
 ## Volumes
 

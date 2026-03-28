@@ -1,7 +1,22 @@
-﻿# Patch Notes
+# Patch Notes
 
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
-> Ã„nderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausfÃ¼hren.
+> Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
+
+## 0.7.6
+
+**28.03.2026**  
+**Foto- und Dev-Workflow gestrafft**
+
+Fotos werden platzsparender behandelt, die Detailansicht nutzt wieder bevorzugt Vorschaubilder, und API sowie Client koennen jetzt bequem aus dem Projekt-Root oder direkt aus VS Code gestartet werden.
+
+- Neue Geraetefotos werden erst beim Speichern hochgeladen statt schon beim Auswaehlen
+- Neue Fotos werden direkt als optimierte JPG-Dateien gespeichert und erzeugen weiterhin kleine Thumbnails
+- Bestehende Geraetefotos koennen per Script auf den optimierten JPG-Pfad gebracht werden
+- Die Detailansicht nutzt wieder bevorzugt das Thumbnail fuer stabilere Bildanzeige
+- API und Client lassen sich jetzt gemeinsam ueber Root-Skripte starten
+- VS Code hat Tasks und Launch-Configs als Startbutton-Ersatz erhalten
+- Docker- und Linux-Deployment inkl. persistentem Upload-Ordner ist dokumentiert
 
 ## 0.7.5
 
@@ -28,22 +43,23 @@ Der Bestand kann jetzt aus Teams/SharePoint uebernommen werden, Buchungen sind a
 - QR-Scan kann in der Buchung direkt einzelne Geraete in die Auswahl uebernehmen
 - Die Hauptansicht hat fuer schmale Screens eine kompakte mobile Kartenansicht erhalten
 - Detailansicht und Buchungsseite wurden fuer kleinere Displays und bessere Reaktionszeit ueberarbeitet
+
 ## 0.6.0
 
 **26.03.2026**  
 **Inventar-Workflow deutlich erweitert**
 
-GerÃ¤teverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.
+Geräteverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.
 
-- GerÃ¤te kÃ¶nnen angelegt, bearbeitet und gelÃ¶scht werden
-- Dokumente pro GerÃ¤t sind integriert
-- QR-Scan Ã¶ffnet direkt die Detailansicht
-- GerÃ¤teverlauf ist sichtbar
-- Admin-Panel fÃ¼r erste Stammdatenpflege ist vorhanden
-- Zustandshinweis ist als eigenes GerÃ¤tefeld verfÃ¼gbar
+- Geräte können angelegt, bearbeitet und gelöscht werden
+- Dokumente pro Gerät sind integriert
+- QR-Scan öffnet direkt die Detailansicht
+- Geräteverlauf ist sichtbar
+- Admin-Panel für erste Stammdatenpflege ist vorhanden
+- Zustandshinweis ist als eigenes Gerätefeld verfügbar
 - Swagger-Dokumentation wurde verbessert
-- Optionaler Dark Mode wurde ergÃ¤nzt
-- Patch Notes sind als read-only Ansicht in der App verfÃ¼gbar
+- Optionaler Dark Mode wurde ergänzt
+- Patch Notes sind als read-only Ansicht in der App verfügbar
 
 ## 0.5.0
 
@@ -53,18 +69,17 @@ GerÃ¤teverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wes
 Die Detailansicht wurde ausgebaut und der Edit-Flow auf eine gemeinsame Formularbasis gestellt.
 
 - Detailansicht deutlich erweitert
-- Add- und Edit-Formular zusammengefÃ¼hrt
+- Add- und Edit-Formular zusammengeführt
 - Foto-Upload integriert
-- Erste Admin-Logik ergÃ¤nzt
+- Erste Admin-Logik ergänzt
 
 ## 0.4.0
 
 **18.03.2026**  
 **Inventarliste und Grundnavigation stehen**
 
-Die erste funktionsfÃ¤hige Inventaransicht und der Basis-Flow zum Anlegen von GerÃ¤ten wurden aufgebaut.
+Die erste funktionsfähige Inventaransicht und der Basis-Flow zum Anlegen von Geräten wurden aufgebaut.
 
-- GerÃ¤te kÃ¶nnen angelegt werden
+- Geräte können angelegt werden
 - Inventarliste und Grundnavigation stehen
-
 

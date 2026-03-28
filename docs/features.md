@@ -39,6 +39,9 @@ Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 
 - ein Geraetefoto pro Geraet
 - mehrere Dokumente pro Geraet
+- neue Geraetefotos werden erst beim echten Speichern hochgeladen
+- neue Geraetefotos werden direkt als optimiertes JPG gespeichert
+- Tabellenansicht und Detailansicht nutzen bevorzugt Thumbnail-Dateien fuer schnellere Anzeige
 
 ## Zusatzdaten
 
@@ -75,6 +78,7 @@ Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 - Dokument-Import aus SharePoint-Attachments
 - Foto-Import aus SharePoint-Bildfeldern und reservierten Bild-Anhaengen
 - vorhandene Team-Fotos koennen als Thumbnails nacherzeugt werden
+- bestehende gespeicherte Geraetefotos koennen nachtraeglich auf den optimierten JPG-Pfad umgestellt werden
 
 ## Verlauf
 

@@ -4,7 +4,7 @@ Diese Seite ist fuer den technischen Einstieg gedacht: lokale Entwicklung, Start
 
 ## Kurz gesagt
 
-- API und Client werden getrennt gestartet
+- API und Client koennen getrennt oder gemeinsam aus dem Root gestartet werden
 - fuer Handy-Tests im gleichen WLAN darf im Client nicht `localhost` stehen
 - Swagger ist ueber die API erreichbar
 - der aktuelle Admin-Modus arbeitet noch uebergangsweise mit einem Passwort
@@ -32,6 +32,11 @@ Datei: `apps/api/.env`
 ```env
 PORT=3000
 ADMIN_PASSWORD=admin
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=churchinv
+DB_PASSWORD=secret
+DB_NAME=church_Inv_Sql
 ```
 
 ### Client
@@ -45,17 +50,41 @@ EXPO_PUBLIC_ADMIN_PASSWORD=admin
 
 ## Lokal starten
 
-### API
+### Gemeinsamer Start aus dem Root
 
 ```bash
-npx tsx apps/api/src/server.ts
+npm run dev
 ```
 
-### Client
+Das startet:
+
+- API
+- normalen Expo-Client
+
+Fuer Browserbetrieb:
 
 ```bash
-cd apps/client
-npx expo start
+npm run dev:web
+```
+
+### Einzelstart
+
+API:
+
+```bash
+npm run dev:api
+```
+
+Client:
+
+```bash
+npm run dev:client
+```
+
+Client direkt im Browser:
+
+```bash
+npm run dev:client:web
 ```
 
 ## Scripts
@@ -73,12 +102,30 @@ Import- und Cleanup-Scripts (Details in `docs/import.md`):
 - `import:teams-documents`
 - `import:teams-photos`
 - `backfill:photo-thumbs`
+- `optimize:stored-photos`
 - `cleanup:photo-documents`
 
 Patch-Notes-Sync:
 
 - `sync:patch-notes` (erstellt `docs/changelog.md` und `apps/client/src/features/patch-notes/data/patchNotes.ts`
   aus `docs/patch-notes/patch-notes.json`)
+
+## VS Code
+
+Fuer VS Code sind jetzt Start-Configs im Repo vorhanden:
+
+- `.vscode/tasks.json`
+- `.vscode/launch.json`
+
+Damit gibt es direkte Startoptionen fuer:
+
+- `ChurchINV Dev`
+- `ChurchINV Dev Web`
+- `ChurchINV API`
+- `ChurchINV Client`
+- `ChurchINV Client Web`
+
+Das ist der naechste Ersatz fuer den klassischen Startbutton aus IntelliJ.
 
 ## Testen im lokalen Netzwerk
 

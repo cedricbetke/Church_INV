@@ -2,6 +2,21 @@
   "app": "ChurchINV",
   "entries": [
     {
+      "version": "0.7.6",
+      "date": "2026-03-28",
+      "title": "Foto- und Dev-Workflow gestrafft",
+      "summary": "Fotos werden platzsparender behandelt, die Detailansicht nutzt wieder bevorzugt Vorschaubilder, und API sowie Client koennen jetzt bequem aus dem Projekt-Root oder direkt aus VS Code gestartet werden.",
+      "items": [
+        "Neue Geraetefotos werden erst beim Speichern hochgeladen statt schon beim Auswaehlen",
+        "Neue Fotos werden direkt als optimierte JPG-Dateien gespeichert und erzeugen weiterhin kleine Thumbnails",
+        "Bestehende Geraetefotos koennen per Script auf den optimierten JPG-Pfad gebracht werden",
+        "Die Detailansicht nutzt wieder bevorzugt das Thumbnail fuer stabilere Bildanzeige",
+        "API und Client lassen sich jetzt gemeinsam ueber Root-Skripte starten",
+        "VS Code hat Tasks und Launch-Configs als Startbutton-Ersatz erhalten",
+        "Docker- und Linux-Deployment inkl. persistentem Upload-Ordner ist dokumentiert"
+      ]
+    },
+    {
       "version": "0.7.5",
       "date": "2026-03-27",
       "title": "Topbar und Feedback-Flow geschaerft",

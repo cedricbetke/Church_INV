@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ChurchINV Dev",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "ChurchINV Dev Web",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev:web",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "ChurchINV API",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev:api",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "ChurchINV Client",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev:client",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "ChurchINV Client Web",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev:client:web",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

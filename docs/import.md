@@ -51,7 +51,8 @@ Hinweise:
 6. Foto-Import pruefen
 7. Fotos importieren
 8. Vorschaubilder fuer bestehende Fotos erzeugen
-9. falls noetig falsch importierte Foto-Dokumente bereinigen
+9. bestehende grosse Geraetefotos optional optimieren
+10. falls noetig falsch importierte Foto-Dokumente bereinigen
 
 ## 1. Inventar-Import
 
@@ -159,6 +160,7 @@ Bei Erfolg:
 
 - Datei wird unter `apps/api/uploads/geraete` gespeichert
 - `geraet.geraetefoto_url` wird gesetzt
+- neue Fotos werden dabei direkt als optimiertes JPG gespeichert
 
 ### Bekannte Restfaelle
 
@@ -189,7 +191,38 @@ Bei Erfolg:
 - Vorschaubilder werden unter `apps/api/uploads/geraete/thumbs` gespeichert
 - die Tabellenansicht nutzt diese kleineren Dateien statt der Vollbilder
 
-## 5. Cleanup falsch importierter Foto-Dokumente
+## 5. Optimierung vorhandener Geraetefotos
+
+Bestehende Fotos koennen nachtraeglich auf denselben optimierten JPG-Pfad gebracht werden wie neue Uploads.
+
+Dry run:
+
+```bash
+npm run optimize:stored-photos -- --dry-run
+```
+
+Echter Lauf:
+
+```bash
+npm run optimize:stored-photos
+```
+
+Report:
+
+- `import/photo-optimization-report.json`
+
+Bei Erfolg:
+
+- grosse Altdateien werden durch optimierte JPGs ersetzt
+- Thumbnails werden neu erzeugt
+- `geraet.geraetefoto_url` wird bei Bedarf auf den neuen JPG-Pfad aktualisiert
+
+Wichtig:
+
+- der Lauf sollte auf dem Bestand ausgefuehrt werden, der tatsaechlich von der laufenden App genutzt wird
+- Sonderfaelle mit ungueltigen Altdateien koennen als Fehler im Report auftauchen
+
+## 6. Cleanup falsch importierter Foto-Dokumente
 
 Falls vor dem Fix SharePoint-Bilder irrtuemlich als Dokumente importiert wurden, entfernt der Cleanup diese Dubletten wieder aus:
 
