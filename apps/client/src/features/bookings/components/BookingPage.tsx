@@ -940,7 +940,6 @@ const BookingPage = () => {
     const { items, canManageInventory } = useInventory();
     const { width } = useWindowDimensions();
     const isCompactViewport = width < 820;
-    const effectiveBookingViewMode: BookingViewMode = isCompactViewport ? "list" : bookingViewMode;
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMappings, setIsLoadingMappings] = useState(false);
@@ -959,6 +958,7 @@ const BookingPage = () => {
     const [selectedInvNrs, setSelectedInvNrs] = useState<number[]>([]);
     const [selectionMode, setSelectionMode] = useState<SelectionMode>("single");
     const [bookingViewMode, setBookingViewMode] = useState<BookingViewMode>("calendar");
+    const effectiveBookingViewMode: BookingViewMode = isCompactViewport ? "list" : bookingViewMode;
     const [pcoMappings, setPcoMappings] = useState<PcoMapping[]>([]);
     const [pcoSuggestions, setPcoSuggestions] = useState<PcoPlanSuggestion[]>([]);
     const [activeMappingId, setActiveMappingId] = useState<number | null>(null);
