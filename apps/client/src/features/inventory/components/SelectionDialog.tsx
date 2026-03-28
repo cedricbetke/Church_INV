@@ -12,6 +12,7 @@ interface SelectionDialogProps {
     items: Array<{ id: number; name: string }>;
     onSelect: (name: string) => void;
     onAddNew: () => Promise<void>;
+    canCreateNew: boolean;
     isNewItem: boolean;
 }
 
@@ -24,9 +25,11 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
     items,
     onSelect,
     onAddNew,
+    canCreateNew,
     isNewItem,
 }) => {
     const { isDarkMode } = useAppThemeMode();
+    const searchLabel = canCreateNew ? "Suchen oder neue eingeben" : "Suchen oder auswählen";
 
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -39,7 +42,7 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                 <Dialog.Content>
                     <TextInput
                         mode="outlined"
-                        label="Suchen oder neue eingeben"
+                        label={searchLabel}
                         value={searchQuery}
                         onChangeText={onSearchChange}
                         style={[styles.searchInput, isDarkMode && styles.searchInputDark]}
@@ -56,7 +59,7 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                             />
                         ))}
 
-                        {isNewItem && searchQuery.trim() && (
+                        {canCreateNew && isNewItem && searchQuery.trim() && (
                             <List.Item
                                 title={`"${searchQuery}" als neu hinzufügen`}
                                 left={(props) => <List.Icon {...props} icon="plus" />}

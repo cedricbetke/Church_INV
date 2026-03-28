@@ -35,6 +35,11 @@ Im aktuellen Stand werden diese Stammdaten genutzt:
 
 Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 
+Beim Anlegen eines Geraets gilt aktuell:
+
+- Hersteller, Objekttyp und Modell koennen direkt aus dem Auswahldialog neu angelegt werden
+- Status, Standort, Bereich, Kategorie und Person sind dort reine Auswahlfelder und suggerieren keine direkte Neuanlage
+
 ## Medien
 
 - ein Geraetefoto pro Geraet

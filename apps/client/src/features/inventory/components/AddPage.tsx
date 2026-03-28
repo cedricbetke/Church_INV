@@ -666,6 +666,7 @@ const AddPage: React.FC<AddPageProps> = ({
                     onAddNew={async () => {
                         console.log("Neue Status können nur vom Administrator hinzugefügt werden");
                     }}
+                    canCreateNew={false}
                     isNewItem={false}
                 />
 
@@ -683,6 +684,7 @@ const AddPage: React.FC<AddPageProps> = ({
                     items={objekttypen}
                     onSelect={handleObjekttypSelect}
                     onAddNew={handleAddNewObjekttyp}
+                    canCreateNew={true}
                     isNewItem={isNewObjekttyp}
                 />
 
@@ -700,6 +702,7 @@ const AddPage: React.FC<AddPageProps> = ({
                     items={existingBrands}
                     onSelect={handleBrandSelect}
                     onAddNew={handleAddNewBrand}
+                    canCreateNew={true}
                     isNewItem={isNewBrand}
                 />
 
@@ -717,6 +720,7 @@ const AddPage: React.FC<AddPageProps> = ({
                     items={filteredModels}
                     onSelect={handleModelSelect}
                     onAddNew={handleAddNewModel}
+                    canCreateNew={true}
                     isNewItem={isNewModel}
                 />
 
@@ -733,6 +737,7 @@ const AddPage: React.FC<AddPageProps> = ({
                         setStandortSearchQuery("");
                     }}
                     onAddNew={async () => Promise.resolve()}
+                    canCreateNew={false}
                     isNewItem={false}
                 />
 
@@ -750,6 +755,7 @@ const AddPage: React.FC<AddPageProps> = ({
                         setKategorieSearchQuery("");
                     }}
                     onAddNew={async () => Promise.resolve()}
+                    canCreateNew={false}
                     isNewItem={false}
                 />
 
@@ -766,6 +772,7 @@ const AddPage: React.FC<AddPageProps> = ({
                         setKategorieSearchQuery("");
                     }}
                     onAddNew={async () => Promise.resolve()}
+                    canCreateNew={false}
                     isNewItem={false}
                 />
 
@@ -782,6 +789,7 @@ const AddPage: React.FC<AddPageProps> = ({
                         setVerantwortlicherSearchQuery("");
                     }}
                     onAddNew={async () => Promise.resolve()}
+                    canCreateNew={false}
                     isNewItem={false}
                 />
 

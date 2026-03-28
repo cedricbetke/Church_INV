@@ -31,6 +31,7 @@ export const patchNotesData: PatchNotesData = {
                 "Mobile Geraete zeigen im rechten Buchungsbereich nur noch die stabilere Listenansicht",
                 "Desktop und breitere Webansichten behalten den Umschalter zwischen Liste und Kalender",
                 "Im Buchungsformular gibt es jetzt nur noch eine gezielte Aktion zum Leeren der Geraeteauswahl statt eines kompletten Formular-Resets",
+                "Die Auswahldialoge auf der AddPage unterscheiden jetzt sauber zwischen Feldern mit echter Neuanlage und reinen Auswahlfeldern",
             ],
         },
         {
