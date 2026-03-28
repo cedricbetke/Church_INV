@@ -96,6 +96,52 @@ const WebDateTimeField = ({
 const formatDateRange = (booking: Booking) =>
     `${formatBookingDate(booking.startDatum)} bis ${formatBookingDate(booking.endDatum)}`;
 
+const getCalendarDateKey = (date: Date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+const alignEndDateWithStart = ({
+    previousStartValue,
+    nextStartValue,
+    currentEndValue,
+}: {
+    previousStartValue: string;
+    nextStartValue: string;
+    currentEndValue: string;
+}) => {
+    const nextStartRaw = parseDateInput(nextStartValue);
+
+    if (!nextStartRaw) {
+        return currentEndValue;
+    }
+
+    const nextStartDate = new Date(nextStartRaw);
+    const currentEndRaw = parseDateInput(currentEndValue);
+
+    if (!currentEndRaw) {
+        return formatDateForInput(nextStartDate);
+    }
+
+    const currentEndDate = new Date(currentEndRaw);
+    const previousStartRaw = parseDateInput(previousStartValue);
+    const shouldMoveEndDate =
+        !previousStartRaw ||
+        getCalendarDateKey(currentEndDate) === getCalendarDateKey(new Date(previousStartRaw)) ||
+        currentEndDate.getTime() < nextStartDate.getTime();
+
+    if (!shouldMoveEndDate) {
+        return currentEndValue;
+    }
+
+    const shiftedEndDate = new Date(currentEndDate);
+    shiftedEndDate.setFullYear(nextStartDate.getFullYear(), nextStartDate.getMonth(), nextStartDate.getDate());
+
+    if (shiftedEndDate.getTime() < nextStartDate.getTime()) {
+        return formatDateForInput(nextStartDate);
+    }
+
+    return formatDateForInput(shiftedEndDate);
+};
+
 const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
 
 const endOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -896,6 +942,8 @@ const BookingPage = () => {
 
     const deferredSearchQuery = useDeferredValue(searchQuery);
     const deferredMappingSearchQuery = useDeferredValue(mappingSearchQuery);
+    const deferredStartDatum = useDeferredValue(startDatum);
+    const deferredEndDatum = useDeferredValue(endDatum);
 
     const filteredItems = useMemo(() => {
         const normalizedQuery = deferredSearchQuery.trim().toLocaleLowerCase("de-DE");
@@ -1045,8 +1093,8 @@ const BookingPage = () => {
     }, [selectedInvNrs]);
 
     const currentBookingConflicts = useMemo(() => {
-        const normalizedStart = parseDateInput(startDatum);
-        const normalizedEnd = parseDateInput(endDatum);
+        const normalizedStart = parseDateInput(deferredStartDatum);
+        const normalizedEnd = parseDateInput(deferredEndDatum);
 
         if (!normalizedStart || !normalizedEnd || selectedInvNrs.length === 0) {
             return [];
@@ -1086,7 +1134,7 @@ const BookingPage = () => {
             booking: Booking;
             overlappingDevices: Booking["geraete"];
         }>;
-    }, [startDatum, endDatum, selectedInvNrs, sortedBookings]);
+    }, [deferredStartDatum, deferredEndDatum, selectedInvNrs, sortedBookings]);
 
     const hasBlockingConflicts = currentBookingConflicts.length > 0;
 
@@ -1214,6 +1262,10 @@ const BookingPage = () => {
         setFeedback(`Gerät ${matchedItem.invNr} zur Buchung hinzugefügt.`);
     }, [items]);
 
+    const handleOpenScanner = useCallback(() => {
+        setIsScannerVisible(true);
+    }, []);
+
     const handleOpenMappingEditor = (mapping: PcoMapping) => {
         setActiveMappingId(mapping.id);
         setSelectedMappingInvNrs(mapping.geraete.map((device) => device.invNr));
@@ -1229,11 +1281,25 @@ const BookingPage = () => {
         );
     };
 
+    const handleStartDateChange = useCallback((nextValue: string) => {
+        setStartDatum((currentStart) => {
+            setEndDatum((currentEnd) =>
+                alignEndDateWithStart({
+                    previousStartValue: currentStart,
+                    nextStartValue: nextValue,
+                    currentEndValue: currentEnd,
+                }),
+            );
+
+            return nextValue;
+        });
+    }, []);
+
     const handleDateConfirm = (date: Date) => {
         const formattedDate = formatDateForInput(date);
 
         if (activeDateField === "start") {
-            setStartDatum(formattedDate);
+            handleStartDateChange(formattedDate);
         }
 
         if (activeDateField === "end") {
@@ -1433,7 +1499,7 @@ const BookingPage = () => {
                                 <WebDateTimeField
                                     label="Von"
                                     value={startDatum ? formatDateForDisplayInput(startDatum) : ""}
-                                    onChange={setStartDatum}
+                                    onChange={handleStartDateChange}
                                     isDarkMode={isDarkMode}
                                 />
                             ) : (
@@ -1442,7 +1508,7 @@ const BookingPage = () => {
                                     label="Von"
                                     placeholder="2026-03-26 18:00"
                                     value={startDatum ? formatDateForDisplayInput(startDatum) : ""}
-                                    onChangeText={setStartDatum}
+                                    onChangeText={handleStartDateChange}
                                     style={styles.input}
                                     right={<TextInput.Icon icon="calendar" onPress={() => setActiveDateField("start")} />}
                                 />
@@ -1488,7 +1554,7 @@ const BookingPage = () => {
                             onSetModelQuantity={handleSetModelQuantity}
                             selectedInvChipSummary={selectedInvChipSummary}
                             showScannerAction={showScannerAction}
-                            onOpenScanner={() => setIsScannerVisible(true)}
+                            onOpenScanner={handleOpenScanner}
                         />
 
                         {false ? (
