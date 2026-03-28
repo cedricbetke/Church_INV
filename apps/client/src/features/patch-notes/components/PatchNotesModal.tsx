@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Divider, Modal, Text } from "react-native-paper";
 import { patchNotesData } from "@/src/features/patch-notes/data/patchNotes";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
@@ -12,6 +12,14 @@ interface PatchNotesModalProps {
 const formatDate = (value: string) => {
     const [year, month, day] = value.split("-");
     return `${day}.${month}.${year}`;
+};
+
+const openIssueLink = async (url: string) => {
+    try {
+        await Linking.openURL(url);
+    } catch (error) {
+        console.error("Issue-Link konnte nicht geöffnet werden:", error);
+    }
 };
 
 const PatchNotesModal: React.FC<PatchNotesModalProps> = ({ visible, onDismiss }) => {
@@ -64,6 +72,19 @@ const PatchNotesModal: React.FC<PatchNotesModalProps> = ({ visible, onDismiss })
                             <Text variant="bodyMedium" style={[styles.summary, isDarkMode && styles.summaryDark]}>
                                 {entry.summary}
                             </Text>
+
+                            {entry.issueUrl ? (
+                                <Button
+                                    mode="text"
+                                    compact
+                                    onPress={() => void openIssueLink(entry.issueUrl!)}
+                                    contentStyle={styles.issueButtonContent}
+                                    style={styles.issueButton}
+                                    labelStyle={styles.issueButtonLabel}
+                                >
+                                    {entry.issueLabel ?? "Issue öffnen"}
+                                </Button>
+                            ) : null}
 
                             <View style={styles.itemList}>
                                 {entry.items.map((item) => (
@@ -180,6 +201,18 @@ const styles = StyleSheet.create({
     },
     summaryDark: {
         color: "#d3dbe6",
+    },
+    issueButton: {
+        alignSelf: "flex-start",
+        marginLeft: -8,
+        marginTop: -4,
+    },
+    issueButtonContent: {
+        paddingHorizontal: 0,
+    },
+    issueButtonLabel: {
+        color: "#0f5ea8",
+        fontWeight: "700",
     },
     itemList: {
         gap: 8,

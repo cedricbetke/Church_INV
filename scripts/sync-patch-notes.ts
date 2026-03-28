@@ -9,6 +9,8 @@ type PatchNotesData = {
         title: string;
         summary: string;
         items: string[];
+        issueUrl?: string;
+        issueLabel?: string;
     }>;
 };
 
@@ -43,7 +45,9 @@ const markdown = [
         `**${formatDate(entry.date)}**  `,
         `**${entry.title}**`,
         "",
-        entry.summary,
+        entry.issueUrl
+            ? `${entry.summary} ([${entry.issueLabel ?? "Issue"}](${entry.issueUrl}))`
+            : entry.summary,
         "",
         ...entry.items.map((item) => `- ${item}`),
         "",
@@ -60,6 +64,8 @@ const clientModule = [
     "    title: string;",
     "    summary: string;",
     "    items: string[];",
+    "    issueUrl?: string;",
+    "    issueLabel?: string;",
     "}",
     "",
     "export interface PatchNotesData {",
@@ -76,6 +82,8 @@ const clientModule = [
         `            date: ${escapeTsString(entry.date)},`,
         `            title: ${escapeTsString(entry.title)},`,
         `            summary: ${escapeTsString(entry.summary)},`,
+        `            issueUrl: ${entry.issueUrl ? escapeTsString(entry.issueUrl) : "undefined"},`,
+        `            issueLabel: ${entry.issueLabel ? escapeTsString(entry.issueLabel) : "undefined"},`,
         "            items: [",
         ...entry.items.map((item) => `                ${escapeTsString(item)},`),
         "            ],",

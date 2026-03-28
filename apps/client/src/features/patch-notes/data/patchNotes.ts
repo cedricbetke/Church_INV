@@ -7,6 +7,8 @@ export interface PatchNoteEntry {
     title: string;
     summary: string;
     items: string[];
+    issueUrl?: string;
+    issueLabel?: string;
 }
 
 export interface PatchNotesData {
@@ -22,11 +24,13 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-28",
             title: "Buchungskalender als zweite Ansicht",
             summary: "Bestehende Buchungen koennen jetzt nicht nur als Liste, sondern auch in einer Kalenderansicht mit Tagesagenda betrachtet werden. Der Buchungsbereich startet dabei standardmaessig im Kalender.",
+            issueUrl: "https://github.com/cedricbetke/Church_INV/issues/4",
+            issueLabel: "#4",
             items: [
-                "Bestehende Buchungen haben jetzt einen Umschalter zwischen Liste und Kalender",
-                "Die neue Kalenderansicht zeigt eine Monatsuebersicht direkt auf der Buchungsseite",
-                "Ein gewaehlter Kalendertag blendet darunter die passende Tagesagenda ein",
-                "Der rechte Buchungsbereich startet jetzt standardmaessig in der Kalenderansicht",
+                "Bestehende Buchungen haben jetzt einen Umschalter zwischen Liste und Kalender (Issue #4)",
+                "Die neue Kalenderansicht zeigt eine Monatsuebersicht direkt auf der Buchungsseite (Issue #4)",
+                "Ein gewaehlter Kalendertag blendet darunter die passende Tagesagenda ein (Issue #4)",
+                "Der rechte Buchungsbereich startet jetzt standardmaessig in der Kalenderansicht (Issue #4)",
             ],
         },
         {
@@ -34,6 +38,8 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-28",
             title: "Foto- und Dev-Workflow gestrafft",
             summary: "Fotos werden platzsparender behandelt, die Detailansicht nutzt wieder bevorzugt Vorschaubilder, und API sowie Client koennen jetzt bequem aus dem Projekt-Root oder direkt aus VS Code gestartet werden.",
+            issueUrl: undefined,
+            issueLabel: undefined,
             items: [
                 "Neue Geraetefotos werden erst beim Speichern hochgeladen statt schon beim Auswaehlen",
                 "Neue Fotos werden direkt als optimierte JPG-Dateien gespeichert und erzeugen weiterhin kleine Thumbnails",
@@ -49,6 +55,8 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-27",
             title: "Topbar und Feedback-Flow geschaerft",
             summary: "Die Web-Topbar wurde klarer sortiert, Patch Notes sitzen jetzt direkt am Titel, und Bugs sowie Feature-Wuensche koennen direkt als GitHub-Issues gemeldet werden.",
+            issueUrl: undefined,
+            issueLabel: undefined,
             items: [
                 "Patch Notes wurden in der Standard-Webansicht direkt neben dem ChurchINV-Titel platziert",
                 "Bug- und Feature-Buttons oeffnen direkt die passende GitHub-Issue-Maske mit vorbereiteten Labels",
@@ -61,6 +69,8 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-27",
             title: "Import, Buchungen und mobile Oberflaeche ausgebaut",
             summary: "Der Bestand kann jetzt aus Teams/SharePoint uebernommen werden, Buchungen sind als eigener Workflow verfuegbar, und Haupt- sowie Detailansicht wurden fuer kleinere Screens deutlich nachgeschaerft.",
+            issueUrl: undefined,
+            issueLabel: undefined,
             items: [
                 "CSV-, Dokument- und Foto-Import aus Teams/SharePoint sind als wiederverwendbare Scripts vorhanden",
                 "Teams-Fotos erzeugen jetzt zusaetzlich Vorschaubilder fuer schnellere Listenansichten",
@@ -75,6 +85,8 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-26",
             title: "Inventar-Workflow deutlich erweitert",
             summary: "Geräteverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.",
+            issueUrl: undefined,
+            issueLabel: undefined,
             items: [
                 "Geräte können angelegt, bearbeitet und gelöscht werden",
                 "Dokumente pro Gerät sind integriert",
@@ -92,6 +104,8 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-22",
             title: "Detail und Edit-Flow verbessert",
             summary: "Die Detailansicht wurde ausgebaut und der Edit-Flow auf eine gemeinsame Formularbasis gestellt.",
+            issueUrl: undefined,
+            issueLabel: undefined,
             items: [
                 "Detailansicht deutlich erweitert",
                 "Add- und Edit-Formular zusammengeführt",
@@ -104,6 +118,8 @@ export const patchNotesData: PatchNotesData = {
             date: "2026-03-18",
             title: "Inventarliste und Grundnavigation stehen",
             summary: "Die erste funktionsfähige Inventaransicht und der Basis-Flow zum Anlegen von Geräten wurden aufgebaut.",
+            issueUrl: undefined,
+            issueLabel: undefined,
             items: [
                 "Geräte können angelegt werden",
                 "Inventarliste und Grundnavigation stehen",

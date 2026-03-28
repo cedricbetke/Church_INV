@@ -8,12 +8,12 @@
 **28.03.2026**  
 **Buchungskalender als zweite Ansicht**
 
-Bestehende Buchungen koennen jetzt nicht nur als Liste, sondern auch in einer Kalenderansicht mit Tagesagenda betrachtet werden. Der Buchungsbereich startet dabei standardmaessig im Kalender.
+Bestehende Buchungen koennen jetzt nicht nur als Liste, sondern auch in einer Kalenderansicht mit Tagesagenda betrachtet werden. Der Buchungsbereich startet dabei standardmaessig im Kalender. ([#4](https://github.com/cedricbetke/Church_INV/issues/4))
 
-- Bestehende Buchungen haben jetzt einen Umschalter zwischen Liste und Kalender
-- Die neue Kalenderansicht zeigt eine Monatsuebersicht direkt auf der Buchungsseite
-- Ein gewaehlter Kalendertag blendet darunter die passende Tagesagenda ein
-- Der rechte Buchungsbereich startet jetzt standardmaessig in der Kalenderansicht
+- Bestehende Buchungen haben jetzt einen Umschalter zwischen Liste und Kalender (Issue #4)
+- Die neue Kalenderansicht zeigt eine Monatsuebersicht direkt auf der Buchungsseite (Issue #4)
+- Ein gewaehlter Kalendertag blendet darunter die passende Tagesagenda ein (Issue #4)
+- Der rechte Buchungsbereich startet jetzt standardmaessig in der Kalenderansicht (Issue #4)
 
 ## 0.7.6
 
