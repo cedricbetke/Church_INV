@@ -71,6 +71,7 @@ Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
 - beim Anlegen wird auf einfache Zeitueberschneidungen geprueft
 - bestehende Buchungen koennen angezeigt und geloescht werden
 - die Geraeteauswahl kennt sowohl Einzelgeraete als auch Auswahl nach Modellmenge
+- die Geraeteauswahl kann separat geleert werden, ohne Titel, Zeitraum und Zweck zurueckzusetzen
 - bestehende Buchungen haben eine umschaltbare Listen- und Kalenderansicht
 - die Kalenderansicht startet standardmaessig und zeigt Monatsuebersicht plus Tagesagenda
 - auf mobilen Breiten wird aktuell nur die stabilere Listenansicht gezeigt

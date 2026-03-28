@@ -30,6 +30,7 @@ export const patchNotesData: PatchNotesData = {
                 "Die Kalenderansicht fuer bestehende Buchungen ist auf mobilen Breiten vorerst deaktiviert",
                 "Mobile Geraete zeigen im rechten Buchungsbereich nur noch die stabilere Listenansicht",
                 "Desktop und breitere Webansichten behalten den Umschalter zwischen Liste und Kalender",
+                "Im Buchungsformular gibt es jetzt nur noch eine gezielte Aktion zum Leeren der Geraeteauswahl statt eines kompletten Formular-Resets",
             ],
         },
         {

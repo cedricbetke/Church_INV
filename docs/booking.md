@@ -50,6 +50,7 @@ CREATE TABLE geraet_buchung_geraet (
 - vorhandene Buchungen starten in der Listenansicht eingeklappt
 - auf mobilen Breiten bleibt der rechte Buchungsbereich vorerst bei der Listenansicht, damit die Darstellung stabil bleibt
 - Geraete koennen einzeln oder nach Modellmenge ausgewaehlt werden
+- die Geraeteauswahl kann gezielt geleert werden, ohne das restliche Buchungsformular zurueckzusetzen
 - beim Setzen des Startdatums wird das Enddatum in typischen Faellen sinnvoll mitgezogen
 - leere Datumsfelder starten beim Oeffnen des nativen Pickers mit 00:00 fuer `Von` und 23:59 fuer `Bis`
 - QR-Scan kann einzelne Geraete direkt in die Auswahl uebernehmen
