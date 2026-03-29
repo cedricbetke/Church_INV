@@ -3,6 +3,19 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.10
+
+**29.03.2026**  
+**Mobile Kartenansicht der Inventarliste verfeinert**
+
+Die mobile Hauptansicht der Inventarliste wurde visuell neu gewichtet: Karten sind kompakter, der Footer ist auf kleinen Breiten besser ausbalanciert, und Fotos haben in der Kartenansicht jetzt klar mehr Prioritaet.
+
+- Die mobile Kartenansicht der Inventarliste wurde platzsparender abgestimmt, damit auf kleinen Breiten mehr Geraete gleichzeitig sichtbar bleiben
+- Der mobile Pagination-Footer der Hauptansicht wurde mehrfach nachgeschaerft und als flache, besser ausbalancierte Leiste fuer kleine Breiten umgesetzt
+- In der mobilen Kartenansicht wurden die Tags unter den Geraeten wieder entfernt, um die Darstellung ruhiger zu halten
+- Das Thumbnail neben der Modellbezeichnung ist in der mobilen Hauptansicht jetzt deutlich groesser und als wichtiges visuelles Element gewichtet
+- Desktop- und breitere Webansichten der Inventarliste bleiben von diesen Anpassungen unberuehrt
+
 ## 0.7.9
 
 **28.03.2026**  

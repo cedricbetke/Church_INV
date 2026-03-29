@@ -2,6 +2,19 @@
   "app": "ChurchINV",
   "entries": [
     {
+      "version": "0.7.10",
+      "date": "2026-03-29",
+      "title": "Mobile Kartenansicht der Inventarliste verfeinert",
+      "summary": "Die mobile Hauptansicht der Inventarliste wurde visuell neu gewichtet: Karten sind kompakter, der Footer ist auf kleinen Breiten besser ausbalanciert, und Fotos haben in der Kartenansicht jetzt klar mehr Prioritaet.",
+      "items": [
+        "Die mobile Kartenansicht der Inventarliste wurde platzsparender abgestimmt, damit auf kleinen Breiten mehr Geraete gleichzeitig sichtbar bleiben",
+        "Der mobile Pagination-Footer der Hauptansicht wurde mehrfach nachgeschaerft und als flache, besser ausbalancierte Leiste fuer kleine Breiten umgesetzt",
+        "In der mobilen Kartenansicht wurden die Tags unter den Geraeten wieder entfernt, um die Darstellung ruhiger zu halten",
+        "Das Thumbnail neben der Modellbezeichnung ist in der mobilen Hauptansicht jetzt deutlich groesser und als wichtiges visuelles Element gewichtet",
+        "Desktop- und breitere Webansichten der Inventarliste bleiben von diesen Anpassungen unberuehrt"
+      ]
+    },
+    {
       "version": "0.7.9",
       "date": "2026-03-28",
       "title": "Mobile Buchungsansicht stabilisiert",

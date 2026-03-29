@@ -2,7 +2,6 @@ import React from "react";
 import { Image, Platform, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import {
     Button,
-    Chip,
     DataTable,
     IconButton,
     Menu,
@@ -42,6 +41,16 @@ interface DataTableProps {
     numberOfItemsPerPageList: number[];
 }
 
+const getCompactChipLabel = (value?: string | null) => {
+    const trimmed = value?.trim();
+
+    if (!trimmed) {
+        return "";
+    }
+
+    return trimmed.length > 11 ? `${trimmed.slice(0, 10)}…` : trimmed;
+};
+
 const DataTableComponent: React.FC<DataTableProps> = ({
     columns,
     from,
@@ -76,6 +85,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const { width } = useWindowDimensions();
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
+    const [isItemsPerPageMenuVisible, setIsItemsPerPageMenuVisible] = React.useState(false);
     const isCompactMobile = width < 640;
     const showScannerAction = Platform.OS !== "web" || isCompactMobile;
     const webSearchbarShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.028)" } : null;
@@ -108,6 +118,8 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     ));
 
     const pagedItems = filteredItems.slice(from, to);
+    const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage));
+    const paginationLabel = filteredItems.length === 0 ? "0-0 von 0" : `${from + 1}-${Math.min(to, filteredItems.length)} von ${filteredItems.length}`;
     const hasActiveFilters = Boolean(
         filters.status || filters.hersteller || filters.modell || filters.bereich || filters.standort,
     );
@@ -337,37 +349,73 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 <View style={[styles.mobileList, isDarkMode && styles.tableDark]}>
                     <ScrollView style={styles.scrollView} contentContainerStyle={styles.mobileListContent}>
                         {pagedItems.map((item) => (
-                            <View key={item.invNr} style={[styles.mobileCard, isDarkMode && styles.mobileCardDark]}>
-                                <View style={styles.mobileCardHeader}>
-                                    <View style={styles.mobileCardMeta}>
-                                        <Text style={[styles.mobileInvNr, isDarkMode && styles.cellTextDark]}>#{item.invNr}</Text>
-                                        <Text style={[styles.mobileModel, isDarkMode && styles.cellTextDark]}>{item.modell}</Text>
-                                        <Text style={[styles.mobileStatus, isDarkMode && styles.deviceSubtitleDark]}>{item.status}</Text>
+                            <View
+                                key={item.invNr}
+                                style={[
+                                    styles.mobileCard,
+                                    isCompactMobile && styles.mobileCardCompact,
+                                    isDarkMode && styles.mobileCardDark,
+                                ]}
+                            >
+                                <View style={[styles.mobileCardHeader, isCompactMobile && styles.mobileCardHeaderCompact]}>
+                                    <View style={[styles.mobileCardMeta, isCompactMobile && styles.mobileCardMetaCompact]}>
+                                        <Text style={[styles.mobileInvNr, isCompactMobile && styles.mobileInvNrCompact, isDarkMode && styles.cellTextDark]}>
+                                            #{item.invNr}
+                                        </Text>
+                                        <Text
+                                            numberOfLines={2}
+                                            style={[styles.mobileModel, isCompactMobile && styles.mobileModelCompact, isDarkMode && styles.cellTextDark]}
+                                        >
+                                            {item.modell}
+                                        </Text>
+                                        <Text
+                                            numberOfLines={1}
+                                            style={[styles.mobileStatus, isCompactMobile && styles.mobileStatusCompact, isDarkMode && styles.deviceSubtitleDark]}
+                                        >
+                                            {item.status}
+                                        </Text>
                                     </View>
-                                    {item.geraeteFoto ? (
-                                        <View style={[styles.thumbnailFrame, isDarkMode && styles.thumbnailFrameDark]}>
-                                            <Image
-                                                source={{ uri: item.geraeteFotoThumb ?? item.geraeteFoto }}
-                                                style={styles.image}
-                                                resizeMode="cover"
-                                            />
-                                        </View>
-                                    ) : (
-                                        <View style={[styles.photoStatus, isDarkMode && styles.photoStatusDark]}>
-                                            <MaterialIcons
-                                                name="image-not-supported"
-                                                size={18}
-                                                color={isDarkMode ? "#7f8b99" : "#888"}
-                                            />
-                                        </View>
-                                    )}
+                                    <View style={isCompactMobile ? styles.mobileThumbnailSlotCompact : undefined}>
+                                        {item.geraeteFoto ? (
+                                            <View
+                                                style={[
+                                                    styles.thumbnailFrame,
+                                                    isCompactMobile && styles.thumbnailFrameCompact,
+                                                    isCompactMobile && styles.thumbnailFramePriority,
+                                                    isDarkMode && styles.thumbnailFrameDark,
+                                                ]}
+                                            >
+                                                <Image
+                                                    source={{ uri: item.geraeteFotoThumb ?? item.geraeteFoto }}
+                                                    style={styles.image}
+                                                    resizeMode="cover"
+                                                />
+                                            </View>
+                                        ) : (
+                                            <View
+                                                style={[
+                                                    styles.photoStatus,
+                                                    isCompactMobile && styles.photoStatusCompact,
+                                                    isCompactMobile && styles.thumbnailFramePriority,
+                                                    isDarkMode && styles.photoStatusDark,
+                                                ]}
+                                            >
+                                                <MaterialIcons
+                                                    name="image-not-supported"
+                                                    size={isCompactMobile ? 16 : 18}
+                                                    color={isDarkMode ? "#7f8b99" : "#888"}
+                                                />
+                                            </View>
+                                        )}
+                                    </View>
                                 </View>
-                                <View style={styles.mobileFacts}>
-                                    <Chip compact style={styles.mobileChip}>{item.standort}</Chip>
-                                    <Chip compact style={styles.mobileChip}>{item.bereich}</Chip>
-                                    {item.hersteller ? <Chip compact style={styles.mobileChip}>{item.hersteller}</Chip> : null}
-                                </View>
-                                <Button mode="text" onPress={() => openDetailModal(item)} contentStyle={styles.mobileDetailButtonContent}>
+                                <Button
+                                    mode="text"
+                                    compact={isCompactMobile}
+                                    onPress={() => openDetailModal(item)}
+                                    contentStyle={[styles.mobileDetailButtonContent, isCompactMobile && styles.mobileDetailButtonContentCompact]}
+                                    labelStyle={isCompactMobile ? styles.mobileDetailButtonLabelCompact : undefined}
+                                >
                                     Details ansehen
                                 </Button>
                             </View>
@@ -451,13 +499,87 @@ const DataTableComponent: React.FC<DataTableProps> = ({
             </DataTable>
             )}
 
-            <View style={[styles.pagination, isDarkMode && styles.paginationDark]}>
-                {Platform.OS === "web" ? (
+            <View
+                style={[
+                    styles.pagination,
+                    Platform.OS === "web" && isCompactMobile && styles.paginationCompact,
+                    isDarkMode && styles.paginationDark,
+                ]}
+            >
+                {Platform.OS === "web" && isCompactMobile ? (
+                    <View style={styles.paginationCompactWrap}>
+                        <View style={[styles.paginationCompactRow, isDarkMode && styles.paginationCompactRowDark]}>
+                            <View style={styles.paginationCompactControls}>
+                                <Menu
+                                    visible={isItemsPerPageMenuVisible}
+                                    onDismiss={() => setIsItemsPerPageMenuVisible(false)}
+                                    anchor={(
+                                        <Button
+                                            compact
+                                            mode="outlined"
+                                            onPress={() => setIsItemsPerPageMenuVisible(true)}
+                                            style={[styles.paginationSizeButton, isDarkMode && styles.paginationSizeButtonDark]}
+                                            contentStyle={styles.paginationSizeButtonContent}
+                                            labelStyle={[styles.paginationSizeButtonLabel, isDarkMode && styles.paginationSizeButtonLabelDark]}
+                                            icon="chevron-down"
+                                        >
+                                            {itemsPerPage}
+                                        </Button>
+                                    )}
+                                >
+                                    {numberOfItemsPerPageList.map((option) => (
+                                        <Menu.Item
+                                            key={`items-per-page-${option}`}
+                                            onPress={() => {
+                                                setIsItemsPerPageMenuVisible(false);
+                                                onItemsPerPageChange(option);
+                                            }}
+                                            title={`${option}`}
+                                        />
+                                    ))}
+                                </Menu>
+                                <View style={[styles.paginationArrowRow, isDarkMode && styles.paginationArrowRowDark]}>
+                                    <IconButton
+                                        icon="page-first"
+                                        size={18}
+                                        disabled={page === 0}
+                                        onPress={() => setPage(0)}
+                                        style={styles.paginationIconButton}
+                                    />
+                                    <IconButton
+                                        icon="chevron-left"
+                                        size={18}
+                                        disabled={page === 0}
+                                        onPress={() => setPage(Math.max(0, page - 1))}
+                                        style={styles.paginationIconButton}
+                                    />
+                                    <IconButton
+                                        icon="chevron-right"
+                                        size={18}
+                                        disabled={page >= totalPages - 1}
+                                        onPress={() => setPage(Math.min(totalPages - 1, page + 1))}
+                                        style={styles.paginationIconButton}
+                                    />
+                                    <IconButton
+                                        icon="page-last"
+                                        size={18}
+                                        disabled={page >= totalPages - 1}
+                                        onPress={() => setPage(totalPages - 1)}
+                                        style={styles.paginationIconButton}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                        <Text style={[styles.paginationCompactLabel, isDarkMode && styles.paginationCompactLabelDark]}>
+                            {paginationLabel}
+                        </Text>
+                    </View>
+                ) : Platform.OS === "web" ? (
                     <DataTable.Pagination
                         page={page}
-                        numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
+                        numberOfPages={totalPages}
                         onPageChange={setPage}
-                        label={filteredItems.length === 0 ? "0-0 von 0" : `${from + 1}-${Math.min(to, filteredItems.length)} von ${filteredItems.length}`}
+                        label={paginationLabel}
                         numberOfItemsPerPageList={numberOfItemsPerPageList}
                         numberOfItemsPerPage={itemsPerPage}
                         onItemsPerPageChange={onItemsPerPageChange}
@@ -466,9 +588,9 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 ) : (
                     <DataTable.Pagination
                         page={page}
-                        numberOfPages={Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))}
+                        numberOfPages={totalPages}
                         onPageChange={setPage}
-                        label={filteredItems.length === 0 ? "0-0 von 0" : `${from + 1}-${Math.min(to, filteredItems.length)} von ${filteredItems.length}`}
+                        label={paginationLabel}
                         showFastPaginationControls
                     />
                 )}
@@ -613,8 +735,8 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     mobileListContent: {
-        padding: 12,
-        gap: 12,
+        padding: 10,
+        gap: 10,
     },
     mobileCard: {
         borderRadius: 16,
@@ -623,6 +745,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         padding: 12,
         gap: 10,
+        width: "100%",
+    },
+    mobileCardCompact: {
+        padding: 8,
+        gap: 6,
+        borderRadius: 12,
     },
     mobileCardDark: {
         backgroundColor: "#151922",
@@ -634,33 +762,56 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 12,
     },
+    mobileCardHeaderCompact: {
+        alignItems: "center",
+        gap: 12,
+    },
     mobileCardMeta: {
         flex: 1,
-        gap: 4,
+        gap: 2,
+        minWidth: 0,
+    },
+    mobileCardMetaCompact: {
+        paddingTop: 4,
+        paddingRight: 2,
     },
     mobileInvNr: {
         fontSize: 13,
         fontWeight: "700",
         color: "#5f6877",
     },
+    mobileInvNrCompact: {
+        fontSize: 11,
+    },
     mobileModel: {
         fontSize: 16,
         fontWeight: "700",
         color: "#1d1d1f",
     },
+    mobileModelCompact: {
+        fontSize: 13,
+        lineHeight: 16,
+    },
     mobileStatus: {
         fontSize: 13,
     },
-    mobileFacts: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 8,
+    mobileStatusCompact: {
+        fontSize: 11,
     },
-    mobileChip: {
+    mobileThumbnailSlotCompact: {
+        paddingTop: 2,
+        paddingRight: 2,
         alignSelf: "flex-start",
     },
     mobileDetailButtonContent: {
         justifyContent: "flex-start",
+    },
+    mobileDetailButtonContentCompact: {
+        justifyContent: "flex-start",
+        minHeight: 24,
+    },
+    mobileDetailButtonLabelCompact: {
+        fontSize: 12,
     },
     table: {
         flex: 1,
@@ -761,6 +912,85 @@ const styles = StyleSheet.create({
         backgroundColor: "#1b212c",
         borderTopColor: "#2a3340",
     },
+    paginationCompact: {
+        minHeight: 0,
+        paddingVertical: 0,
+    },
+    paginationCompactWrap: {
+        width: "100%",
+        alignItems: "center",
+        gap: 2,
+        paddingHorizontal: 0,
+        paddingTop: 2,
+        paddingBottom: 2,
+    },
+    paginationCompactRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 0,
+        backgroundColor: "transparent",
+        borderWidth: 0,
+    },
+    paginationCompactRowDark: {
+        backgroundColor: "transparent",
+    },
+    paginationCompactControls: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        flexShrink: 0,
+    },
+    paginationArrowRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+        paddingLeft: 10,
+        borderLeftWidth: 1,
+        borderLeftColor: "#e5e7eb",
+    },
+    paginationArrowRowDark: {
+        borderLeftColor: "#334154",
+    },
+    paginationSizeButton: {
+        margin: 0,
+        minWidth: 62,
+        borderRadius: 14,
+        borderColor: "transparent",
+        backgroundColor: "#f7f9fc",
+    },
+    paginationSizeButtonDark: {
+        backgroundColor: "#1d2633",
+        borderColor: "transparent",
+    },
+    paginationSizeButtonContent: {
+        height: 32,
+        flexDirection: "row-reverse",
+    },
+    paginationSizeButtonLabel: {
+        fontSize: 13,
+    },
+    paginationSizeButtonLabelDark: {
+        color: "#eef4fb",
+    },
+    paginationIconButton: {
+        margin: 0,
+        width: 30,
+        height: 30,
+    },
+    paginationCompactLabel: {
+        fontSize: 12,
+        color: "#6b7280",
+        textAlign: "center",
+        lineHeight: 15,
+        width: "100%",
+    },
+    paginationCompactLabelDark: {
+        color: "#aab4c2",
+    },
     photoStatus: {
         width: 34,
         height: 34,
@@ -770,6 +1000,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#f1f3f6",
         borderWidth: 1,
         borderColor: "#e2e7ee",
+    },
+    photoStatusCompact: {
+        width: 64,
+        height: 64,
+        borderRadius: 14,
     },
     photoStatusDark: {
         backgroundColor: "#11161d",
@@ -783,6 +1018,21 @@ const styles = StyleSheet.create({
         backgroundColor: "#eef2f6",
         borderWidth: 1,
         borderColor: "#dbe3ec",
+    },
+    thumbnailFrameCompact: {
+        width: 72,
+        height: 72,
+        borderRadius: 14,
+    },
+    thumbnailFramePriority: {
+        borderWidth: 1,
+        borderColor: "#c9d5e3",
+        backgroundColor: "#f3f6fa",
+        shadowColor: "#1f2937",
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 2,
     },
     thumbnailFrameDark: {
         backgroundColor: "#11161d",
