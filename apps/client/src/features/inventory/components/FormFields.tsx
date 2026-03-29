@@ -68,6 +68,13 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     const { isDarkMode } = useAppThemeMode();
     const { width } = useWindowDimensions();
     const isCompactViewport = width < 640;
+    const openSelectionDialog = (showDialog: (show: boolean) => void) => {
+        if (Platform.OS === "web" && typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+
+        showDialog(true);
+    };
 
     const renderWebDateField = () => (
         <View style={styles.dateFieldWrapper}>
@@ -149,21 +156,21 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             <UIGrid columns={2} xGap={16} yGap={8}>
                 {renderField("invNr", "Inventarnummer", { disabled: loading || invNrDisabled })}
                 {renderField("hersteller", "Hersteller", {
-                    onFocus: () => setShowBrandDialog(true),
-                    onPressIn: () => setShowBrandDialog(true),
+                    onFocus: () => openSelectionDialog(setShowBrandDialog),
+                    onPressIn: () => openSelectionDialog(setShowBrandDialog),
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                 })}
                 {renderField("objekttyp", "Objekttyp", {
-                    onFocus: () => setShowObjekttypDialog(true),
-                    onPressIn: () => setShowObjekttypDialog(true),
+                    onFocus: () => openSelectionDialog(setShowObjekttypDialog),
+                    onPressIn: () => openSelectionDialog(setShowObjekttypDialog),
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                 })}
                 {renderField("modell", "Modell", {
                     disabled: !isModelSelectionEnabled,
-                    onFocus: isModelSelectionEnabled ? () => setShowModelDialog(true) : undefined,
-                    onPressIn: isModelSelectionEnabled ? () => setShowModelDialog(true) : undefined,
+                    onFocus: isModelSelectionEnabled ? () => openSelectionDialog(setShowModelDialog) : undefined,
+                    onPressIn: isModelSelectionEnabled ? () => openSelectionDialog(setShowModelDialog) : undefined,
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                     placeholder: !isModelSelectionEnabled && isCompactViewport ? "Zuerst Hersteller + Objekttyp" : undefined,
@@ -174,8 +181,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     ? renderWebDateField()
                     : renderField("kaufdatum", "Kaufdatum", {
                         placeholder: "YYYY-MM-DD",
-                        onFocus: () => setShowKaufdatumPicker(true),
-                        onPressIn: () => setShowKaufdatumPicker(true),
+                        onFocus: () => openSelectionDialog(setShowKaufdatumPicker),
+                        onPressIn: () => openSelectionDialog(setShowKaufdatumPicker),
                         rightIcon: "calendar",
                         selectionOnly: true,
                     })}
@@ -185,35 +192,35 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 })}
                 {renderField("zustandshinweis", "Zustandshinweis")}
                 {renderField("standort", "Standort", {
-                    onFocus: () => setShowStandortDialog(true),
-                    onPressIn: () => setShowStandortDialog(true),
+                    onFocus: () => openSelectionDialog(setShowStandortDialog),
+                    onPressIn: () => openSelectionDialog(setShowStandortDialog),
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                 })}
                 {renderField("bereich", "Bereich", {
-                    onFocus: () => setShowBereichDialog(true),
-                    onPressIn: () => setShowBereichDialog(true),
+                    onFocus: () => openSelectionDialog(setShowBereichDialog),
+                    onPressIn: () => openSelectionDialog(setShowBereichDialog),
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                 })}
                 {renderField("kategorie", "Kategorie", {
                     disabled: !isKategorieSelectionEnabled,
-                    onFocus: isKategorieSelectionEnabled ? () => setShowKategorieDialog(true) : undefined,
-                    onPressIn: isKategorieSelectionEnabled ? () => setShowKategorieDialog(true) : undefined,
+                    onFocus: isKategorieSelectionEnabled ? () => openSelectionDialog(setShowKategorieDialog) : undefined,
+                    onPressIn: isKategorieSelectionEnabled ? () => openSelectionDialog(setShowKategorieDialog) : undefined,
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                     placeholder: !isKategorieSelectionEnabled && isCompactViewport ? "Zuerst Bereich wählen" : undefined,
                     helperText: !isKategorieSelectionEnabled && !isCompactViewport ? "Bitte zuerst einen Bereich wählen" : undefined,
                 })}
                 {renderField("status", "Status", {
-                    onFocus: () => setShowStatusDialog(true),
-                    onPressIn: () => setShowStatusDialog(true),
+                    onFocus: () => openSelectionDialog(setShowStatusDialog),
+                    onPressIn: () => openSelectionDialog(setShowStatusDialog),
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                 })}
                 {renderField("verantwortlicher", "Verantwortlicher", {
-                    onFocus: () => setShowVerantwortlicherDialog(true),
-                    onPressIn: () => setShowVerantwortlicherDialog(true),
+                    onFocus: () => openSelectionDialog(setShowVerantwortlicherDialog),
+                    onPressIn: () => openSelectionDialog(setShowVerantwortlicherDialog),
                     rightIcon: "chevron-down",
                     selectionOnly: true,
                 })}

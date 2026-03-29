@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import { Button, Dialog, List, Portal, TextInput } from "react-native-paper";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
@@ -29,11 +29,27 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
     isNewItem,
 }) => {
     const { isDarkMode } = useAppThemeMode();
+    const searchInputRef = useRef<any>(null);
     const searchLabel = canCreateNew ? "Suchen oder neue eingeben" : "Suchen oder auswählen";
 
     const filteredItems = items.filter((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+
+    useEffect(() => {
+        if (!visible) {
+            return;
+        }
+
+        const focusSearchInput = () => searchInputRef.current?.focus?.();
+
+        if (Platform.OS === "web") {
+            const timer = setTimeout(focusSearchInput, 0);
+            return () => clearTimeout(timer);
+        }
+
+        focusSearchInput();
+    }, [visible]);
 
     return (
         <Portal>
@@ -41,6 +57,7 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                 <Dialog.Title>{title}</Dialog.Title>
                 <Dialog.Content>
                     <TextInput
+                        ref={searchInputRef}
                         mode="outlined"
                         label={searchLabel}
                         value={searchQuery}
