@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { HelperText, TextInput } from "react-native-paper";
 import { FormData } from "@/src/features/inventory/types/FormData";
 import UIGrid from "./DetailGrid";
@@ -66,6 +66,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     setShowKaufdatumPicker,
 }) => {
     const { isDarkMode } = useAppThemeMode();
+    const { width } = useWindowDimensions();
+    const isCompactViewport = width < 640;
 
     const renderWebDateField = () => (
         <View style={styles.dateFieldWrapper}>
@@ -164,7 +166,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     onPressIn: isModelSelectionEnabled ? () => setShowModelDialog(true) : undefined,
                     rightIcon: "chevron-down",
                     selectionOnly: true,
-                    helperText: !isModelSelectionEnabled ? "Bitte zuerst Hersteller und Objekttyp wählen" : undefined,
+                    placeholder: !isModelSelectionEnabled && isCompactViewport ? "Zuerst Hersteller + Objekttyp" : undefined,
+                    helperText: !isModelSelectionEnabled && !isCompactViewport ? "Bitte zuerst Hersteller und Objekttyp wählen" : undefined,
                 })}
                 {renderField("serien_nr", "Seriennummer")}
                 {Platform.OS === "web"
@@ -199,7 +202,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     onPressIn: isKategorieSelectionEnabled ? () => setShowKategorieDialog(true) : undefined,
                     rightIcon: "chevron-down",
                     selectionOnly: true,
-                    helperText: !isKategorieSelectionEnabled ? "Bitte zuerst einen Bereich wählen" : undefined,
+                    placeholder: !isKategorieSelectionEnabled && isCompactViewport ? "Zuerst Bereich wählen" : undefined,
+                    helperText: !isKategorieSelectionEnabled && !isCompactViewport ? "Bitte zuerst einen Bereich wählen" : undefined,
                 })}
                 {renderField("status", "Status", {
                     onFocus: () => setShowStatusDialog(true),
