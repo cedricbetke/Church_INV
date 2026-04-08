@@ -556,10 +556,32 @@ type SelectionMode = "single" | "model";
 type ModelGroup = {
     key: string;
     modell: string;
-    hersteller: string | null;
-    standort: string | null;
-    bereich: string | null;
+    subtitle: string;
     items: InventoryItem[];
+};
+
+const normalizeModelGroupPart = (value: string | null | undefined) =>
+    (value ?? "")
+        .normalize("NFKC")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toLocaleLowerCase("de-DE");
+
+const joinUniqueValues = (values: Array<string | null | undefined>) =>
+    [...new Set(values.map((value) => value?.trim()).filter(Boolean) as string[])].sort((left, right) => left.localeCompare(right, "de"));
+
+const buildModelGroupSubtitle = (items: InventoryItem[]) => {
+    const hersteller = joinUniqueValues(items.map((item) => item.hersteller));
+    const standorte = joinUniqueValues(items.map((item) => item.standort));
+    const bereiche = joinUniqueValues(items.map((item) => item.bereich));
+
+    return [
+        hersteller.join(", "),
+        standorte.join(", "),
+        bereiche.join(", "),
+    ]
+        .filter(Boolean)
+        .join(" · ");
 };
 
 const BookingDeviceRow = React.memo(
@@ -609,7 +631,7 @@ const BookingModelGroupRow = React.memo(
                     {group.modell}
                 </Text>
                 <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                    {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" · ")}
+                    {group.subtitle}
                 </Text>
                 <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
                     {selectedCount} von {group.items.length} ausgewählt
@@ -1116,28 +1138,20 @@ const BookingPage = () => {
             {
                 key: string;
                 modell: string;
-                hersteller: string | null;
-                standort: string | null;
-                bereich: string | null;
                 items: typeof filteredItems;
             }
         >();
 
         for (const item of filteredItems) {
             const key = [
-                item.modell ?? "",
-                item.hersteller ?? "",
-                item.standort ?? "",
-                item.bereich ?? "",
+                normalizeModelGroupPart(item.hersteller),
+                normalizeModelGroupPart(item.modell),
             ].join("||");
 
             if (!groups.has(key)) {
                 groups.set(key, {
                     key,
-                    modell: item.modell,
-                    hersteller: item.hersteller ?? null,
-                    standort: item.standort ?? null,
-                    bereich: item.bereich ?? null,
+                    modell: item.modell?.trim() || "Ohne Modell",
                     items: [],
                 });
             }
@@ -1149,6 +1163,7 @@ const BookingPage = () => {
             .map((group) => ({
                 ...group,
                 items: [...group.items].sort((left, right) => left.invNr - right.invNr),
+                subtitle: buildModelGroupSubtitle(group.items),
             }))
             .sort((left, right) => {
                 const byModel = left.modell.localeCompare(right.modell, "de");
@@ -1156,7 +1171,7 @@ const BookingPage = () => {
                     return byModel;
                 }
 
-                return (left.standort ?? "").localeCompare(right.standort ?? "", "de");
+                return left.subtitle.localeCompare(right.subtitle, "de");
             });
     }, [filteredItems]);
 
@@ -1775,7 +1790,7 @@ const BookingPage = () => {
                                                         {group.modell}
                                                     </Text>
                                                     <Text style={[styles.deviceSubtitle, isDarkMode && styles.deviceSubtitleDark]}>
-                                                        {[group.hersteller, group.standort, group.bereich].filter(Boolean).join(" - ")}
+                                                        {group.subtitle}
                                                     </Text>
                                                     <Text style={[styles.groupAvailability, isDarkMode && styles.deviceSubtitleDark]}>
                                                         {selectedCount} von {group.items.length} ausgewaehlt

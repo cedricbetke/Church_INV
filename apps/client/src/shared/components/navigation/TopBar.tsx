@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import { useState } from "react";
 import { router } from "expo-router";
-import { Linking, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Image, Linking, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput, Tooltip } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
@@ -9,6 +9,7 @@ import { patchNotesData } from "@/src/features/patch-notes/data/patchNotes";
 import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
+const CHURCHINV_LOGO = require("../../../../assets/images/churchinv-header-icon.png");
 const BUG_ISSUE_URL =
     "https://github.com/cedricbetke/Church_INV/issues/new?labels=bug&title=Bug%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20ist%20kaputt%20oder%20unerwartet%3F%0A-%20Wie%20kann%20man%20es%20nachstellen%3F%0A-%20Auf%20welcher%20Ansicht%20oder%20welchem%20Geraet%20passiert%20es%3F%0A";
 const FEATURE_ISSUE_URL =
@@ -99,9 +100,21 @@ const TopBar = () => {
                 <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => {}} />
                 <View style={styles.leftCluster}>
                     <View style={styles.titleStack}>
-                        <Text style={[styles.title, isDarkMode && styles.titleDark, isCompactViewport && styles.titleCompact]}>
-                            ChurchINV
-                        </Text>
+                        <View style={styles.brandRow}>
+                            <Image
+                                source={CHURCHINV_LOGO}
+                                style={[styles.logo, isCompactViewport && styles.logoCompact]}
+                                resizeMode="contain"
+                            />
+                            <View style={styles.wordmark}>
+                                <Text style={[styles.wordmarkChurch, isDarkMode && styles.wordmarkChurchDark, isCompactViewport && styles.wordmarkChurchCompact]}>
+                                    Church
+                                </Text>
+                                <Text style={[styles.wordmarkInv, isCompactViewport && styles.wordmarkInvCompact]}>
+                                    INV
+                                </Text>
+                            </View>
+                        </View>
                         {isCompactViewport ? (
                             <View style={[styles.betaBadge, styles.betaBadgeBelowTitle, isDarkMode && styles.betaBadgeDark]}>
                                 <Text style={[styles.betaBadgeText, styles.betaBadgeTextCompact, isDarkMode && styles.betaBadgeTextDark]}>
@@ -271,6 +284,44 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         gap: 2,
     },
+    brandRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    logo: {
+        width: 36,
+        height: 36,
+    },
+    logoCompact: {
+        width: 32,
+        height: 32,
+    },
+    wordmark: {
+        flexDirection: "row",
+        alignItems: "baseline",
+    },
+    wordmarkChurch: {
+        color: "#222328",
+        fontSize: 21,
+        fontWeight: "800",
+        letterSpacing: -0.55,
+    },
+    wordmarkChurchCompact: {
+        fontSize: 18,
+    },
+    wordmarkChurchDark: {
+        color: "#f3f5f9",
+    },
+    wordmarkInv: {
+        color: "#1677ff",
+        fontSize: 21,
+        fontWeight: "800",
+        letterSpacing: -0.55,
+    },
+    wordmarkInvCompact: {
+        fontSize: 18,
+    },
     leftClusterAction: {
         marginLeft: 2,
         marginRight: 0,
@@ -312,18 +363,6 @@ const styles = StyleSheet.create({
     rightCluster: {
         flexDirection: "row",
         alignItems: "center",
-    },
-    title: {
-        color: "#111111",
-        fontSize: 23,
-        fontWeight: "700",
-        letterSpacing: -0.35,
-    },
-    titleCompact: {
-        fontSize: 17,
-    },
-    titleDark: {
-        color: "#f5f7fb",
     },
     adminModal: {
         backgroundColor: "#ffffff",
