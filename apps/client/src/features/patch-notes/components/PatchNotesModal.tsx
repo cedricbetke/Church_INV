@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Divider, Modal, Text } from "react-native-paper";
 import { patchNotesData } from "@/src/features/patch-notes/data/patchNotes";
@@ -8,6 +9,9 @@ interface PatchNotesModalProps {
     visible: boolean;
     onDismiss: () => void;
 }
+
+const INITIAL_VISIBLE_ENTRIES = 3;
+const LOAD_MORE_STEP = 5;
 
 const formatDate = (value: string) => {
     const [year, month, day] = value.split("-");
@@ -24,7 +28,16 @@ const openIssueLink = async (url: string) => {
 
 const PatchNotesModal: React.FC<PatchNotesModalProps> = ({ visible, onDismiss }) => {
     const { isDarkMode } = useAppThemeMode();
+    const [visibleEntries, setVisibleEntries] = useState(INITIAL_VISIBLE_ENTRIES);
     const latestEntry = patchNotesData.entries[0];
+    const displayedEntries = patchNotesData.entries.slice(0, visibleEntries);
+    const hasMoreEntries = visibleEntries < patchNotesData.entries.length;
+
+    useEffect(() => {
+        if (visible) {
+            setVisibleEntries(INITIAL_VISIBLE_ENTRIES);
+        }
+    }, [visible]);
 
     return (
         <Modal
@@ -55,7 +68,7 @@ const PatchNotesModal: React.FC<PatchNotesModalProps> = ({ visible, onDismiss })
                 </View>
 
                 <View style={styles.entries}>
-                    {patchNotesData.entries.map((entry, index) => (
+                    {displayedEntries.map((entry, index) => (
                         <View
                             key={`${entry.version}-${entry.date}`}
                             style={[styles.entryCard, isDarkMode && styles.entryCardDark]}
@@ -100,12 +113,27 @@ const PatchNotesModal: React.FC<PatchNotesModalProps> = ({ visible, onDismiss })
                                 ))}
                             </View>
 
-                            {index < patchNotesData.entries.length - 1 && (
+                            {index < displayedEntries.length - 1 && (
                                 <Divider style={[styles.divider, isDarkMode && styles.dividerDark]} />
                             )}
                         </View>
                     ))}
                 </View>
+
+                {hasMoreEntries ? (
+                    <View style={styles.loadMoreRow}>
+                        <Button
+                            mode="text"
+                            onPress={() =>
+                                setVisibleEntries((current) =>
+                                    Math.min(current + LOAD_MORE_STEP, patchNotesData.entries.length),
+                                )
+                            }
+                        >
+                            Weitere laden
+                        </Button>
+                    </View>
+                ) : null}
 
                 <View style={styles.footer}>
                     <Button mode="outlined" onPress={onDismiss}>
@@ -251,6 +279,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         marginTop: 4,
+    },
+    loadMoreRow: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: -4,
     },
 });
 
