@@ -29,6 +29,7 @@ export const patchNotesData: PatchNotesData = {
             items: [
                 "Die Auswahl Nach Modell in den Buchungen gruppiert jetzt nach Hersteller plus Modell statt zusaetzlich nach Standort oder Bereich",
                 "Standort- und Bereichsinformationen bleiben in der Modellansicht sichtbar, erzeugen aber keine getrennten Gruppen mehr",
+                "Ausgemusterte Geraete werden auf der Buchungsseite nicht mehr in die buchbare Auswahl aufgenommen",
                 "Mehrere doppelte Modell-Schreibweisen in den Stammdaten wurden auf gemeinsame Zielmodelle zusammengefuehrt",
                 "Mehrere offensichtliche Standort-Tippfehler wurden in den Stammdaten auf die jeweils korrekte Variante vereinheitlicht",
                 "Die Hauptseite zeigt in der Topbar keinen leeren Zurueck-Pfeil mehr",

@@ -584,6 +584,9 @@ const buildModelGroupSubtitle = (items: InventoryItem[]) => {
         .join(" · ");
 };
 
+const isBookableInventoryItem = (item: InventoryItem) =>
+    item.status.trim().toLocaleLowerCase("de-DE") !== "ausgemustert";
+
 const BookingDeviceRow = React.memo(
     ({
         item,
@@ -1115,6 +1118,10 @@ const BookingPage = () => {
 
         return items
             .filter((item) => {
+                if (!isBookableInventoryItem(item)) {
+                    return false;
+                }
+
                 if (!normalizedQuery) {
                     return true;
                 }
@@ -1202,6 +1209,10 @@ const BookingPage = () => {
 
         return items
             .filter((item) => {
+                if (!isBookableInventoryItem(item)) {
+                    return false;
+                }
+
                 if (!normalizedQuery) {
                     return true;
                 }

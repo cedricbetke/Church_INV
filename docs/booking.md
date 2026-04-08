@@ -52,6 +52,7 @@ CREATE TABLE geraet_buchung_geraet (
 - Geraete koennen einzeln oder nach Modellmenge ausgewaehlt werden
 - die Modellansicht gruppiert Geraete nach Hersteller plus Modell, nicht mehr nach Standort oder Bereich
 - unterschiedliche Standorte oder Bereiche bleiben in der Modellansicht nur noch Zusatzinfo und trennen keine Gruppen mehr
+- ausgemusterte Geraete werden auf der Buchungsseite nicht mehr als buchbare Auswahl angezeigt
 - die Geraeteauswahl kann gezielt geleert werden, ohne das restliche Buchungsformular zurueckzusetzen
 - beim Setzen des Startdatums wird das Enddatum in typischen Faellen sinnvoll mitgezogen
 - leere Datumsfelder starten beim Oeffnen des nativen Pickers mit 00:00 fuer `Von` und 23:59 fuer `Bis`
