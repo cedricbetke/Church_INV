@@ -107,6 +107,10 @@ export const isValidIsoDate = (value: string) => {
 
 export const getErrorMessage = (error: unknown) => {
     if (!axios.isAxiosError(error)) {
+        if (error instanceof Error && error.message.trim()) {
+            return error.message;
+        }
+
         return "Fehler beim Speichern des Items";
     }
 

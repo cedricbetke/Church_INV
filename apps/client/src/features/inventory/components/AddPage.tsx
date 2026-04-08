@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, StyleSheet, Platform, Image } from "react-native";
-import { Modal, Portal, Button, Title, Text } from "react-native-paper";
+import { Modal, Portal, Button, Title, Text, HelperText } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { FormFields } from "./FormFields";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
@@ -11,7 +11,11 @@ import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import dokumenteService from "@/src/features/masterdata/services/dokumenteService";
 import apiClient from "@/src/shared/api/apiClient";
 import { pickImageAsDataUrl } from "@/src/shared/utils/ImagePickerUtil";
-import { pickDocumentAsDataUrl } from "@/src/shared/utils/documentPicker";
+import {
+    DOCUMENT_UPLOAD_ALLOWED_TYPE_LABEL,
+    DOCUMENT_UPLOAD_MAX_SIZE_LABEL,
+    pickDocumentAsDataUrl,
+} from "@/src/shared/utils/documentPicker";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 import {
     buildPersonItems,
@@ -81,6 +85,7 @@ const AddPage: React.FC<AddPageProps> = ({
     const [isNewModel, setIsNewModel] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [documentError, setDocumentError] = useState<string | null>(null);
     const [pendingNewBrand, setPendingNewBrand] = useState<string | null>(null);
     const [pendingNewObjekttyp, setPendingNewObjekttyp] = useState<string | null>(null);
     const [pendingModel, setPendingModel] = useState<PendingModel | null>(null);
@@ -149,6 +154,7 @@ const AddPage: React.FC<AddPageProps> = ({
             setSelectedPhotoDataUrl(editingItem.geraeteFoto ?? null);
             setUploadedPhotoPath(toStoredAssetPath(editingItem.geraeteFoto));
             setPendingPhotoUpload(null);
+            setDocumentError(null);
             setAttachments(editingItem.attachments.map((attachment) => ({ ...attachment })));
             return;
         }
@@ -182,6 +188,7 @@ const AddPage: React.FC<AddPageProps> = ({
         setSelectedPhotoDataUrl(null);
         setUploadedPhotoPath(null);
         setPendingPhotoUpload(null);
+        setDocumentError(null);
         setAttachments([]);
     };
 
@@ -400,10 +407,11 @@ const AddPage: React.FC<AddPageProps> = ({
                 },
                 ...current,
             ]);
+            setDocumentError(null);
             setError(null);
         } catch (documentError) {
             console.error("Fehler beim Auswählen des Dokuments:", documentError);
-            setError(getErrorMessage(documentError));
+            setDocumentError(getErrorMessage(documentError));
         }
     };
 
@@ -618,6 +626,10 @@ const AddPage: React.FC<AddPageProps> = ({
                                 </Text>
                             </View>
                             <View style={styles.documentSection}>
+                                <Text variant="bodySmall" style={[styles.documentInfoText, isDarkMode && styles.documentInfoTextDark]}>
+                                    Erlaubt: {DOCUMENT_UPLOAD_ALLOWED_TYPE_LABEL} | max. {DOCUMENT_UPLOAD_MAX_SIZE_LABEL}
+                                </Text>
+                                {documentError && <HelperText type="error">{documentError}</HelperText>}
                                 {visibleAttachments.length === 0 ? (
                                     <View style={[styles.documentPlaceholder, isDarkMode && styles.photoPlaceholderDark]}>
                                         <Text style={styles.photoPlaceholderText}>Noch keine Dokumente ausgewählt</Text>
@@ -899,6 +911,13 @@ const styles = StyleSheet.create({
     },
     documentSection: {
         gap: 10,
+    },
+    documentInfoText: {
+        color: "#6b7280",
+        lineHeight: 18,
+    },
+    documentInfoTextDark: {
+        color: "#9aa4b2",
     },
     documentPlaceholder: {
         minHeight: 90,
