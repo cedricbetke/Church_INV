@@ -20,6 +20,21 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.11",
+            date: "2026-04-08",
+            title: "Modellgruppierung und Stammdaten bereinigt",
+            summary: "Die Modellansicht in den Buchungen fasst Geraete jetzt robuster nach Hersteller und Modell zusammen. Zusaetzlich wurden mehrere Modell- und Standort-Schreibvarianten in den Stammdaten bereinigt, und die Hauptseite zeigt keinen wirkungslosen Zurueck-Pfeil mehr.",
+            issueUrl: undefined,
+            issueLabel: undefined,
+            items: [
+                "Die Auswahl Nach Modell in den Buchungen gruppiert jetzt nach Hersteller plus Modell statt zusaetzlich nach Standort oder Bereich",
+                "Standort- und Bereichsinformationen bleiben in der Modellansicht sichtbar, erzeugen aber keine getrennten Gruppen mehr",
+                "Mehrere doppelte Modell-Schreibweisen in den Stammdaten wurden auf gemeinsame Zielmodelle zusammengefuehrt",
+                "Mehrere offensichtliche Standort-Tippfehler wurden in den Stammdaten auf die jeweils korrekte Variante vereinheitlicht",
+                "Die Hauptseite zeigt in der Topbar keinen leeren Zurueck-Pfeil mehr",
+            ],
+        },
+        {
             version: "0.7.10",
             date: "2026-03-29",
             title: "Mobile Kartenansicht der Inventarliste verfeinert",

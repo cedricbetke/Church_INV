@@ -97,7 +97,6 @@ const TopBar = () => {
     return (
         <View>
             <Appbar.Header style={[styles.header, isDarkMode && styles.headerDark, isCompactViewport && styles.headerCompact]}>
-                <Appbar.BackAction iconColor={isDarkMode ? "#dbe6f5" : "#445160"} onPress={() => {}} />
                 <View style={styles.leftCluster}>
                     <View style={styles.titleStack}>
                         <View style={styles.brandRow}>

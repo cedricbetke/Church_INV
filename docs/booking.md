@@ -50,10 +50,18 @@ CREATE TABLE geraet_buchung_geraet (
 - vorhandene Buchungen starten in der Listenansicht eingeklappt
 - auf mobilen Breiten bleibt der rechte Buchungsbereich vorerst bei der Listenansicht, damit die Darstellung stabil bleibt
 - Geraete koennen einzeln oder nach Modellmenge ausgewaehlt werden
+- die Modellansicht gruppiert Geraete nach Hersteller plus Modell, nicht mehr nach Standort oder Bereich
+- unterschiedliche Standorte oder Bereiche bleiben in der Modellansicht nur noch Zusatzinfo und trennen keine Gruppen mehr
 - die Geraeteauswahl kann gezielt geleert werden, ohne das restliche Buchungsformular zurueckzusetzen
 - beim Setzen des Startdatums wird das Enddatum in typischen Faellen sinnvoll mitgezogen
 - leere Datumsfelder starten beim Oeffnen des nativen Pickers mit 00:00 fuer `Von` und 23:59 fuer `Bis`
 - QR-Scan kann einzelne Geraete direkt in die Auswahl uebernehmen
+
+## Stammdatenhinweis
+
+- die Gruppierung nach Modell ist nur dann wirklich sauber, wenn Hersteller und Modell in den Stammdaten konsistent gepflegt sind
+- offensichtliche Schreibvarianten bei Modellen und Standorten wurden im Datenbestand bereits bereinigt
+- falls gleiche Geraete trotzdem noch getrennt erscheinen, sollte zuerst auf abweichende Hersteller- oder Modellnamen geprueft werden
 
 ## Kalenderansicht
 

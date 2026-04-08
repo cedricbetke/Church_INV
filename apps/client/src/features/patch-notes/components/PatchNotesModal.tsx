@@ -109,7 +109,7 @@ const PatchNotesModal: React.FC<PatchNotesModalProps> = ({ visible, onDismiss })
 
                 <View style={styles.footer}>
                     <Button mode="outlined" onPress={onDismiss}>
-                        Schlie\u00dfen
+                        Schließen
                     </Button>
                 </View>
             </ScrollView>

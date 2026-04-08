@@ -3,6 +3,19 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.11
+
+**08.04.2026**  
+**Modellgruppierung und Stammdaten bereinigt**
+
+Die Modellansicht in den Buchungen fasst Geraete jetzt robuster nach Hersteller und Modell zusammen. Zusaetzlich wurden mehrere Modell- und Standort-Schreibvarianten in den Stammdaten bereinigt, und die Hauptseite zeigt keinen wirkungslosen Zurueck-Pfeil mehr.
+
+- Die Auswahl Nach Modell in den Buchungen gruppiert jetzt nach Hersteller plus Modell statt zusaetzlich nach Standort oder Bereich
+- Standort- und Bereichsinformationen bleiben in der Modellansicht sichtbar, erzeugen aber keine getrennten Gruppen mehr
+- Mehrere doppelte Modell-Schreibweisen in den Stammdaten wurden auf gemeinsame Zielmodelle zusammengefuehrt
+- Mehrere offensichtliche Standort-Tippfehler wurden in den Stammdaten auf die jeweils korrekte Variante vereinheitlicht
+- Die Hauptseite zeigt in der Topbar keinen leeren Zurueck-Pfeil mehr
+
 ## 0.7.10
 
 **29.03.2026**  
