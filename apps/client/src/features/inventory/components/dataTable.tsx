@@ -2,6 +2,7 @@ import React from "react";
 import { Image, Platform, ScrollView, StyleSheet, View, useWindowDimensions } from "react-native";
 import {
     Button,
+    Chip,
     DataTable,
     IconButton,
     Menu,
