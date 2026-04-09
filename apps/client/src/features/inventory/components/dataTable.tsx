@@ -129,6 +129,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         states,
         brands,
         models,
+        objekttypen,
         bereiche,
         standorte,
         filters,
@@ -165,6 +166,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
             (filters.status === "" || item.status === filters.status) &&
             (filters.hersteller === "" || item.hersteller === filters.hersteller) &&
             (filters.modell === "" || item.modell === filters.modell) &&
+            (filters.objekttyp === "" || item.objekttyp === filters.objekttyp) &&
             (filters.bereich === "" || item.bereich === filters.bereich) &&
             (filters.standort === "" || item.standort === filters.standort)
         );
@@ -174,7 +176,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage));
     const paginationLabel = filteredItems.length === 0 ? "0-0 von 0" : `${from + 1}-${Math.min(to, filteredItems.length)} von ${filteredItems.length}`;
     const hasActiveFilters = Boolean(
-        filters.status || filters.hersteller || filters.modell || filters.bereich || filters.standort,
+        filters.status || filters.hersteller || filters.modell || filters.objekttyp || filters.bereich || filters.standort,
     );
 
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
@@ -190,6 +192,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
             status: "",
             hersteller: "",
             modell: "",
+            objekttyp: "",
             bereich: "",
             standort: "",
         });
@@ -445,6 +448,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             {renderFilterSection("status", "Status", states)}
                             {renderFilterSection("hersteller", "Hersteller", brands)}
                             {renderFilterSection("modell", "Modell", models)}
+                            {renderFilterSection("objekttyp", "Objekttyp", objekttypen)}
                             {renderFilterSection("bereich", "Bereich", bereiche)}
                             {renderFilterSection("standort", "Standort", standorte)}
                         </ScrollView>

@@ -2,7 +2,7 @@ const db = require('../config/db'); // Import der DB-Verbindung
 
 const Objekttyp = {
     getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM objekttyp');
+        const [rows] = await db.query('SELECT * FROM objekttyp ORDER BY name ASC');
         return rows;
     },
 

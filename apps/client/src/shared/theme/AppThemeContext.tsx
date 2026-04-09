@@ -1,5 +1,19 @@
-import React, { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { Platform } from "react-native";
 import { MD3DarkTheme, MD3LightTheme } from "react-native-paper";
+
+const THEME_STORAGE_KEY = "churchinv.themeMode";
+
+const canUseLocalStorage = () =>
+    Platform.OS === "web" && typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+
+const readStoredThemeMode = () => {
+    if (!canUseLocalStorage()) {
+        return false;
+    }
+
+    return window.localStorage.getItem(THEME_STORAGE_KEY) === "dark";
+};
 
 const lightTheme = {
     ...MD3LightTheme,
@@ -42,11 +56,19 @@ interface AppThemeContextValue {
 const AppThemeContext = createContext<AppThemeContextValue | undefined>(undefined);
 
 export const AppThemeProvider = ({ children }: { children: ReactNode }) => {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(readStoredThemeMode);
 
     const toggleTheme = () => {
         setIsDarkMode((current) => !current);
     };
+
+    useEffect(() => {
+        if (!canUseLocalStorage()) {
+            return;
+        }
+
+        window.localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? "dark" : "light");
+    }, [isDarkMode]);
 
     const theme = useMemo(
         () => (isDarkMode ? darkTheme : lightTheme),

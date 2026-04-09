@@ -5,6 +5,7 @@ export interface InventoryFilters {
     status: string;
     hersteller: string;
     modell: string;
+    objekttyp: string;
     bereich: string;
     standort: string;
 }
@@ -32,6 +33,7 @@ export const useInventoryUiState = (): InventoryUiState => {
         status: "",
         hersteller: "",
         modell: "",
+        objekttyp: "",
         bereich: "",
         standort: "",
     });
