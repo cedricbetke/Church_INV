@@ -3,6 +3,20 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.13
+
+**10.04.2026**  
+**Inventarsuche und Filterbedienung nachgeschaerft**
+
+Die Inventarliste ist bei groesseren Datenmengen jetzt deutlich besser bedienbar. Filter liegen nicht mehr inline ueber der Tabelle, sondern als eigenes Overlay vor, die Filterwerte kommen alphabetisch sortiert aus der API, und die Freitextsuche versteht mehr alltagstaugliche Schreibweisen.
+
+- Die Filter der Inventarliste oeffnen sich jetzt als eigenes Overlay statt die Tabellenansicht inline nach unten zu druecken
+- Auf breiten Webansichten wird der Filter als rechte Seitenleiste gezeigt, auf kleineren Breiten als Bottom Sheet
+- Status, Hersteller, Modell, Bereich und Standort werden aus der API jetzt alphabetisch nach Name geliefert
+- Die Freitextsuche durchsucht zusaetzlich Objekttyp, Kaufdatum und Anhang-Namen
+- Die Freitextsuche ist robuster gegen Schreibvarianten und unterstuetzt Kombinationen mehrerer Suchwoerter besser
+- Inventarnummern lassen sich in der Suche toleranter finden, auch in Schreibweisen wie `INV-123`
+
 ## 0.7.12
 
 **09.04.2026**  

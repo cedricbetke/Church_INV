@@ -59,8 +59,10 @@ Beim Anlegen eines Geraets gilt aktuell:
 
 ## Suche und Tabellenansicht
 
-- Textsuche
-- Filter
+- Textsuche ueber Inventarnummer, Hersteller, Modell, Objekttyp, Standort, Bereich, Kategorie, verantwortliche Person, Seriennummer, Kaufdatum und Dokumentnamen
+- Freitextsuche ist toleranter bei Schreibweisen und kombiniert mehrere Suchwoerter robuster
+- Filter als separates Overlay statt inline ueber der Tabelle
+- Filterwerte fuer Status, Hersteller, Modell, Bereich und Standort kommen alphabetisch sortiert aus der API
 - Sortierung
 - sichtbare Spalten waehlbar
 

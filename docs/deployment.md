@@ -127,6 +127,7 @@ Im aktuellen Testserver-Setup ist der Web-Client extern auf `http://SERVER:51821
 
 Standardmaessig laeuft der Deploy:
 
+- bei Push auf `master`
 - bei Push auf `main`
 - manuell ueber `workflow_dispatch`
 
