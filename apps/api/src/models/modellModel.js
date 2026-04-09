@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 const Modell = {
     getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM modell');
+        const [rows] = await db.query('SELECT * FROM modell ORDER BY name ASC');
         return rows;
     },
 

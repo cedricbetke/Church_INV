@@ -2,7 +2,7 @@ const db = require('../config/db'); // Import der DB-Verbindung
 
 const Bereich = {
     getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM bereich');
+        const [rows] = await db.query('SELECT * FROM bereich ORDER BY name ASC');
         return rows;
     },
 

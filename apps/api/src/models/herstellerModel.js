@@ -2,7 +2,7 @@ const db = require('../config/db'); // Import der DB-Verbindung
 
 const Hersteller = {
     getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM hersteller');
+        const [rows] = await db.query('SELECT * FROM hersteller ORDER BY name ASC');
         return rows;
     },
 

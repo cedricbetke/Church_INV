@@ -2,7 +2,7 @@ const db = require('../config/db'); // Import der DB-Verbindung
 
 const Standort = {
     getAll: async () => {
-        const [rows] = await db.query('SELECT * FROM standort');
+        const [rows] = await db.query('SELECT * FROM standort ORDER BY name ASC');
         return rows;
     },
 

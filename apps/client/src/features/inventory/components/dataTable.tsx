@@ -5,6 +5,7 @@ import {
     Chip,
     DataTable,
     IconButton,
+    List,
     Menu,
     Modal,
     Portal,
@@ -42,7 +43,7 @@ interface DataTableProps {
     numberOfItemsPerPageList: number[];
 }
 
-const getCompactChipLabel = (value?: string | null) => {
+const getCompactChipLabel = (value?: string | null, maxLength = 24) => {
     const trimmed = value?.trim();
 
     if (!trimmed) {
@@ -50,6 +51,20 @@ const getCompactChipLabel = (value?: string | null) => {
     }
 
     return trimmed.length > 11 ? `${trimmed.slice(0, 10)}…` : trimmed;
+};
+
+const getResponsiveChipLabel = (value?: string | null, maxLength = 24) => {
+    if (maxLength <= 11) {
+        return getCompactChipLabel(value);
+    }
+
+    const trimmed = value?.trim();
+
+    if (!trimmed) {
+        return "";
+    }
+
+    return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength - 3)}...` : trimmed;
 };
 
 const DataTableComponent: React.FC<DataTableProps> = ({
@@ -83,14 +98,17 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         canManageInventory,
     } = useInventory();
     const { isDarkMode } = useAppThemeMode();
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     const [isColumnMenuVisible, setIsColumnMenuVisible] = React.useState(false);
     const [isScannerVisible, setIsScannerVisible] = React.useState(false);
     const [isItemsPerPageMenuVisible, setIsItemsPerPageMenuVisible] = React.useState(false);
+    const [expandedFilterKey, setExpandedFilterKey] = React.useState<keyof typeof filters | null>(null);
     const isCompactMobile = width < 640;
     const showScannerAction = Platform.OS !== "web" || isCompactMobile;
     const webSearchbarShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.028)" } : null;
     const webTableShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 10px 24px rgba(0, 0, 0, 0.028)" } : null;
+    const shouldWrapFilterChips = Platform.OS === "web";
+    const filterOptionsMaxHeight = Math.max(180, Math.min(360, Math.floor(height * 0.38)));
 
     const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -141,7 +159,96 @@ const DataTableComponent: React.FC<DataTableProps> = ({
             bereich: "",
             standort: "",
         });
+        setExpandedFilterKey(null);
         setPage(0);
+    };
+
+    const toggleExpandedFilter = (filterKey: keyof typeof filters) => {
+        setExpandedFilterKey((current) => current === filterKey ? null : filterKey);
+    };
+
+    const renderFilterOptions = (
+        filterKey: keyof typeof filters,
+        options: { id: string | number; name: string }[],
+    ) => {
+        const chipElements = options.map((option) => (
+            <Chip
+                key={`${filterKey}-${option.id}`}
+                selected={filters[filterKey] === option.name}
+                onPress={() => handleFilterChange(filterKey, option.name)}
+                compact={isCompactMobile}
+                style={[
+                    styles.filterChip,
+                    shouldWrapFilterChips && styles.filterChipWrapped,
+                ]}
+                textStyle={styles.filterChipText}
+            >
+                {getResponsiveChipLabel(option.name, shouldWrapFilterChips ? 32 : 18)}
+            </Chip>
+        ));
+
+        if (shouldWrapFilterChips) {
+            return <View style={styles.chipWrapRow}>{chipElements}</View>;
+        }
+
+        return (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                {chipElements}
+            </ScrollView>
+        );
+    };
+
+    const renderFilterSection = (
+        filterKey: keyof typeof filters,
+        label: string,
+        options: { id: string | number; name: string }[],
+    ) => {
+        const selectedValue = filters[filterKey];
+        const description = selectedValue
+            ? `Aktiv: ${getResponsiveChipLabel(selectedValue, 36)}`
+            : `${options.length} Optionen`;
+
+        return (
+            <View style={[styles.filterAccordion, isDarkMode && styles.filterAccordionDark]}>
+                <List.Accordion
+                    title={label}
+                    description={description}
+                    expanded={expandedFilterKey === filterKey}
+                    onPress={() => toggleExpandedFilter(filterKey)}
+                    style={styles.filterAccordionHeader}
+                    titleStyle={[styles.filterAccordionTitle, isDarkMode && styles.filterAccordionTitleDark]}
+                    descriptionStyle={[styles.filterAccordionDescription, isDarkMode && styles.filterAccordionDescriptionDark]}
+                    left={(props) => (
+                        <List.Icon
+                            {...props}
+                            icon={selectedValue ? "filter-check-outline" : "filter-outline"}
+                            color={selectedValue ? (isDarkMode ? "#8cc8ff" : "#0f5ea8") : props.color}
+                        />
+                    )}
+                >
+                    <View style={styles.filterAccordionContent}>
+                        {selectedValue ? (
+                            <Button
+                                compact
+                                mode="text"
+                                onPress={() => handleFilterChange(filterKey, selectedValue)}
+                                style={styles.filterClearButton}
+                            >
+                                Auswahl entfernen
+                            </Button>
+                        ) : null}
+                        <ScrollView
+                            style={[styles.filterOptionsScroll, { maxHeight: filterOptionsMaxHeight }]}
+                            contentContainerStyle={styles.filterOptionsScrollContent}
+                            nestedScrollEnabled
+                            showsVerticalScrollIndicator
+                        >
+                            {renderFilterOptions(filterKey, options)}
+                        </ScrollView>
+                    </View>
+                </List.Accordion>
+            </View>
+        );
     };
 
     return (
@@ -269,80 +376,11 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                         )}
                     </View>
 
-                    <View style={styles.filterGroup}>
-                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Status</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-                            {states.map((state) => (
-                                <Chip
-                                    key={`status-${state.id}`}
-                                    selected={filters.status === state.name}
-                                    onPress={() => handleFilterChange("status", state.name)}
-                                >
-                                    {state.name}
-                                </Chip>
-                            ))}
-                        </ScrollView>
-                    </View>
-
-                    <View style={styles.filterGroup}>
-                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Hersteller</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-                            {brands.map((brand) => (
-                                <Chip
-                                    key={`hersteller-${brand.id}`}
-                                    selected={filters.hersteller === brand.name}
-                                    onPress={() => handleFilterChange("hersteller", brand.name)}
-                                >
-                                    {brand.name}
-                                </Chip>
-                            ))}
-                        </ScrollView>
-                    </View>
-
-                    <View style={styles.filterGroup}>
-                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Modell</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-                            {models.map((model) => (
-                                <Chip
-                                    key={`modell-${model.id}`}
-                                    selected={filters.modell === model.name}
-                                    onPress={() => handleFilterChange("modell", model.name)}
-                                >
-                                    {model.name}
-                                </Chip>
-                            ))}
-                        </ScrollView>
-                    </View>
-
-                    <View style={styles.filterGroup}>
-                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Bereich</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-                            {bereiche.map((bereich) => (
-                                <Chip
-                                    key={`bereich-${bereich.id}`}
-                                    selected={filters.bereich === bereich.name}
-                                    onPress={() => handleFilterChange("bereich", bereich.name)}
-                                >
-                                    {bereich.name}
-                                </Chip>
-                            ))}
-                        </ScrollView>
-                    </View>
-
-                    <View style={styles.filterGroup}>
-                        <Text variant="labelMedium" style={isDarkMode ? styles.filterLabelDark : undefined}>Standort</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
-                            {standorte.map((standort) => (
-                                <Chip
-                                    key={`standort-${standort.id}`}
-                                    selected={filters.standort === standort.name}
-                                    onPress={() => handleFilterChange("standort", standort.name)}
-                                >
-                                    {standort.name}
-                                </Chip>
-                            ))}
-                        </ScrollView>
-                    </View>
+                    {renderFilterSection("status", "Status", states)}
+                    {renderFilterSection("hersteller", "Hersteller", brands)}
+                    {renderFilterSection("modell", "Modell", models)}
+                    {renderFilterSection("bereich", "Bereich", bereiche)}
+                    {renderFilterSection("standort", "Standort", standorte)}
                 </View>
             )}
 
@@ -848,15 +886,69 @@ const styles = StyleSheet.create({
     filterTitleDark: {
         color: "#eef4fb",
     },
-    filterGroup: {
-        gap: 6,
+    filterAccordion: {
+        borderWidth: 1,
+        borderColor: "#e8eaee",
+        borderRadius: 16,
+        overflow: "hidden",
+        backgroundColor: "#fbfcfe",
     },
-    filterLabelDark: {
-        color: "#c8d1dd",
+    filterAccordionDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#2a3340",
+    },
+    filterAccordionHeader: {
+        backgroundColor: "transparent",
+    },
+    filterAccordionTitle: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#1f2937",
+    },
+    filterAccordionTitleDark: {
+        color: "#eef4fb",
+    },
+    filterAccordionDescription: {
+        color: "#6b7280",
+        fontSize: 12,
+    },
+    filterAccordionDescriptionDark: {
+        color: "#9aa7b8",
+    },
+    filterAccordionContent: {
+        paddingHorizontal: 14,
+        paddingBottom: 14,
+        gap: 10,
+    },
+    filterOptionsScroll: {
+        width: "100%",
+    },
+    filterOptionsScrollContent: {
+        paddingRight: 4,
+    },
+    filterClearButton: {
+        alignSelf: "flex-start",
+        marginLeft: -8,
+    },
+    chipWrapRow: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "flex-start",
+        gap: 8,
+        width: "100%",
     },
     chipRow: {
         gap: 8,
         paddingRight: 8,
+    },
+    filterChip: {
+        maxWidth: "100%",
+    },
+    filterChipWrapped: {
+        maxWidth: 260,
+    },
+    filterChipText: {
+        fontSize: 13,
     },
     tableHeader: {
         backgroundColor: "#f7f7f9",
