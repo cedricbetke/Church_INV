@@ -136,7 +136,7 @@ Diese Repository-Secrets werden fuer den Workflow erwartet:
 
 - `DEPLOY_HOST`
 - `DEPLOY_USER`
-- `DEPLOY_SSH_KEY`
+- `DEPLOY_SSH_KEY_B64`
 - `DEPLOY_PATH`
 - optional `DEPLOY_PORT`
 - optional `DEPLOY_HEALTHCHECK_URL`
@@ -151,7 +151,7 @@ Beispielwerte:
 
 Hinweise:
 
-- `DEPLOY_SSH_KEY` ist der private SSH-Key, den GitHub Actions fuer den Serverzugriff nutzt
+- `DEPLOY_SSH_KEY_B64` ist der private SSH-Key Base64-kodiert, damit mehrzeilige OpenSSH-Keys in GitHub Secrets stabil uebertragen werden
 - der passende Public Key muss in `~/.ssh/authorized_keys` des Zielusers auf dem Server liegen
 - `apps/api/.env` bleibt bewusst nur auf dem Server und wird vom Workflow nicht ueberschrieben
 - `apps/client/.env` wird ebenfalls nicht auf den Server kopiert
