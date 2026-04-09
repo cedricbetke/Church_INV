@@ -47,28 +47,39 @@ jobs:
       - name: Prepare SSH
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s' "$DEPLOY_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -p "${DEPLOY_PORT:-22}" "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+          cat <<EOF > ~/.ssh/config
+          Host deploy-target
+            HostName ${DEPLOY_HOST}
+            User ${DEPLOY_USER}
+            Port ${DEPLOY_PORT:-22}
+            IdentityFile ~/.ssh/id_ed25519
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          EOF
+          chmod 600 ~/.ssh/config
 
       - name: Ensure target path exists
         run: |
-          ssh -p "${DEPLOY_PORT:-22}" "${DEPLOY_USER}@${DEPLOY_HOST}" "mkdir -p '${DEPLOY_PATH}' /srv/churchinv/uploads"
+          ssh deploy-target "mkdir -p '${DEPLOY_PATH}' /srv/churchinv/uploads"
 
       - name: Sync repository to server
         run: |
           rsync -az --delete \
+            -e "ssh" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
             --exclude ".expo" \
             --exclude "apps/api/.env" \
             --exclude "apps/client/.env" \
-            ./ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
+            ./ "deploy-target:${DEPLOY_PATH}/"
 
       - name: Deploy with Docker Compose
         run: |
-          ssh -p "${DEPLOY_PORT:-22}" "${DEPLOY_USER}@${DEPLOY_HOST}" "
+          ssh deploy-target "
             set -e
             cd '${DEPLOY_PATH}'
             docker compose build --pull
