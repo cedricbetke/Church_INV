@@ -67,6 +67,48 @@ const getResponsiveChipLabel = (value?: string | null, maxLength = 24) => {
     return trimmed.length > maxLength ? `${trimmed.slice(0, maxLength - 3)}...` : trimmed;
 };
 
+const normalizeSearchValue = (value: string | number) => String(value)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+
+const getInventorySearchTerms = (item: InventoryItem) => {
+    const isoDate = item.kaufdatum ? new Date(item.kaufdatum).toISOString().slice(0, 10) : null;
+    const localizedDate = item.kaufdatum
+        ? new Intl.DateTimeFormat("de-DE").format(new Date(item.kaufdatum))
+        : null;
+    const invNrValue = String(item.invNr).trim();
+
+    const rawTerms = [
+        invNrValue,
+        `INV-${invNrValue}`,
+        item.hersteller,
+        item.modell,
+        item.objekttyp,
+        item.standort,
+        item.status,
+        item.bereich,
+        item.kategorie,
+        item.verantwortlicher,
+        item.seriennummer,
+        isoDate,
+        localizedDate,
+        ...item.attachments.map((attachment) => attachment.name),
+    ].filter(Boolean) as Array<string | number>;
+
+    const normalizedTerms = rawTerms
+        .map((term) => normalizeSearchValue(term))
+        .filter(Boolean);
+
+    return Array.from(new Set(normalizedTerms));
+};
+
 const DataTableComponent: React.FC<DataTableProps> = ({
     columns,
     from,
@@ -112,33 +154,21 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const isDesktopFilterSheet = Platform.OS === "web" && width >= 960;
 
     const visibleColumns = columns.filter((column) => column.visible);
-    const normalizedQuery = searchQuery.trim().toLowerCase();
+    const normalizedQuery = normalizeSearchValue(searchQuery);
+    const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
 
-    const searchableValues = (item: InventoryItem) => [
-        item.invNr,
-        item.hersteller,
-        item.modell,
-        item.objekttyp,
-        item.standort,
-        item.status,
-        item.bereich,
-        item.kategorie,
-        item.verantwortlicher,
-        item.seriennummer,
-        item.kaufdatum ? new Date(item.kaufdatum).toISOString().slice(0, 10) : null,
-        ...item.attachments.map((attachment) => attachment.name),
-    ]
-        .filter(Boolean)
-        .map((value) => String(value).toLowerCase());
+    const filteredItems = items.filter((item) => {
+        const searchTerms = queryTokens.length > 0 ? getInventorySearchTerms(item) : [];
 
-    const filteredItems = items.filter((item) => (
-        (normalizedQuery === "" || searchableValues(item).some((value) => value.includes(normalizedQuery))) &&
-        (filters.status === "" || item.status === filters.status) &&
-        (filters.hersteller === "" || item.hersteller === filters.hersteller) &&
-        (filters.modell === "" || item.modell === filters.modell) &&
-        (filters.bereich === "" || item.bereich === filters.bereich) &&
-        (filters.standort === "" || item.standort === filters.standort)
-    ));
+        return (
+            (queryTokens.length === 0 || queryTokens.every((token) => searchTerms.some((value) => value.includes(token)))) &&
+            (filters.status === "" || item.status === filters.status) &&
+            (filters.hersteller === "" || item.hersteller === filters.hersteller) &&
+            (filters.modell === "" || item.modell === filters.modell) &&
+            (filters.bereich === "" || item.bereich === filters.bereich) &&
+            (filters.standort === "" || item.standort === filters.standort)
+        );
+    });
 
     const pagedItems = filteredItems.slice(from, to);
     const totalPages = Math.max(1, Math.ceil(filteredItems.length / itemsPerPage));
