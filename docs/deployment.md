@@ -123,6 +123,8 @@ Der Workflow macht:
 3. `docker compose build --pull`
 4. `docker compose up -d --remove-orphans`
 
+Im aktuellen Testserver-Setup ist der Web-Client extern auf `http://SERVER:51821` ausgelegt. Ein passender Healthcheck sollte deshalb ebenfalls auf Port `51821` zeigen.
+
 Standardmaessig laeuft der Deploy:
 
 - bei Push auf `main`

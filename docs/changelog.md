@@ -3,6 +3,20 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.12
+
+**09.04.2026**  
+**Testserver-Deploy per GitHub Actions eingerichtet**
+
+ChurchINV kann jetzt automatisiert auf einen externen Testserver deployed werden. Der Workflow prueft den Docker-Build vorab, synchronisiert das Repo per SSH auf den Server und startet die Container dort neu. Der Web-Client ist dabei fuer den externen Zugriff auf Port 51821 ausgelegt.
+
+- Ein GitHub-Actions-Workflow deployt den aktuellen Stand automatisiert auf den externen Testserver
+- Der Deploy prueft zuerst den Docker-Build und synchronisiert das Repo anschliessend per SSH und rsync auf den Zielserver
+- Der Server startet API und Client danach per docker compose neu und raeumt alte Container mit remove-orphans mit auf
+- Der Deploy-Workflow nutzt einen Base64-kodierten SSH-Key in den Repository-Secrets fuer stabilere Uebertragung in GitHub Actions
+- Die Deployment-Doku beschreibt jetzt die noetigen Secrets, den Server-Setup und den manuellen wie automatischen Ablauf
+- Der Web-Client ist fuer den externen Testbetrieb auf Host-Port 51821 dokumentiert und erreichbar
+
 ## 0.7.11
 
 **08.04.2026**  
