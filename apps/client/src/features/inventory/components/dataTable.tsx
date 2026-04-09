@@ -109,6 +109,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const webTableShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 10px 24px rgba(0, 0, 0, 0.028)" } : null;
     const shouldWrapFilterChips = Platform.OS === "web";
     const filterOptionsMaxHeight = Math.max(180, Math.min(360, Math.floor(height * 0.38)));
+    const isDesktopFilterSheet = Platform.OS === "web" && width >= 960;
 
     const visibleColumns = columns.filter((column) => column.visible);
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -363,26 +364,60 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                 </Modal>
             </Portal>
 
-            {isFilterVisible && (
-                <View style={[styles.filterPanel, isDarkMode && styles.filterPanelDark]}>
+            <Portal>
+                <Modal
+                    visible={isFilterVisible}
+                    onDismiss={() => setIsFilterVisible(false)}
+                    contentContainerStyle={[
+                        styles.filterModalContainer,
+                        isDesktopFilterSheet ? styles.filterModalContainerDesktop : styles.filterModalContainerMobile,
+                    ]}
+                >
+                    <View
+                        style={[
+                            styles.filterSheet,
+                            isDesktopFilterSheet ? styles.filterSheetDesktop : styles.filterSheetMobile,
+                            isDarkMode && styles.filterSheetDark,
+                        ]}
+                    >
                     <View style={styles.filterHeader}>
-                        <Text variant="titleSmall" style={isDarkMode ? styles.filterTitleDark : undefined}>
-                            Filter
-                        </Text>
-                        {hasActiveFilters && (
-                            <Button compact mode="text" onPress={clearFilters}>
-                                Zurücksetzen
-                            </Button>
-                        )}
+                        <View style={styles.filterHeaderTextBlock}>
+                            <Text variant="titleMedium" style={isDarkMode ? styles.filterTitleDark : undefined}>
+                                Filter
+                            </Text>
+                            <Text style={[styles.filterSubtitle, isDarkMode && styles.filterSubtitleDark]}>
+                                {hasActiveFilters ? "Aktive Filter anpassen" : "Ergebnisse eingrenzen"}
+                            </Text>
+                        </View>
+                        <View style={styles.filterHeaderActions}>
+                            {hasActiveFilters ? (
+                                <Button compact mode="text" onPress={clearFilters}>
+                                    Zurücksetzen
+                                </Button>
+                            ) : null}
+                            <IconButton
+                                icon="close"
+                                size={18}
+                                onPress={() => setIsFilterVisible(false)}
+                                style={styles.filterCloseButton}
+                            />
+                        </View>
                     </View>
 
-                    {renderFilterSection("status", "Status", states)}
-                    {renderFilterSection("hersteller", "Hersteller", brands)}
-                    {renderFilterSection("modell", "Modell", models)}
-                    {renderFilterSection("bereich", "Bereich", bereiche)}
-                    {renderFilterSection("standort", "Standort", standorte)}
-                </View>
-            )}
+                        <ScrollView
+                            style={styles.filterPanelScroll}
+                            contentContainerStyle={styles.filterPanelScrollContent}
+                            showsVerticalScrollIndicator
+                        >
+                            {renderFilterSection("status", "Status", states)}
+                            {renderFilterSection("hersteller", "Hersteller", brands)}
+                            {renderFilterSection("modell", "Modell", models)}
+                            {renderFilterSection("bereich", "Bereich", bereiche)}
+                            {renderFilterSection("standort", "Standort", standorte)}
+                        </ScrollView>
+                    </View>
+                </Modal>
+            </Portal>
 
             {isCompactMobile ? (
                 <View style={[styles.mobileList, isDarkMode && styles.tableDark]}>
@@ -878,13 +913,85 @@ const styles = StyleSheet.create({
         backgroundColor: "#151922",
         borderColor: "#2a3340",
     },
+    filterModalContainer: {
+        flex: 1,
+        margin: 0,
+    },
+    filterModalContainerDesktop: {
+        justifyContent: "flex-start",
+        alignItems: "flex-end",
+    },
+    filterModalContainerMobile: {
+        justifyContent: "flex-end",
+    },
+    filterSheet: {
+        backgroundColor: "#ffffff",
+        borderColor: "#e5e5ea",
+        borderWidth: 1,
+        shadowColor: "#111827",
+        shadowOpacity: 0.14,
+        shadowRadius: 28,
+        shadowOffset: { width: 0, height: 8 },
+        elevation: 12,
+    },
+    filterSheetDesktop: {
+        width: 420,
+        maxWidth: "92%",
+        height: "100%",
+        borderTopLeftRadius: 28,
+        borderBottomLeftRadius: 28,
+        paddingTop: 18,
+        paddingHorizontal: 18,
+        paddingBottom: 24,
+    },
+    filterSheetMobile: {
+        width: "100%",
+        maxHeight: "82%",
+        borderTopLeftRadius: 28,
+        borderTopRightRadius: 28,
+        paddingTop: 18,
+        paddingHorizontal: 16,
+        paddingBottom: 24,
+    },
+    filterSheetDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
+    },
     filterHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: 12,
+        paddingBottom: 12,
+    },
+    filterHeaderTextBlock: {
+        flex: 1,
+        gap: 2,
+    },
+    filterHeaderActions: {
+        flexDirection: "row",
         alignItems: "center",
+        gap: 4,
     },
     filterTitleDark: {
         color: "#eef4fb",
+    },
+    filterSubtitle: {
+        color: "#6b7280",
+        fontSize: 13,
+    },
+    filterSubtitleDark: {
+        color: "#9aa7b8",
+    },
+    filterCloseButton: {
+        margin: 0,
+    },
+    filterPanelScroll: {
+        flex: 1,
+    },
+    filterPanelScrollContent: {
+        gap: 12,
+        paddingBottom: 16,
     },
     filterAccordion: {
         borderWidth: 1,
