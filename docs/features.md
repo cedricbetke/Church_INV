@@ -62,7 +62,8 @@ Beim Anlegen eines Geraets gilt aktuell:
 - Textsuche ueber Inventarnummer, Hersteller, Modell, Objekttyp, Standort, Bereich, Kategorie, verantwortliche Person, Seriennummer, Kaufdatum und Dokumentnamen
 - Freitextsuche ist toleranter bei Schreibweisen und kombiniert mehrere Suchwoerter robuster
 - Filter als separates Overlay statt inline ueber der Tabelle
-- Filterwerte fuer Status, Hersteller, Modell, Bereich und Standort kommen alphabetisch sortiert aus der API
+- Filterwerte fuer Status, Hersteller, Modell, Objekttyp, Bereich und Standort kommen alphabetisch sortiert aus der API
+- Objekttyp steht in der Inventarliste auch als eigener Filter zur Verfuegung
 - Sortierung
 - sichtbare Spalten waehlbar
 
@@ -114,6 +115,7 @@ Mehrere Aenderungen eines Speichervorgangs werden in der Oberflaeche als gemeins
 ## Dark Mode
 
 - optional ueber die Topbar umschaltbar
+- der gewaehlte Modus bleibt im Web-Client im Browser gespeichert
 - Hauptansicht, Detailseite, Add/Edit und grosse Teile des Admin-Bereichs sind bereits angepasst
 - sollte im Alltag weiter auf kleineren Screens mitgeprueft werden
 
@@ -128,6 +130,7 @@ Mehrere Aenderungen eines Speichervorgangs werden in der Oberflaeche als gemeins
 - strukturierte Datenbasis in `docs/patch-notes/patch-notes.json`
 - Markdown-Uebersicht in [changelog.md](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/docs/changelog.md)
 - read-only Anzeige direkt in der App ueber die Topbar
+- neue Versionen koennen beim Oeffnen der Web-App einmalig als Hinweis angezeigt werden
 - Patch-Notes-Eintraege koennen optional direkt auf zugehoerige GitHub-Issues verlinken
 
 ## Topbar
