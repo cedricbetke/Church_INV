@@ -30,3 +30,7 @@ apps/api/src/config/loadEnv.js
 
 expo-env.d.ts
 # @end expo-cli
+
+# local deploy keys
+github-actions-churchinv
+github-actions-churchinv.pub
