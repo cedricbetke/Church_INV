@@ -109,3 +109,70 @@ Wenn du bereits einen vorgeschalteten Nginx- oder Traefik-Proxy hast, ist der sa
 - der `client`-Container proxied `/api` und `/uploads` intern an `api:3000`
 
 Dann brauchst du nach aussen nur noch einen Einstiegspunkt.
+
+## GitHub Actions CI/CD
+
+Fuer einen einfachen Test-Deploy auf einen externen Server liegt ein GitHub-Workflow unter:
+
+- `.github/workflows/deploy-test-server.yml`
+
+Der Workflow macht:
+
+1. `docker compose build` auf GitHub Actions als Vorpruefung
+2. Sync des Repos per SSH und `rsync` auf den Zielserver
+3. `docker compose build --pull`
+4. `docker compose up -d --remove-orphans`
+
+Standardmaessig laeuft der Deploy:
+
+- bei Push auf `main`
+- manuell ueber `workflow_dispatch`
+
+Wenn du einen anderen Branch fuer den Testserver nutzen willst, passe die Branch-Liste im Workflow an.
+
+## GitHub Secrets
+
+Diese Repository-Secrets werden fuer den Workflow erwartet:
+
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_PATH`
+- optional `DEPLOY_PORT`
+- optional `DEPLOY_HEALTHCHECK_URL`
+
+Beispielwerte:
+
+- `DEPLOY_HOST=dein.server.tld`
+- `DEPLOY_USER=deploy`
+- `DEPLOY_PORT=22`
+- `DEPLOY_PATH=/srv/churchinv/app`
+- `DEPLOY_HEALTHCHECK_URL=https://deine-domain.tld/`
+
+Hinweise:
+
+- `DEPLOY_SSH_KEY` ist der private SSH-Key, den GitHub Actions fuer den Serverzugriff nutzt
+- der passende Public Key muss in `~/.ssh/authorized_keys` des Zielusers auf dem Server liegen
+- `apps/api/.env` bleibt bewusst nur auf dem Server und wird vom Workflow nicht ueberschrieben
+- `apps/client/.env` wird ebenfalls nicht auf den Server kopiert
+
+## Server-Vorbereitung fuer CI/CD
+
+Vor dem ersten Deploy sollten auf dem Server vorhanden sein:
+
+1. Docker und Docker Compose
+2. ein Deploy-User mit SSH-Zugriff
+3. der Zielordner aus `DEPLOY_PATH`
+4. `apps/api/.env` im Deploy-Ordner
+5. der Upload-Ordner `/srv/churchinv/uploads`
+
+Der Workflow erstellt bei Bedarf:
+
+- `DEPLOY_PATH`
+- `/srv/churchinv/uploads`
+
+Nicht automatisch erstellt wird:
+
+- `apps/api/.env`
+
+Diese Datei musst du einmalig direkt auf dem Server anlegen.
