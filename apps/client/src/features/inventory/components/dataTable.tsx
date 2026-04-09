@@ -118,12 +118,15 @@ const DataTableComponent: React.FC<DataTableProps> = ({
         item.invNr,
         item.hersteller,
         item.modell,
+        item.objekttyp,
         item.standort,
         item.status,
         item.bereich,
         item.kategorie,
         item.verantwortlicher,
         item.seriennummer,
+        item.kaufdatum ? new Date(item.kaufdatum).toISOString().slice(0, 10) : null,
+        ...item.attachments.map((attachment) => attachment.name),
     ]
         .filter(Boolean)
         .map((value) => String(value).toLowerCase());
