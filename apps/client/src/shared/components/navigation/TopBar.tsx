@@ -8,6 +8,7 @@ import MasterdataAdminModal from "@/src/features/masterdata/components/Masterdat
 import { patchNotesData } from "@/src/features/patch-notes/data/patchNotes";
 import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
+import { readSeenUpdateVersion, writeSeenUpdateVersion } from "@/src/shared/utils/updateNoticeStorage";
 
 const CHURCHINV_LOGO = require("../../../../assets/images/churchinv-header-icon.png");
 const BUG_ISSUE_URL =
@@ -22,9 +23,11 @@ const TopBar = () => {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [showMasterdataModal, setShowMasterdataModal] = useState(false);
     const [showPatchNotesModal, setShowPatchNotesModal] = useState(false);
+    const [showUpdateNotice, setShowUpdateNotice] = useState(false);
     const [adminPassword, setAdminPassword] = useState("");
     const [adminError, setAdminError] = useState<string | null>(null);
     const { isDarkMode, toggleTheme } = useAppThemeMode();
+    const latestPatchNote = patchNotesData.entries[0];
 
     const {
         setIsAddPageVisible,
@@ -66,6 +69,20 @@ const TopBar = () => {
     const handleOpenFeatureRequest = () => {
         void Linking.openURL(FEATURE_ISSUE_URL);
     };
+
+    React.useEffect(() => {
+        if (!latestPatchNote?.version) {
+            return;
+        }
+
+        const seenVersion = readSeenUpdateVersion();
+        if (seenVersion === latestPatchNote.version) {
+            return;
+        }
+
+        writeSeenUpdateVersion(latestPatchNote.version);
+        setShowUpdateNotice(true);
+    }, [latestPatchNote?.version]);
 
     const renderAction = (
         icon: string,
@@ -252,6 +269,48 @@ const TopBar = () => {
                         onDismiss={() => setShowPatchNotesModal(false)}
                     />
                 )}
+
+                <Modal
+                    visible={showUpdateNotice}
+                    onDismiss={() => setShowUpdateNotice(false)}
+                    contentContainerStyle={[styles.updateNoticeModal, isDarkMode && styles.updateNoticeModalDark]}
+                >
+                    <View style={styles.updateNoticeContent}>
+                        <View style={styles.updateNoticeBadge}>
+                            <Text style={styles.updateNoticeBadgeText}>{`Neu in ${latestPatchNote?.version ?? CURRENT_VERSION}`}</Text>
+                        </View>
+                        <Text variant="titleLarge" style={[styles.updateNoticeTitle, isDarkMode && styles.adminTitleDark]}>
+                            {latestPatchNote?.title ?? "Neues Update verfuegbar"}
+                        </Text>
+                        <Text variant="bodyMedium" style={[styles.adminText, isDarkMode && styles.adminTextDark]}>
+                            {latestPatchNote?.summary ?? "Es gibt neue Aenderungen in ChurchINV."}
+                        </Text>
+                        <View style={styles.updateNoticeList}>
+                            {(latestPatchNote?.items ?? []).map((item) => (
+                                <View key={item} style={styles.updateNoticeItem}>
+                                    <View style={[styles.updateNoticeDot, isDarkMode && styles.updateNoticeDotDark]} />
+                                    <Text style={[styles.updateNoticeItemText, isDarkMode && styles.updateNoticeItemTextDark]}>
+                                        {item}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                        <View style={styles.actionRow}>
+                            <Button mode="outlined" onPress={() => setShowUpdateNotice(false)}>
+                                Schließen
+                            </Button>
+                            <Button
+                                mode="contained"
+                                onPress={() => {
+                                    setShowUpdateNotice(false);
+                                    setShowPatchNotesModal(true);
+                                }}
+                            >
+                                Patch Notes
+                            </Button>
+                        </View>
+                    </View>
+                </Modal>
             </Portal>
         </View>
     );
@@ -436,6 +495,66 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: 8,
+    },
+    updateNoticeModal: {
+        backgroundColor: "#ffffff",
+        margin: 20,
+        padding: 22,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        maxWidth: 520,
+        alignSelf: "center",
+    },
+    updateNoticeModalDark: {
+        backgroundColor: "#151922",
+        borderColor: "#2a3340",
+    },
+    updateNoticeContent: {
+        gap: 12,
+    },
+    updateNoticeBadge: {
+        alignSelf: "flex-start",
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 999,
+        backgroundColor: "#e8f1ff",
+    },
+    updateNoticeBadgeText: {
+        color: "#0f5ea8",
+        fontSize: 12,
+        fontWeight: "700",
+    },
+    updateNoticeTitle: {
+        color: "#111827",
+        fontWeight: "700",
+    },
+    updateNoticeList: {
+        gap: 8,
+        marginTop: 2,
+    },
+    updateNoticeItem: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 10,
+    },
+    updateNoticeDot: {
+        width: 7,
+        height: 7,
+        borderRadius: 999,
+        backgroundColor: "#0f5ea8",
+        marginTop: 7,
+    },
+    updateNoticeDotDark: {
+        backgroundColor: "#8dc9ff",
+    },
+    updateNoticeItemText: {
+        flex: 1,
+        color: "#1f2937",
+        lineHeight: 20,
+    },
+    updateNoticeItemTextDark: {
+        color: "#e5edf7",
     },
 });
 
