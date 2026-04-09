@@ -84,7 +84,7 @@ docker compose up -d
 
 Danach:
 
-- Client: `http://SERVER:8080`
+- Client: `http://SERVER:51821`
 - API: `http://SERVER:3000`
 - Swagger: `http://SERVER:3000/api/docs`
 
