@@ -5,7 +5,7 @@
       "version": "0.7.13",
       "date": "2026-04-10",
       "title": "Inventarsuche und Filterbedienung nachgeschaerft",
-      "summary": "Die Inventarliste ist bei groesseren Datenmengen jetzt deutlich besser bedienbar. Filter liegen nicht mehr inline ueber der Tabelle, sondern als eigenes Overlay vor, die Filterwerte kommen alphabetisch sortiert aus der API, und die Freitextsuche versteht mehr alltagstaugliche Schreibweisen. Zusaetzlich merkt sich die Web-App Theme und gesehene Update-Hinweise im Browser.",
+      "summary": "Die Inventarliste ist bei groesseren Datenmengen jetzt deutlich besser bedienbar. Filter liegen nicht mehr inline ueber der Tabelle, sondern als eigenes Overlay vor, die Filterwerte kommen alphabetisch sortiert aus der API, und die Freitextsuche versteht mehr alltagstaugliche Schreibweisen. Zusaetzlich merkt sich die Web-App Theme und gesehene Update-Hinweise im Browser, und mehrere selten genutzte UI-Bausteine werden erst bei Bedarf nachgeladen.",
       "items": [
         "Die Filter der Inventarliste oeffnen sich jetzt als eigenes Overlay statt die Tabellenansicht inline nach unten zu druecken",
         "Auf breiten Webansichten wird der Filter als rechte Seitenleiste gezeigt, auf kleineren Breiten als Bottom Sheet",
@@ -15,7 +15,8 @@
         "Die Freitextsuche ist robuster gegen Schreibvarianten und unterstuetzt Kombinationen mehrerer Suchwoerter besser",
         "Inventarnummern lassen sich in der Suche toleranter finden, auch in Schreibweisen wie `INV-123`",
         "Die Web-App zeigt neue Patch-Notes-Versionen als einmaligen Hinweis beim Oeffnen an und merkt sich gesehene Versionen im Browser",
-        "Der gewaehltе Hell- oder Darkmode bleibt im Browser gespeichert und wird beim naechsten Oeffnen wiederhergestellt"
+        "Der gewaehlte Hell- oder Darkmode bleibt im Browser gespeichert und wird beim naechsten Oeffnen wiederhergestellt",
+        "Patch Notes, Stammdaten-Admin, Detailansicht und Add/Edit-Form werden im Client jetzt erst bei Bedarf lazy geladen"
       ]
     },
     {
@@ -148,17 +149,17 @@
       "version": "0.6.0",
       "date": "2026-03-26",
       "title": "Inventar-Workflow deutlich erweitert",
-      "summary": "Ger\u00e4teverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.",
+      "summary": "Geräteverwaltung, Dokumente, Verlauf, QR-Scan und Admin-Funktionen wurden wesentlich ausgebaut.",
       "items": [
-        "Ger\u00e4te k\u00f6nnen angelegt, bearbeitet und gel\u00f6scht werden",
-        "Dokumente pro Ger\u00e4t sind integriert",
-        "QR-Scan \u00f6ffnet direkt die Detailansicht",
-        "Ger\u00e4teverlauf ist sichtbar",
-        "Admin-Panel f\u00fcr erste Stammdatenpflege ist vorhanden",
-        "Zustandshinweis ist als eigenes Ger\u00e4tefeld verf\u00fcgbar",
+        "Geräte können angelegt, bearbeitet und gelöscht werden",
+        "Dokumente pro Gerät sind integriert",
+        "QR-Scan öffnet direkt die Detailansicht",
+        "Geräteverlauf ist sichtbar",
+        "Admin-Panel für erste Stammdatenpflege ist vorhanden",
+        "Zustandshinweis ist als eigenes Gerätefeld verfügbar",
         "Swagger-Dokumentation wurde verbessert",
-        "Optionaler Dark Mode wurde erg\u00e4nzt",
-        "Patch Notes sind als read-only Ansicht in der App verf\u00fcgbar"
+        "Optionaler Dark Mode wurde ergänzt",
+        "Patch Notes sind als read-only Ansicht in der App verfügbar"
       ]
     },
     {
@@ -168,18 +169,18 @@
       "summary": "Die Detailansicht wurde ausgebaut und der Edit-Flow auf eine gemeinsame Formularbasis gestellt.",
       "items": [
         "Detailansicht deutlich erweitert",
-        "Add- und Edit-Formular zusammengef\u00fchrt",
+        "Add- und Edit-Formular zusammengeführt",
         "Foto-Upload integriert",
-        "Erste Admin-Logik erg\u00e4nzt"
+        "Erste Admin-Logik ergänzt"
       ]
     },
     {
       "version": "0.4.0",
       "date": "2026-03-18",
       "title": "Inventarliste und Grundnavigation stehen",
-      "summary": "Die erste funktionsf\u00e4hige Inventaransicht und der Basis-Flow zum Anlegen von Ger\u00e4ten wurden aufgebaut.",
+      "summary": "Die erste funktionsfähige Inventaransicht und der Basis-Flow zum Anlegen von Geräten wurden aufgebaut.",
       "items": [
-        "Ger\u00e4te k\u00f6nnen angelegt werden",
+        "Geräte können angelegt werden",
         "Inventarliste und Grundnavigation stehen"
       ]
     }

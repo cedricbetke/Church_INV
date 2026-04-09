@@ -6,10 +6,11 @@ import { useInventory } from "@/src/features/inventory/context/InventoryContext"
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraetPayload";
 import { Column } from "./dataTable";
-import DetailModal from "./DetailPage";
 import DataTableComponent from "./dataTable";
-import AddPage from "./AddPage";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
+
+const DetailModal = React.lazy(() => import("./DetailPage"));
+const AddPage = React.lazy(() => import("./AddPage"));
 
 const DEFAULT_COLUMNS: Column[] = [
     { title: "InvNr", key: "invNr", numeric: false, sortDirection: "ascending", visible: true, locked: true },
@@ -312,27 +313,31 @@ const InvTable = () => {
                 onItemsPerPageChange={onItemsPerPageChange}
                 numberOfItemsPerPageList={numberOfItemsPerPageList}
             />
-            <DetailModal
-                visible={visibleModal}
-                onDismiss={() => setVisibleModal(false)}
-                selectedItem={selectedItem}
-                columns={columns}
-                canManageInventory={canManageInventory}
-                onEdit={(item) => {
-                    setVisibleModal(false);
-                    openEditModal(item);
-                }}
-                onDelete={handleDelete}
-            />
-            <AddPage
-                visible={isAddPageVisible}
-                onDismiss={closeAddPage}
-                existingBrands={brands}
-                existingModels={models}
-                onAddBrand={handleAddBrand}
-                onSubmit={handleSubmit}
-                editingItem={editingItem}
-            />
+            <React.Suspense fallback={null}>
+                <DetailModal
+                    visible={visibleModal}
+                    onDismiss={() => setVisibleModal(false)}
+                    selectedItem={selectedItem}
+                    columns={columns}
+                    canManageInventory={canManageInventory}
+                    onEdit={(item) => {
+                        setVisibleModal(false);
+                        openEditModal(item);
+                    }}
+                    onDelete={handleDelete}
+                />
+            </React.Suspense>
+            <React.Suspense fallback={null}>
+                <AddPage
+                    visible={isAddPageVisible}
+                    onDismiss={closeAddPage}
+                    existingBrands={brands}
+                    existingModels={models}
+                    onAddBrand={handleAddBrand}
+                    onSubmit={handleSubmit}
+                    editingItem={editingItem}
+                />
+            </React.Suspense>
             {isMounted ? (
                 <Snackbar
                     visible={Boolean(feedbackMessage)}

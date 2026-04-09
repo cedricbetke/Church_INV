@@ -30,6 +30,12 @@ Wichtige Bereiche:
 - Theme / Dark Mode
 - Patch-Notes-Modal
 
+Client-seitige Lastverteilung:
+
+- stark genutzte Hauptansichten bleiben direkt verfuegbar
+- selten genutzte Modals und Detailflows werden schrittweise lazy geladen
+- aktuell betrifft das unter anderem Patch Notes, Stammdaten-Admin sowie Detail- und Add/Edit-Flow der Inventarliste
+
 ## API
 
 Pfad:

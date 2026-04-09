@@ -125,6 +125,11 @@ Mehrere Aenderungen eines Speichervorgangs werden in der Oberflaeche als gemeins
 - Detailansicht und Buchungsseite sind fuer kleinere Browser- und App-Screens nachgeschaerft
 - einige Topbar-Aktionen sind auf mobilen Breiten bewusst kompakter angeordnet
 
+## Ladeverhalten
+
+- selten genutzte UI-Bausteine werden im Web-Client erst bei Bedarf geladen
+- dazu gehoeren aktuell Patch Notes, Stammdaten-Admin, Detailansicht sowie Add/Edit-Form der Inventarliste
+
 ## Patch Notes
 
 - strukturierte Datenbasis in `docs/patch-notes/patch-notes.json`

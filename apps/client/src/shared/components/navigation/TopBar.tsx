@@ -4,9 +4,7 @@ import { router } from "expo-router";
 import { Image, Linking, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Appbar, Button, HelperText, Modal, Portal, Text, TextInput, Tooltip } from "react-native-paper";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
-import MasterdataAdminModal from "@/src/features/masterdata/components/MasterdataAdminModal";
 import { patchNotesData } from "@/src/features/patch-notes/data/patchNotes";
-import PatchNotesModal from "@/src/features/patch-notes/components/PatchNotesModal";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 import { readSeenUpdateVersion, writeSeenUpdateVersion } from "@/src/shared/utils/updateNoticeStorage";
 
@@ -16,6 +14,8 @@ const BUG_ISSUE_URL =
 const FEATURE_ISSUE_URL =
     "https://github.com/cedricbetke/Church_INV/issues/new?labels=enhancement&title=Feature%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20wuenschst%20du%20dir%3F%0A-%20Welches%20Problem%20wuerde%20das%20loesen%3F%0A-%20Wie%20sollte%20es%20sich%20verhalten%3F%0A";
 const CURRENT_VERSION = patchNotesData.entries[0]?.version ?? "0.0.0";
+const MasterdataAdminModal = React.lazy(() => import("@/src/features/masterdata/components/MasterdataAdminModal"));
+const PatchNotesModal = React.lazy(() => import("@/src/features/patch-notes/components/PatchNotesModal"));
 
 const TopBar = () => {
     const { width } = useWindowDimensions();
@@ -251,23 +251,27 @@ const TopBar = () => {
                 </Modal>
 
                 {showMasterdataModal && (
-                    <MasterdataAdminModal
-                        visible={showMasterdataModal}
-                        onDismiss={() => setShowMasterdataModal(false)}
-                        brands={brands}
-                        objekttypen={objekttypen}
-                        models={models}
-                        addBrand={addBrand}
-                        addObjectType={addObjectType}
-                        addModel={addModel}
-                    />
+                    <React.Suspense fallback={null}>
+                        <MasterdataAdminModal
+                            visible={showMasterdataModal}
+                            onDismiss={() => setShowMasterdataModal(false)}
+                            brands={brands}
+                            objekttypen={objekttypen}
+                            models={models}
+                            addBrand={addBrand}
+                            addObjectType={addObjectType}
+                            addModel={addModel}
+                        />
+                    </React.Suspense>
                 )}
 
                 {showPatchNotesModal && (
-                    <PatchNotesModal
-                        visible={showPatchNotesModal}
-                        onDismiss={() => setShowPatchNotesModal(false)}
-                    />
+                    <React.Suspense fallback={null}>
+                        <PatchNotesModal
+                            visible={showPatchNotesModal}
+                            onDismiss={() => setShowPatchNotesModal(false)}
+                        />
+                    </React.Suspense>
                 )}
 
                 <Modal

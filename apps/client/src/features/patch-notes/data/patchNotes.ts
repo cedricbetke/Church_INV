@@ -23,7 +23,7 @@ export const patchNotesData: PatchNotesData = {
             version: "0.7.13",
             date: "2026-04-10",
             title: "Inventarsuche und Filterbedienung nachgeschaerft",
-            summary: "Die Inventarliste ist bei groesseren Datenmengen jetzt deutlich besser bedienbar. Filter liegen nicht mehr inline ueber der Tabelle, sondern als eigenes Overlay vor, die Filterwerte kommen alphabetisch sortiert aus der API, und die Freitextsuche versteht mehr alltagstaugliche Schreibweisen. Zusaetzlich merkt sich die Web-App Theme und gesehene Update-Hinweise im Browser.",
+            summary: "Die Inventarliste ist bei groesseren Datenmengen jetzt deutlich besser bedienbar. Filter liegen nicht mehr inline ueber der Tabelle, sondern als eigenes Overlay vor, die Filterwerte kommen alphabetisch sortiert aus der API, und die Freitextsuche versteht mehr alltagstaugliche Schreibweisen. Zusaetzlich merkt sich die Web-App Theme und gesehene Update-Hinweise im Browser, und mehrere selten genutzte UI-Bausteine werden erst bei Bedarf nachgeladen.",
             issueUrl: undefined,
             issueLabel: undefined,
             items: [
@@ -35,7 +35,8 @@ export const patchNotesData: PatchNotesData = {
                 "Die Freitextsuche ist robuster gegen Schreibvarianten und unterstuetzt Kombinationen mehrerer Suchwoerter besser",
                 "Inventarnummern lassen sich in der Suche toleranter finden, auch in Schreibweisen wie `INV-123`",
                 "Die Web-App zeigt neue Patch-Notes-Versionen als einmaligen Hinweis beim Oeffnen an und merkt sich gesehene Versionen im Browser",
-                "Der gewaehltе Hell- oder Darkmode bleibt im Browser gespeichert und wird beim naechsten Oeffnen wiederhergestellt",
+                "Der gewaehlte Hell- oder Darkmode bleibt im Browser gespeichert und wird beim naechsten Oeffnen wiederhergestellt",
+                "Patch Notes, Stammdaten-Admin, Detailansicht und Add/Edit-Form werden im Client jetzt erst bei Bedarf lazy geladen",
             ],
         },
         {
