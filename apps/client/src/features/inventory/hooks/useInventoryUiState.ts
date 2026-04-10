@@ -41,7 +41,7 @@ export const useInventoryUiState = (): InventoryUiState => {
     const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
     const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [numberOfItemsPerPageList] = useState([5, 10, 15, 20, 30, 50]);
+    const [numberOfItemsPerPageList] = useState([5, 10, 15, 20, 30, 50, 100]);
     const [isAddPageVisible, setIsAddPageVisible] = useState<boolean>(false);
     const [scannedCode, setScannedCode] = useState<string | null>(null);
 

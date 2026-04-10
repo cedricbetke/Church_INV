@@ -8,6 +8,7 @@ import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraet
 import { Column } from "./dataTable";
 import DataTableComponent from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
+import { readStoredItemsPerPage, writeStoredItemsPerPage } from "@/src/shared/utils/inventoryTableStorage";
 
 const DetailModal = React.lazy(() => import("./DetailPage"));
 const AddPage = React.lazy(() => import("./AddPage"));
@@ -115,8 +116,9 @@ const InvTable = () => {
         setScannedCode,
     } = useInventory();
 
+    const defaultItemsPerPage = numberOfItemsPerPageList[1];
     const [page, setPage] = useState<number>(0);
-    const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[1]);
+    const [itemsPerPage, setItemsPerPage] = useState(() => readStoredItemsPerPage(numberOfItemsPerPageList, defaultItemsPerPage));
     const [visibleModal, setVisibleModal] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
     const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
@@ -161,6 +163,14 @@ const InvTable = () => {
     useEffect(() => {
         setPage(0);
     }, [itemsPerPage]);
+
+    useEffect(() => {
+        writeStoredItemsPerPage(itemsPerPage);
+    }, [itemsPerPage]);
+
+    const handleItemsPerPageChange = (nextItemsPerPage: number) => {
+        setItemsPerPage(nextItemsPerPage);
+    };
 
     useEffect(() => {
         if (!scannedCode) {
@@ -310,7 +320,7 @@ const InvTable = () => {
                 onSort={handleSort}
                 onToggleColumnVisibility={handleToggleColumnVisibility}
                 itemsPerPage={itemsPerPage}
-                onItemsPerPageChange={onItemsPerPageChange}
+                onItemsPerPageChange={handleItemsPerPageChange}
                 numberOfItemsPerPageList={numberOfItemsPerPageList}
             />
             <React.Suspense fallback={null}>
