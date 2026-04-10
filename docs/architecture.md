@@ -36,6 +36,12 @@ Client-seitige Lastverteilung:
 - selten genutzte Modals und Detailflows werden schrittweise lazy geladen
 - aktuell betrifft das unter anderem Patch Notes, Stammdaten-Admin sowie Detail- und Add/Edit-Flow der Inventarliste
 
+Client-seitige Persistenz im Browser:
+
+- Theme-Modus wird im Web-Client in `localStorage` gespeichert
+- gesehene Update-Hinweise werden versionsbezogen in `localStorage` gespeichert
+- die zuletzt gewaehlte Seitengroesse der Inventarliste wird im Web-Client in `localStorage` gespeichert
+
 ## API
 
 Pfad:

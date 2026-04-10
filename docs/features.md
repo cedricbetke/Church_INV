@@ -64,6 +64,8 @@ Beim Anlegen eines Geraets gilt aktuell:
 - Filter als separates Overlay statt inline ueber der Tabelle
 - Filterwerte fuer Status, Hersteller, Modell, Objekttyp, Bereich und Standort kommen alphabetisch sortiert aus der API
 - Objekttyp steht in der Inventarliste auch als eigener Filter zur Verfuegung
+- Die Tabellenansicht bietet bis zu 100 Eintraege pro Seite
+- Die im Web-Client gewaehlte Seitengroesse der Inventarliste bleibt im Browser gespeichert
 - Sortierung
 - sichtbare Spalten waehlbar
 
