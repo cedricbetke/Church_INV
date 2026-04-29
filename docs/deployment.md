@@ -140,6 +140,43 @@ Wichtig:
 - der Import sollte nur einmal auf eine frische Datenbank erfolgen
 - wenn bereits Daten im Volume liegen, vorher bewusst pruefen, ob du wirklich ersetzen willst
 
+## Backups
+
+Produktionsdaten liegen ausserhalb des Repos und muessen separat gesichert werden:
+
+- MySQL-Datenbank im Container `churchinv-db`
+- Uploads unter `/home/inventory/data/uploads`
+
+Das Script [scripts/backup-production.sh](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/scripts/backup-production.sh) erstellt beides in `/home/inventory/backups`.
+
+Der Zielpfad kann spaeter ohne Script-Aenderung ueber `/home/inventory/backup.env` gesetzt werden:
+
+```env
+BACKUP_ROOT=/pfad/zum/admin-backup-speicher/churchinv
+RETENTION_DAYS=30
+```
+
+Wenn diese Datei fehlt, nutzt das Script automatisch `/home/inventory/backups`.
+
+Manuell auf dem Server ausfuehren:
+
+```bash
+cd /home/inventory/actions-runner/_work/Church_INV/Church_INV
+bash scripts/backup-production.sh
+```
+
+Standardmaessig werden Backups 14 Tage behalten. Das kann beim Aufruf angepasst werden:
+
+```bash
+RETENTION_DAYS=30 bash scripts/backup-production.sh
+```
+
+Cron-Beispiel fuer ein taegliches Backup um 02:15 Uhr:
+
+```cron
+15 2 * * * cd /home/inventory/actions-runner/_work/Church_INV/Church_INV && bash scripts/backup-production.sh >> /home/inventory/backups/backup.log 2>&1
+```
+
 ## Reverse Proxy Optional
 
 Wenn du bereits einen vorgeschalteten Nginx- oder Traefik-Proxy hast, ist der saubere Zielzustand:
