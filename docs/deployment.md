@@ -217,9 +217,9 @@ Der Produktions-Workflow ist fuer einen `self-hosted` GitHub Runner gedacht. Das
 
 Der Workflow macht:
 
-1. `docker compose build` auf GitHub Actions als Vorpruefung
+1. gecachte Docker-Builds fuer API und Client auf GitHub Actions als Vorpruefung
 2. Checkout auf dem self-hosted Runner direkt auf dem Produktionsserver
-3. lokale Pruefung, ob `apps/api/.env` auf dem Server vorhanden ist
+3. lokale Pruefung, ob `apps/api/.env` und `apps/client/.env` auf dem Server vorhanden sind
 4. `docker compose build --pull`
 5. `docker compose up -d --remove-orphans`
 
@@ -255,8 +255,9 @@ Vor dem ersten Produktions-Deploy sollten auf dem Produktivserver vorhanden sein
 3. ein registrierter self-hosted GitHub Runner fuer dieses Repository
 4. der ausgecheckte Repo-Ordner des Runners
 5. `apps/api/.env` im ausgecheckten Repo
-6. der Upload-Ordner `/home/inventory/data/uploads`
-7. optional vor dem ersten API-Start der MySQL-Dump fuer den DB-Import
+6. `apps/client/.env` im ausgecheckten Repo
+7. der Upload-Ordner `/home/inventory/data/uploads`
+8. optional vor dem ersten API-Start der MySQL-Dump fuer den DB-Import
 
 Der Workflow erstellt bei Bedarf:
 
@@ -267,5 +268,6 @@ Der Workflow erstellt bei Bedarf:
 Nicht automatisch erstellt wird:
 
 - `apps/api/.env`
+- `apps/client/.env`
 
-Diese Datei musst du einmalig direkt auf dem Produktivserver anlegen und dort auch pflegen.
+Diese Dateien musst du einmalig direkt auf dem Produktivserver anlegen und dort auch pflegen.

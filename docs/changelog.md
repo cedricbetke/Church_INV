@@ -3,6 +3,21 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.14
+
+**30.04.2026**  
+**Serverbetrieb und Datensicherung vorbereitet**
+
+ChurchINV ist fuer den dauerhaften Serverbetrieb vorbereitet. Bestehende Inventardaten, Bilder und Dokumente koennen auf den neuen Server uebernommen werden, und fuer die wichtigsten Daten gibt es jetzt einen vorbereiteten Backup-Ablauf.
+
+- Der Serverbetrieb ist so vorbereitet, dass neue Versionen kontrolliert auf den Zielserver uebernommen werden koennen
+- Die bestehende Inventardatenbank kann auf den neuen Server migriert und dort weiterverwendet werden
+- Vorhandene Bilder und Dokumente koennen auf den Server uebernommen und weiter in der App angezeigt werden
+- Datenbank, Bilder und Dokumente bleiben ausserhalb der App-Container erhalten
+- Fuer Datenbank, Bilder und Dokumente gibt es jetzt einen vorbereiteten Backup-Ablauf
+- Der Backup-Zielort kann spaeter auf den dedizierten Speicher der Administration umgestellt werden
+- Die technische Deployment-Doku wurde fuer Serverbetrieb, Datenumzug und Backups aktualisiert
+
 ## 0.7.13
 
 **10.04.2026**  
