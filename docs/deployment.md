@@ -12,14 +12,14 @@ Diese Seite beschreibt den einfachsten Docker-Deploy fuer einen Linux-Server.
 ## Voraussetzungen
 
 - Docker und Docker Compose auf dem Server
-- MySQL ist bereits erreichbar
-- die API-Datenbanktabellen existieren bereits
+- ein initialer SQL-Dump der bestehenden Datenbank fuer den Umzug
 
 ## Wichtige Ordner
 
 - Web-App: `apps/client`
 - API: `apps/api`
 - Uploads auf dem Server: `/srv/churchinv/uploads`
+- MySQL-Daten auf dem Server: `/srv/churchinv/mysql`
 
 ## API-Umgebung
 
@@ -30,12 +30,19 @@ Beispiel fuer [apps/api/.env](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_IN
 ```env
 PORT=3000
 ADMIN_PASSWORD=dein-admin-passwort
-DB_HOST=192.168.178.71
+DB_HOST=db
 DB_PORT=3306
-DB_USER=cedric
+DB_USER=churchinv
 DB_PASSWORD=dein-db-passwort
 DB_NAME=church_Inv_Sql
+MYSQL_ROOT_PASSWORD=dein-root-db-passwort
 ```
+
+Hinweise:
+
+- `DB_*` nutzt die API fuer die Verbindung zur Datenbank
+- der MySQL-Container uebernimmt `DB_NAME`, `DB_USER` und `DB_PASSWORD` aus derselben `.env`
+- separat zusaetzlich noetig bleibt nur `MYSQL_ROOT_PASSWORD`
 
 ## Client-API-URL
 
@@ -72,6 +79,7 @@ Wichtig:
 
 - `apps/api/.env` kommt bewusst nicht aus Git
 - Uploads liegen ebenfalls ausserhalb des Images als Host-Ordner
+- die MySQL-Daten liegen ebenfalls ausserhalb des Containers unter `/srv/churchinv/mysql`
 
 ## Starten
 
@@ -97,9 +105,39 @@ Im Compose-Setup wird dieser Mount verwendet:
 ```yaml
 volumes:
   - /srv/churchinv/uploads:/app/uploads
+  - /srv/churchinv/mysql:/var/lib/mysql
 ```
 
-Das ist wichtig, weil die API Uploads lokal unter `/app/uploads` erwartet.
+Das ist wichtig, weil die API Uploads lokal unter `/app/uploads` erwartet und MySQL seine Daten persistent unter `/var/lib/mysql` ablegt.
+
+## Datenbank-Import
+
+Wenn du einen Dump wie `churchinvdump.sql` aus der bestehenden Datenbank exportiert hast, ist der typische Ablauf auf dem Server:
+
+1. `apps/api/.env` mit den finalen `DB_*`- und `MYSQL_*`-Werten anlegen
+2. den MySQL-Container einmal starten:
+
+```bash
+docker compose up -d db
+```
+
+3. den Dump importieren:
+
+```bash
+docker exec -i churchinv-db mysql -u root -p church_Inv_Sql < churchinvdump.sql
+```
+
+4. danach API und Client starten:
+
+```bash
+docker compose up -d --build
+```
+
+Wichtig:
+
+- beim Import fragt MySQL nach dem `MYSQL_ROOT_PASSWORD`
+- der Import sollte nur einmal auf eine frische Datenbank erfolgen
+- wenn bereits Daten im Volume liegen, vorher bewusst pruefen, ob du wirklich ersetzen willst
 
 ## Reverse Proxy Optional
 
@@ -180,10 +218,12 @@ Vor dem ersten Produktions-Deploy sollten auf dem Produktivserver vorhanden sein
 4. der ausgecheckte Repo-Ordner des Runners
 5. `apps/api/.env` im ausgecheckten Repo
 6. der Upload-Ordner `/srv/churchinv/uploads`
+7. optional vor dem ersten API-Start der MySQL-Dump fuer den DB-Import
 
 Der Workflow erstellt bei Bedarf:
 
 - `/srv/churchinv/uploads`
+- `/srv/churchinv/mysql`
 
 Nicht automatisch erstellt wird:
 
