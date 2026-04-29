@@ -12,7 +12,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     command: --default-authentication-plugin=mysql_native_password
     volumes:
-      - /home/inventory/data/mysql:/var/lib/mysql
+      - ${MYSQL_DATA_DIR:-/home/inventory/data/mysql}:/var/lib/mysql
 
   api:
     build:
@@ -26,7 +26,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - /home/inventory/data/uploads:/app/uploads
+      - ${UPLOADS_DIR:-/home/inventory/data/uploads}:/app/uploads
 
   client:
     build:

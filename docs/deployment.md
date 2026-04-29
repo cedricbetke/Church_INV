@@ -105,11 +105,13 @@ Im Compose-Setup wird dieser Mount verwendet:
 
 ```yaml
 volumes:
-  - /home/inventory/data/uploads:/app/uploads
-  - /home/inventory/data/mysql:/var/lib/mysql
+  - ${UPLOADS_DIR:-/home/inventory/data/uploads}:/app/uploads
+  - ${MYSQL_DATA_DIR:-/home/inventory/data/mysql}:/var/lib/mysql
 ```
 
 Das ist wichtig, weil die API Uploads lokal unter `/app/uploads` erwartet und MySQL seine Daten persistent unter `/var/lib/mysql` ablegt.
+
+In Produktion greifen die Default-Pfade unter `/home/inventory/data`. Der Testserver-Workflow setzt eigene Pfade unterhalb von `DEPLOY_PATH/data`, damit der Testserver keinen Zugriff auf Produktionspfade wie `/home/inventory` braucht.
 
 ## Datenbank-Import
 
