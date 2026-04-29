@@ -28,10 +28,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          clean: false
 
       - name: Validate server env file
         run: |
           test -f apps/api/.env
+          test -f apps/client/.env
 
       - name: Ensure upload directory exists
         run: |
