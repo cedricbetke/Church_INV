@@ -64,31 +64,34 @@ jobs:
 
       - name: Prepare SSH
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          printf '%s' "$DEPLOY_SSH_KEY_B64" | base64 -d > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keygen -y -f ~/.ssh/id_ed25519 > /dev/null
-          ssh-keyscan -p "${DEPLOY_PORT:-22}" "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          cat <<EOF > ~/.ssh/config
+          SSH_DIR="$RUNNER_TEMP/deploy-ssh"
+          mkdir -p "$SSH_DIR"
+          chmod 700 "$SSH_DIR"
+          printf '%s' "$DEPLOY_SSH_KEY_B64" | base64 -d > "$SSH_DIR/id_ed25519"
+          chmod 600 "$SSH_DIR/id_ed25519"
+          ssh-keygen -y -f "$SSH_DIR/id_ed25519" > /dev/null
+          ssh-keyscan -p "${DEPLOY_PORT:-22}" "$DEPLOY_HOST" > "$SSH_DIR/known_hosts"
+          cat <<EOF > "$SSH_DIR/config"
           Host deploy-target
             HostName ${DEPLOY_HOST}
             User ${DEPLOY_USER}
             Port ${DEPLOY_PORT:-22}
-            IdentityFile ~/.ssh/id_ed25519
+            IdentityFile $SSH_DIR/id_ed25519
             IdentitiesOnly yes
             StrictHostKeyChecking yes
+            UserKnownHostsFile $SSH_DIR/known_hosts
           EOF
-          chmod 600 ~/.ssh/config
+          chmod 600 "$SSH_DIR/config"
+          echo "SSH_CONFIG=$SSH_DIR/config" >> "$GITHUB_ENV"
 
       - name: Ensure target path exists
         run: |
-          ssh deploy-target "mkdir -p '${DEPLOY_PATH}' '${DEPLOY_PATH}/data/uploads' '${DEPLOY_PATH}/data/mysql' '${DEPLOY_PATH}/data/db-imports'"
+          ssh -F "$SSH_CONFIG" deploy-target "mkdir -p '${DEPLOY_PATH}' '${DEPLOY_PATH}/data/uploads' '${DEPLOY_PATH}/data/mysql' '${DEPLOY_PATH}/data/db-imports'"
 
       - name: Sync repository to server
         run: |
           rsync -az --delete \
-            -e "ssh" \
+            -e "ssh -F $SSH_CONFIG" \
             --exclude ".git" \
             --exclude ".github" \
             --exclude "node_modules" \
@@ -99,7 +102,7 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
-          ssh deploy-target "
+          ssh -F "$SSH_CONFIG" deploy-target "
             set -e
             cd '${DEPLOY_PATH}'
             set -a
