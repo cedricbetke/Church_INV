@@ -42,5 +42,8 @@ jobs:
 
       - name: Deploy with Docker Compose
         run: |
+          set -a
+          . apps/api/.env
+          set +a
           docker compose build --pull
           docker compose up -d --remove-orphans
