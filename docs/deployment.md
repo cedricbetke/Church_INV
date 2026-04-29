@@ -127,11 +127,10 @@ Im aktuellen Testserver-Setup ist der Web-Client extern auf `http://SERVER:51821
 
 Standardmaessig laeuft der Deploy:
 
-- bei Push auf `master`
-- bei Push auf `main`
+- bei Push auf `testserver`
 - manuell ueber `workflow_dispatch`
 
-Wenn du einen anderen Branch fuer den Testserver nutzen willst, passe die Branch-Liste im Workflow an.
+Damit bleiben `main` und `master` von Testserver-Deploys getrennt. Wenn du spaeter einen anderen Branchnamen verwenden willst, passe die Branch-Liste im Workflow an.
 
 ## GitHub Secrets
 

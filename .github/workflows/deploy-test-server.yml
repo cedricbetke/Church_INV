@@ -3,8 +3,7 @@ name: Deploy Test Server
 on:
   push:
     branches:
-      - master
-      - main
+      - testserver
   workflow_dispatch:
 
 concurrency:
