@@ -1,0 +1,43 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: docker compose build
+
+  deploy:
+    needs: validate
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate server env file
+        run: |
+          test -f apps/api/.env
+
+      - name: Ensure upload directory exists
+        run: |
+          mkdir -p /srv/churchinv/uploads
+
+      - name: Deploy with Docker Compose
+        run: |
+          docker compose build --pull
+          docker compose up -d --remove-orphans
