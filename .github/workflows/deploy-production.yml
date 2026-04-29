@@ -18,8 +18,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build Docker images
-        run: docker compose build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/api
+          push: false
+          cache-from: type=gha,scope=production-api
+          cache-to: type=gha,mode=max,scope=production-api
+
+      - name: Build client image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/client
+          push: false
+          build-args: |
+            EXPO_PUBLIC_API_BASE_URL=/
+          cache-from: type=gha,scope=production-client
+          cache-to: type=gha,mode=max,scope=production-client
 
   deploy:
     needs: validate
