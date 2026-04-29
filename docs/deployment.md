@@ -18,8 +18,9 @@ Diese Seite beschreibt den einfachsten Docker-Deploy fuer einen Linux-Server.
 
 - Web-App: `apps/client`
 - API: `apps/api`
-- Uploads auf dem Server: `/srv/churchinv/uploads`
-- MySQL-Daten auf dem Server: `/srv/churchinv/mysql`
+- Uploads auf dem Server: `/home/inventory/data/uploads`
+- MySQL-Daten auf dem Server: `/home/inventory/data/mysql`
+- DB-Importe auf dem Server: `/home/inventory/data/db-imports`
 
 ## API-Umgebung
 
@@ -61,7 +62,7 @@ Du brauchst fuer den Docker-Web-Build also keine lokale LAN-IP mehr in `apps/cli
 Die bestehenden Uploads solltest du einmalig auf den Server kopieren:
 
 ```bash
-rsync -av apps/api/uploads/ user@server:/srv/churchinv/uploads/
+rsync -av apps/api/uploads/ user@server:/home/inventory/data/uploads/
 ```
 
 Danach bleiben neue Uploads persistent, weil der Host-Ordner in den API-Container gemountet wird.
@@ -72,14 +73,14 @@ Wenn du bereits Portainer nutzt, kannst du den Stack auch dort deployen. Der pra
 
 1. Repo auf dem Server aktualisieren
 2. `apps/api/.env` auf dem Server anlegen
-3. Upload-Ordner unter `/srv/churchinv/uploads` bereitstellen
+3. Upload-Ordner unter `/home/inventory/data/uploads` bereitstellen
 4. Stack entweder ueber Portainer oder direkt per `docker compose` starten
 
 Wichtig:
 
 - `apps/api/.env` kommt bewusst nicht aus Git
 - Uploads liegen ebenfalls ausserhalb des Images als Host-Ordner
-- die MySQL-Daten liegen ebenfalls ausserhalb des Containers unter `/srv/churchinv/mysql`
+- die MySQL-Daten liegen ebenfalls ausserhalb des Containers unter `/home/inventory/data/mysql`
 
 ## Starten
 
@@ -104,8 +105,8 @@ Im Compose-Setup wird dieser Mount verwendet:
 
 ```yaml
 volumes:
-  - /srv/churchinv/uploads:/app/uploads
-  - /srv/churchinv/mysql:/var/lib/mysql
+  - /home/inventory/data/uploads:/app/uploads
+  - /home/inventory/data/mysql:/var/lib/mysql
 ```
 
 Das ist wichtig, weil die API Uploads lokal unter `/app/uploads` erwartet und MySQL seine Daten persistent unter `/var/lib/mysql` ablegt.
@@ -124,7 +125,7 @@ docker compose up -d db
 3. den Dump importieren:
 
 ```bash
-docker exec -i churchinv-db mysql -u root -p church_Inv_Sql < churchinvdump.sql
+docker exec -i churchinv-db mysql -u root -p church_Inv_Sql < /home/inventory/data/db-imports/churchinvdump.sql
 ```
 
 4. danach API und Client starten:
@@ -217,13 +218,14 @@ Vor dem ersten Produktions-Deploy sollten auf dem Produktivserver vorhanden sein
 3. ein registrierter self-hosted GitHub Runner fuer dieses Repository
 4. der ausgecheckte Repo-Ordner des Runners
 5. `apps/api/.env` im ausgecheckten Repo
-6. der Upload-Ordner `/srv/churchinv/uploads`
+6. der Upload-Ordner `/home/inventory/data/uploads`
 7. optional vor dem ersten API-Start der MySQL-Dump fuer den DB-Import
 
 Der Workflow erstellt bei Bedarf:
 
-- `/srv/churchinv/uploads`
-- `/srv/churchinv/mysql`
+- `/home/inventory/data/uploads`
+- `/home/inventory/data/mysql`
+- `/home/inventory/data/db-imports`
 
 Nicht automatisch erstellt wird:
 

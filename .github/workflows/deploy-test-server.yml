@@ -64,7 +64,7 @@ jobs:
 
       - name: Ensure target path exists
         run: |
-          ssh deploy-target "mkdir -p '${DEPLOY_PATH}' /srv/churchinv/uploads /srv/churchinv/mysql"
+          ssh deploy-target "mkdir -p '${DEPLOY_PATH}' /home/inventory/data/uploads /home/inventory/data/mysql /home/inventory/data/db-imports"
 
       - name: Sync repository to server
         run: |

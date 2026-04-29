@@ -38,7 +38,7 @@ jobs:
 
       - name: Ensure upload directory exists
         run: |
-          mkdir -p /srv/churchinv/uploads /srv/churchinv/mysql
+          mkdir -p /home/inventory/data/uploads /home/inventory/data/mysql /home/inventory/data/db-imports
 
       - name: Deploy with Docker Compose
         run: |
