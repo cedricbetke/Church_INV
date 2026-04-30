@@ -86,7 +86,7 @@ jobs:
 
       - name: Ensure target path exists
         run: |
-          ssh -F "$SSH_CONFIG" deploy-target "mkdir -p '${DEPLOY_PATH}' '${DEPLOY_PATH}/data/uploads' '${DEPLOY_PATH}/data/mysql' '${DEPLOY_PATH}/data/db-imports'"
+          ssh -F "$SSH_CONFIG" deploy-target "mkdir -p '${DEPLOY_PATH}' '${DEPLOY_PATH}/data/uploads' '${DEPLOY_PATH}/data/mysql'"
 
       - name: Sync repository to server
         run: |
