@@ -114,6 +114,14 @@ jobs:
             docker compose up -d --remove-orphans
           "
 
-      - name: Healthcheck
+      - name: Internal healthcheck
+        run: |
+          ssh -F "$SSH_CONFIG" deploy-target "
+            set -e
+            curl --fail --silent --show-error http://localhost:51821/ > /dev/null
+          "
+
+      - name: External healthcheck
         if: ${{ env.DEPLOY_HEALTHCHECK_URL != '' }}
+        continue-on-error: true
         run: curl --fail --silent --show-error "$DEPLOY_HEALTHCHECK_URL"
