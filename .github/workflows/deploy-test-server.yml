@@ -96,6 +96,7 @@ jobs:
             --exclude ".github" \
             --exclude "node_modules" \
             --exclude ".expo" \
+            --exclude "data" \
             --exclude "apps/api/.env" \
             --exclude "apps/client/.env" \
             ./ "deploy-target:${DEPLOY_PATH}/"
