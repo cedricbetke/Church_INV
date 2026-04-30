@@ -61,14 +61,6 @@ jobs:
             /home/inventory/data/uploads/dokumente \
             /home/inventory/data/mysql \
             /home/inventory/data/db-imports
-          chmod u+rwx \
-            /home/inventory/data \
-            /home/inventory/data/uploads \
-            /home/inventory/data/uploads/geraete \
-            /home/inventory/data/uploads/geraete/thumbs \
-            /home/inventory/data/uploads/dokumente \
-            /home/inventory/data/mysql \
-            /home/inventory/data/db-imports
 
       - name: Deploy with Docker Compose
         run: |

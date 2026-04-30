@@ -93,13 +93,6 @@ jobs:
               '${DEPLOY_PATH}/data/uploads/geraete/thumbs' \
               '${DEPLOY_PATH}/data/uploads/dokumente' \
               '${DEPLOY_PATH}/data/mysql'
-            chmod u+rwx \
-              '${DEPLOY_PATH}/data' \
-              '${DEPLOY_PATH}/data/uploads' \
-              '${DEPLOY_PATH}/data/uploads/geraete' \
-              '${DEPLOY_PATH}/data/uploads/geraete/thumbs' \
-              '${DEPLOY_PATH}/data/uploads/dokumente' \
-              '${DEPLOY_PATH}/data/mysql'
           "
 
       - name: Sync repository to server
