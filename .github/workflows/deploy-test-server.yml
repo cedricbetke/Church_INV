@@ -86,7 +86,21 @@ jobs:
 
       - name: Ensure target path exists
         run: |
-          ssh -F "$SSH_CONFIG" deploy-target "mkdir -p '${DEPLOY_PATH}' '${DEPLOY_PATH}/data/uploads' '${DEPLOY_PATH}/data/mysql'"
+          ssh -F "$SSH_CONFIG" deploy-target "
+            set -e
+            mkdir -p \
+              '${DEPLOY_PATH}' \
+              '${DEPLOY_PATH}/data/uploads/geraete/thumbs' \
+              '${DEPLOY_PATH}/data/uploads/dokumente' \
+              '${DEPLOY_PATH}/data/mysql'
+            chmod u+rwx \
+              '${DEPLOY_PATH}/data' \
+              '${DEPLOY_PATH}/data/uploads' \
+              '${DEPLOY_PATH}/data/uploads/geraete' \
+              '${DEPLOY_PATH}/data/uploads/geraete/thumbs' \
+              '${DEPLOY_PATH}/data/uploads/dokumente' \
+              '${DEPLOY_PATH}/data/mysql'
+          "
 
       - name: Sync repository to server
         run: |
@@ -97,6 +111,7 @@ jobs:
             --exclude "node_modules" \
             --exclude ".expo" \
             --exclude "data" \
+            --exclude "apps/api/uploads" \
             --exclude "apps/api/.env" \
             --exclude "apps/client/.env" \
             ./ "deploy-target:${DEPLOY_PATH}/"

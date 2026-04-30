@@ -62,10 +62,21 @@ Du brauchst fuer den Docker-Web-Build also keine lokale LAN-IP mehr in `apps/cli
 Die bestehenden Uploads solltest du einmalig auf den Server kopieren:
 
 ```bash
+ssh user@server "mkdir -p /home/inventory/data/uploads/geraete/thumbs /home/inventory/data/uploads/dokumente"
 rsync -av apps/api/uploads/ user@server:/home/inventory/data/uploads/
 ```
 
 Danach bleiben neue Uploads persistent, weil der Host-Ordner in den API-Container gemountet wird.
+
+Wenn der Upload mit `permission denied` bei `/data/uploads/geraete` oder `/data/uploads/geraete/thumbs` fehlschlaegt, gehoert der Zielordner auf dem Server nicht dem Deploy-/SSH-User. Das ist kein App-Fehler, sondern ein Server-Rechteproblem. Einmalig auf dem Server beheben:
+
+```bash
+sudo mkdir -p /home/inventory/data/uploads/geraete/thumbs /home/inventory/data/uploads/dokumente
+sudo chown -R user:user /home/inventory/data/uploads
+chmod -R u+rwX /home/inventory/data/uploads
+```
+
+`user:user` dabei durch den tatsaechlichen SSH-/Deploy-User und dessen Gruppe ersetzen. Fuer den Testserver mit `DEPLOY_PATH` gilt derselbe Ablauf entsprechend unter `${DEPLOY_PATH}/data/uploads`.
 
 ## Portainer
 
@@ -264,6 +275,8 @@ Vor dem ersten Produktions-Deploy sollten auf dem Produktivserver vorhanden sein
 Der Workflow erstellt bei Bedarf:
 
 - `/home/inventory/data/uploads`
+- `/home/inventory/data/uploads/geraete/thumbs`
+- `/home/inventory/data/uploads/dokumente`
 - `/home/inventory/data/mysql`
 - `/home/inventory/data/db-imports`
 

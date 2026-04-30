@@ -16,6 +16,7 @@ ChurchINV ist fuer den dauerhaften Serverbetrieb vorbereitet. Bestehende Inventa
 - Datenbank, Bilder und Dokumente bleiben ausserhalb der App-Container erhalten
 - Fuer Datenbank, Bilder und Dokumente gibt es jetzt einen vorbereiteten Backup-Ablauf
 - Der Backup-Zielort kann spaeter auf den dedizierten Speicher der Administration umgestellt werden
+- Der Deploy bereitet die Upload-Unterordner fuer Geraetefotos, Thumbnails und Dokumente jetzt explizit vor
 - Die technische Deployment-Doku wurde fuer Serverbetrieb, Datenumzug und Backups aktualisiert
 
 ## 0.7.13
