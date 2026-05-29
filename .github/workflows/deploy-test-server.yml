@@ -65,20 +65,33 @@ jobs:
       - name: Prepare SSH
         run: |
           SSH_DIR="$RUNNER_TEMP/deploy-ssh"
+          SSH_PORT="${DEPLOY_PORT:-22}"
           mkdir -p "$SSH_DIR"
           chmod 700 "$SSH_DIR"
-          printf '%s' "$DEPLOY_SSH_KEY_B64" | base64 -d > "$SSH_DIR/id_ed25519"
+          if ! printf '%s' "$DEPLOY_SSH_KEY_B64" | base64 -d > "$SSH_DIR/id_ed25519"; then
+            echo "::error::DEPLOY_SSH_KEY_B64 is not valid base64"
+            exit 1
+          fi
           chmod 600 "$SSH_DIR/id_ed25519"
-          ssh-keygen -y -f "$SSH_DIR/id_ed25519" > /dev/null
-          ssh-keyscan -p "${DEPLOY_PORT:-22}" "$DEPLOY_HOST" > "$SSH_DIR/known_hosts"
+          if ! ssh-keygen -y -f "$SSH_DIR/id_ed25519" > /dev/null; then
+            echo "::error::DEPLOY_SSH_KEY_B64 does not decode to a usable private SSH key"
+            exit 1
+          fi
+          if ! ssh-keyscan -T 10 -p "$SSH_PORT" "$DEPLOY_HOST" > "$SSH_DIR/known_hosts" 2>/dev/null; then
+            echo "::warning::ssh-keyscan failed; continuing with StrictHostKeyChecking=accept-new"
+          fi
+          STRICT_HOST_KEY_CHECKING="yes"
+          if [ ! -s "$SSH_DIR/known_hosts" ]; then
+            STRICT_HOST_KEY_CHECKING="accept-new"
+          fi
           cat <<EOF > "$SSH_DIR/config"
           Host deploy-target
             HostName ${DEPLOY_HOST}
             User ${DEPLOY_USER}
-            Port ${DEPLOY_PORT:-22}
+            Port ${SSH_PORT}
             IdentityFile $SSH_DIR/id_ed25519
             IdentitiesOnly yes
-            StrictHostKeyChecking yes
+            StrictHostKeyChecking ${STRICT_HOST_KEY_CHECKING}
             UserKnownHostsFile $SSH_DIR/known_hosts
           EOF
           chmod 600 "$SSH_DIR/config"
