@@ -6,6 +6,7 @@ interface InventoryListItemDto {
     inv_nr: number;
     kaufdatum: string | null;
     einkaufspreis: number | null;
+    serien_nr: string | number | null;
     zustandshinweis: string | null;
     geraetefoto_url: string | null;
     geraetefoto_thumb_url?: string | null;
@@ -23,7 +24,7 @@ const inventoryMapper = {
     ...geraeteService,
 
     getAll: async () => {
-        const response = await geraeteService.getAll() as unknown as Promise<InventoryListItemDto[]>;
+        const response = await geraeteService.getAll() as unknown as InventoryListItemDto[];
 
         return response.map((item): InventoryItem => ({
             invNr: item.inv_nr,
@@ -31,6 +32,7 @@ const inventoryMapper = {
             hersteller: item.Hersteller ?? undefined,
             objekttyp: item.Objekttyp ?? undefined,
             modell: item.Modell,
+            seriennummer: item.serien_nr != null ? String(item.serien_nr) : undefined,
             kaufdatum: item.kaufdatum ? new Date(item.kaufdatum) : undefined,
             einkaufspreis: item.einkaufspreis ?? undefined,
             zustandshinweis: item.zustandshinweis ?? undefined,
