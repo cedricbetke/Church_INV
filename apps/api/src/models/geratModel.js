@@ -29,6 +29,7 @@ const Geraet = {
                 g.inv_nr AS inv_nr,
                 g.kaufdatum AS kaufdatum,
                 g.einkaufspreis AS einkaufspreis,
+                g.serien_nr AS serien_nr,
                 g.zustandshinweis AS zustandshinweis,
                 g.geraetefoto_url AS geraetefoto_url,
                 s.name AS Status,

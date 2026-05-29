@@ -52,7 +52,6 @@ jobs:
       - name: Validate server env file
         run: |
           test -f apps/api/.env
-          test -f apps/client/.env
 
       - name: Ensure upload directory exists
         run: |

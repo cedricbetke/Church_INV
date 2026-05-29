@@ -48,6 +48,7 @@ Hinweise:
 ## Client-API-URL
 
 Im Docker-Setup nutzt der Client intern `EXPO_PUBLIC_API_BASE_URL=/`.
+Das Frontend-Admin-Passwort wird beim Docker-Build aus `ADMIN_PASSWORD` in `apps/api/.env` gesetzt.
 
 Dadurch gilt:
 
@@ -55,7 +56,7 @@ Dadurch gilt:
 - API unter `/api`
 - Uploads unter `/uploads`
 
-Du brauchst fuer den Docker-Web-Build also keine lokale LAN-IP mehr in `apps/client/.env`.
+Du brauchst fuer den Docker-Web-Build also keine lokale LAN-IP und kein Server-Passwort mehr in `apps/client/.env`.
 
 ## Uploads Uebernehmen
 
@@ -232,7 +233,7 @@ Der Workflow macht:
 
 1. gecachte Docker-Builds fuer API und Client auf GitHub Actions als Vorpruefung
 2. Checkout auf dem self-hosted Runner direkt auf dem Produktionsserver
-3. lokale Pruefung, ob `apps/api/.env` und `apps/client/.env` auf dem Server vorhanden sind
+3. lokale Pruefung, ob `apps/api/.env` auf dem Server vorhanden ist
 4. `docker compose build --pull`
 5. `docker compose up -d --remove-orphans`
 
@@ -257,7 +258,7 @@ Hinweise:
 - `DEPLOY_SSH_KEY_B64` ist der private SSH-Key Base64-kodiert, damit mehrzeilige OpenSSH-Keys in GitHub Secrets stabil uebertragen werden
 - der passende Public Key muss in `~/.ssh/authorized_keys` des Zielusers auf dem Testserver liegen
 - `apps/api/.env` bleibt bewusst nur auf dem Testserver und wird vom Workflow nicht ueberschrieben
-- `apps/client/.env` wird ebenfalls nicht auf den Server kopiert
+- der Client bekommt sein Docker-Build-Passwort aus `ADMIN_PASSWORD` in `apps/api/.env`
 
 ## Self-Hosted Runner vorbereiten
 
@@ -268,9 +269,8 @@ Vor dem ersten Produktions-Deploy sollten auf dem Produktivserver vorhanden sein
 3. ein registrierter self-hosted GitHub Runner fuer dieses Repository
 4. der ausgecheckte Repo-Ordner des Runners
 5. `apps/api/.env` im ausgecheckten Repo
-6. `apps/client/.env` im ausgecheckten Repo
-7. der Upload-Ordner `/home/inventory/data/uploads`
-8. optional vor dem ersten API-Start der MySQL-Dump fuer den DB-Import
+6. der Upload-Ordner `/home/inventory/data/uploads`
+7. optional vor dem ersten API-Start der MySQL-Dump fuer den DB-Import
 
 Der Workflow erstellt bei Bedarf:
 
@@ -283,6 +283,5 @@ Der Workflow erstellt bei Bedarf:
 Nicht automatisch erstellt wird:
 
 - `apps/api/.env`
-- `apps/client/.env`
 
-Diese Dateien musst du einmalig direkt auf dem Produktivserver anlegen und dort auch pflegen.
+Diese Datei musst du einmalig direkt auf dem Produktivserver anlegen und dort auch pflegen.
