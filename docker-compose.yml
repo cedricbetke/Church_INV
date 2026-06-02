@@ -24,7 +24,7 @@ services:
     env_file:
       - ./apps/api/.env
     ports:
-      - "3000:3000"
+      - "${API_HOST_PORT:-3000}:3000"
     volumes:
       - ${UPLOADS_DIR:-/home/inventory/data/uploads}:/app/uploads
 
