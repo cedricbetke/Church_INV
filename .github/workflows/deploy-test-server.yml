@@ -67,6 +67,7 @@ jobs:
           set -a
           . apps/api/.env
           set +a
+          export API_HOST_PORT="${API_HOST_PORT:-3001}"
           export UPLOADS_DIR="$PWD/data/uploads"
           export MYSQL_DATA_DIR="$PWD/data/mysql"
           docker compose build --pull
