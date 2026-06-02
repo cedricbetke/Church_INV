@@ -10,7 +10,7 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --log-bin-trust-function-creators=1
     volumes:
       - ${MYSQL_DATA_DIR:-/home/inventory/data/mysql}:/var/lib/mysql
 
