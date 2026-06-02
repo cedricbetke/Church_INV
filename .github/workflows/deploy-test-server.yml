@@ -59,7 +59,7 @@ jobs:
             "$PWD/data/uploads/geraete/thumbs" \
             "$PWD/data/uploads/dokumente" \
             "$PWD/data/mysql"
-          chmod -R u+rwX "$PWD/data"
+          chmod -R u+rwX "$PWD/data/uploads"
 
       - name: Deploy with Docker Compose
         run: |
