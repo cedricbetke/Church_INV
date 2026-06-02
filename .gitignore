@@ -20,6 +20,7 @@ import/sharepoint-storage-state.json
 apps/client/app/*.js
 apps/client/src/**/*.js
 scripts/*.js
+scripts/dev-test-db.ps1
 apps/api/src/app.js
 apps/api/src/server.js
 apps/api/src/config/loadEnv.js
