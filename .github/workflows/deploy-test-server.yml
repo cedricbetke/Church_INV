@@ -53,6 +53,10 @@ jobs:
         run: |
           test -f apps/api/.env
 
+      - name: Remove stale client env file
+        run: |
+          rm -f apps/client/.env
+
       - name: Ensure data directories exist
         run: |
           mkdir -p \
