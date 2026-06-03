@@ -119,8 +119,9 @@ export const getErrorMessage = (error: unknown) => {
     }
 
     const { status, data } = error.response;
+    const isHtmlResponse = (value: string) => /<\s*!doctype html|<\s*html/i.test(value);
     const backendMessage =
-        typeof data === "string"
+        typeof data === "string" && !isHtmlResponse(data)
             ? data
             : typeof data?.message === "string"
                 ? data.message
@@ -146,6 +147,10 @@ export const getErrorMessage = (error: unknown) => {
         }
 
         return backendMessage ?? "Der Datensatz steht in Konflikt mit vorhandenen Daten.";
+    }
+
+    if (status === 413) {
+        return "Die Datei ist zu gross. Bitte eine kleinere Datei auswaehlen.";
     }
 
     if (status === 503) {
