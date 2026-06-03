@@ -63,7 +63,8 @@ jobs:
             "$PWD/data/uploads/geraete/thumbs" \
             "$PWD/data/uploads/dokumente" \
             "$PWD/data/mysql"
-          chmod -R u+rwX "$PWD/data/uploads"
+          find "$PWD/data/uploads" -type d -exec chmod u+rwX {} + 2>/dev/null || true
+          find "$PWD/data/uploads" -type f -user "$(id -u)" -exec chmod u+rw {} + 2>/dev/null || true
 
       - name: Deploy with Docker Compose
         run: |
