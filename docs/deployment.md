@@ -200,6 +200,8 @@ Wenn du bereits einen vorgeschalteten Nginx- oder Traefik-Proxy hast, ist der sa
 
 Dann brauchst du nach aussen nur noch einen Einstiegspunkt.
 
+Der Client-Container setzt in `apps/client/nginx.conf` `client_max_body_size 20m`. Das ist noetig, weil Foto- und Dokument-Uploads aktuell als Base64-JSON durch `/api` laufen. Die App erlaubt Dokumente bis 10 MB; durch Base64 wird der Request groesser als die Originaldatei. Ohne dieses nginx-Limit beantwortet der Proxy groessere, aber erlaubte Dokumente mit `413 Request Entity Too Large`.
+
 ## GitHub Actions CI/CD
 
 Es gibt aktuell zwei getrennte Deploy-Wege:

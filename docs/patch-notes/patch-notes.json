@@ -2,6 +2,18 @@
   "app": "ChurchINV",
   "entries": [
     {
+      "version": "0.7.15",
+      "date": "2026-06-03",
+      "title": "Dokument-Uploads im Serverbetrieb stabilisiert",
+      "summary": "Dokument-Uploads funktionieren im Docker-Deployment jetzt auch fuer groessere erlaubte Dateien zuverlaessiger. Der Web-Proxy akzeptiert Upload-Requests passend zum App-Limit, und technische HTML-Fehlerseiten werden im Formular nicht mehr direkt angezeigt.",
+      "items": [
+        "Der nginx-Client-Container erlaubt jetzt Requests bis 20 MB, damit Dokumente bis 10 MB auch mit Base64-Overhead durch den Proxy kommen",
+        "Fehlerseiten von nginx werden im Inventarformular nicht mehr als HTML angezeigt",
+        "Bei zu grossen Uploads zeigt die App jetzt eine lesbare Meldung statt einer technischen Serverantwort",
+        "Der Production-Deploy ist auf den dedizierten Production-Runner gepinnt, damit Production nicht versehentlich auf dem Testserver-Runner ausgefuehrt wird"
+      ]
+    },
+    {
       "version": "0.7.14",
       "date": "2026-04-30",
       "title": "Serverbetrieb und Datensicherung vorbereitet",

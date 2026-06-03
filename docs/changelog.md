@@ -3,6 +3,18 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.15
+
+**03.06.2026**  
+**Dokument-Uploads im Serverbetrieb stabilisiert**
+
+Dokument-Uploads funktionieren im Docker-Deployment jetzt auch fuer groessere erlaubte Dateien zuverlaessiger. Der Web-Proxy akzeptiert Upload-Requests passend zum App-Limit, und technische HTML-Fehlerseiten werden im Formular nicht mehr direkt angezeigt.
+
+- Der nginx-Client-Container erlaubt jetzt Requests bis 20 MB, damit Dokumente bis 10 MB auch mit Base64-Overhead durch den Proxy kommen
+- Fehlerseiten von nginx werden im Inventarformular nicht mehr als HTML angezeigt
+- Bei zu grossen Uploads zeigt die App jetzt eine lesbare Meldung statt einer technischen Serverantwort
+- Der Production-Deploy ist auf den dedizierten Production-Runner gepinnt, damit Production nicht versehentlich auf dem Testserver-Runner ausgefuehrt wird
+
 ## 0.7.14
 
 **30.04.2026**  
