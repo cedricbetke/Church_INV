@@ -41,7 +41,7 @@ jobs:
 
   deploy:
     needs: validate
-    runs-on: self-hosted
+    runs-on: [self-hosted, churchinv-prod]
 
     steps:
       - name: Checkout
