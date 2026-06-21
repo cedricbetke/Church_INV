@@ -3,6 +3,18 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.16
+
+**21.06.2026**  
+**Dokumentauswahl in Safari stabilisiert**
+
+Der Dokument-Upload im Inventarformular ist fuer Safari auf macOS robuster. Ausgewaehlte Dateien werden nach dem Oeffnen des Datei-Dialogs zuverlaessiger in die Dokumentliste uebernommen.
+
+- Der Web-Dokumentpicker haengt den Datei-Input fuer die Auswahl kurz unsichtbar ins DOM ein
+- Safari auf macOS uebernimmt ausgewaehlte Dokumente dadurch zuverlaessiger in den Add- und Edit-Flow
+- Nach Auswahl, Abbruch oder Lesefehler wird der temporaere Datei-Input wieder sauber entfernt
+- Chrome und iPad-Safari behalten den bestehenden Upload-Ablauf bei
+
 ## 0.7.15
 
 **03.06.2026**  
