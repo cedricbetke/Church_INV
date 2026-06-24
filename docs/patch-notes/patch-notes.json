@@ -2,6 +2,19 @@
   "app": "ChurchINV",
   "entries": [
     {
+      "version": "0.7.17",
+      "date": "2026-06-24",
+      "title": "Mobile Bedienung und Inventaruebersicht verbessert",
+      "summary": "Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen.",
+      "items": [
+        "Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet",
+        "Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung",
+        "Der Scanner bleibt ueber localhost, HTTPS und in der mobilen App sichtbar",
+        "Falls der Scanner trotzdem in einem unsicheren Browser-Kontext geoeffnet wird, erscheint eine lesbare Hinweismeldung statt schlecht erkennbarem Text",
+        "Unter Spalten kann die Inventaruebersicht jetzt Seriennummer, Objekttyp, Kategorie, Verantwortlichen, Kaufdatum, Einkaufspreis und Zustandshinweis einblenden"
+      ]
+    },
+    {
       "version": "0.7.14",
       "date": "2026-04-30",
       "title": "Serverbetrieb und Datensicherung vorbereitet",

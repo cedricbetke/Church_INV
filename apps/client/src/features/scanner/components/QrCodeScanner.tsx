@@ -1,7 +1,9 @@
 ﻿import { CameraView, useCameraPermissions } from "expo-camera";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useMemo, useState } from "react";
 import { Button, Text } from "react-native-paper";
+import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
+import { canUseQrScannerInCurrentContext } from "@/src/features/scanner/utils/scannerAvailability";
 
 type CameraProps = {
     setShowModal: (value: boolean) => void;
@@ -11,18 +13,9 @@ type CameraProps = {
 const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
     const [scanned, setScanned] = useState(false);
     const [permission, requestPermission] = useCameraPermissions();
+    const { isDarkMode } = useAppThemeMode();
 
-    const isSecureWebContext = useMemo(() => {
-        if (Platform.OS !== "web") {
-            return true;
-        }
-
-        if (typeof window === "undefined") {
-            return true;
-        }
-
-        return window.isSecureContext;
-    }, []);
+    const isSecureWebContext = useMemo(canUseQrScannerInCurrentContext, []);
 
     const handleBarcodeScanned = ({ data }: { data: string }) => {
         if (!scanned) {
@@ -40,9 +33,11 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
 
     if (!isSecureWebContext) {
         return (
-            <View style={styles.stateContainer}>
-                <Text variant="titleMedium">Kamera im Browser nicht verfügbar</Text>
-                <Text style={styles.stateText}>
+            <View style={[styles.stateContainer, isDarkMode && styles.stateContainerDark]}>
+                <Text variant="titleMedium" style={[styles.stateTitle, isDarkMode && styles.stateTitleDark]}>
+                    Kamera im Browser nicht verfügbar
+                </Text>
+                <Text style={[styles.stateText, isDarkMode && styles.stateTextDark]}>
                     Auf mobilen Browsern funktioniert der Scanner meist nur in einem sicheren Kontext
                     wie HTTPS oder localhost. Über eine normale LAN-HTTP-URL wird die Kamera oft blockiert.
                 </Text>
@@ -55,18 +50,22 @@ const QrCodeScanner: React.FC<CameraProps> = ({ setShowModal, onScan }) => {
 
     if (!permission) {
         return (
-            <View style={styles.stateContainer}>
-                <Text variant="titleMedium">Kamera wird vorbereitet</Text>
-                <Text style={styles.stateText}>Bitte einen Moment warten.</Text>
+            <View style={[styles.stateContainer, isDarkMode && styles.stateContainerDark]}>
+                <Text variant="titleMedium" style={[styles.stateTitle, isDarkMode && styles.stateTitleDark]}>
+                    Kamera wird vorbereitet
+                </Text>
+                <Text style={[styles.stateText, isDarkMode && styles.stateTextDark]}>Bitte einen Moment warten.</Text>
             </View>
         );
     }
 
     if (!permission.granted) {
         return (
-            <View style={styles.stateContainer}>
-                <Text variant="titleMedium">Kamerazugriff erforderlich</Text>
-                <Text style={styles.stateText}>
+            <View style={[styles.stateContainer, isDarkMode && styles.stateContainerDark]}>
+                <Text variant="titleMedium" style={[styles.stateTitle, isDarkMode && styles.stateTitleDark]}>
+                    Kamerazugriff erforderlich
+                </Text>
+                <Text style={[styles.stateText, isDarkMode && styles.stateTextDark]}>
                     Für den QR-/Barcode-Scanner muss der Browser Zugriff auf die Kamera erhalten.
                 </Text>
                 <View style={styles.actions}>
@@ -95,16 +94,33 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: "#ffffff",
         padding: 24,
         gap: 14,
     },
+    stateContainerDark: {
+        backgroundColor: "#151922",
+    },
+    stateTitle: {
+        color: "#1d1d1f",
+        textAlign: "center",
+    },
+    stateTitleDark: {
+        color: "#f4f7fb",
+    },
     stateText: {
         textAlign: "center",
-        color: "#5f6368",
+        color: "#445160",
         maxWidth: 420,
+        lineHeight: 21,
+    },
+    stateTextDark: {
+        color: "#dbe6f5",
     },
     actions: {
         flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "center",
         gap: 12,
         marginTop: 8,
     },

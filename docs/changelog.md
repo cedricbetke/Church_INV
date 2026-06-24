@@ -3,6 +3,19 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.17
+
+**24.06.2026**  
+**Mobile Bedienung und Inventaruebersicht verbessert**
+
+Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen.
+
+- Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet
+- Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung
+- Der Scanner bleibt ueber localhost, HTTPS und in der mobilen App sichtbar
+- Falls der Scanner trotzdem in einem unsicheren Browser-Kontext geoeffnet wird, erscheint eine lesbare Hinweismeldung statt schlecht erkennbarem Text
+- Unter Spalten kann die Inventaruebersicht jetzt Seriennummer, Objekttyp, Kategorie, Verantwortlichen, Kaufdatum, Einkaufspreis und Zustandshinweis einblenden
+
 ## 0.7.14
 
 **30.04.2026**  
