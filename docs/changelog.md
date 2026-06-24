@@ -6,14 +6,15 @@
 ## 0.7.17
 
 **24.06.2026**  
-**Mobiler QR-Scan robuster**
+**Mobile Bedienung und Inventaruebersicht verbessert**
 
-Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Auf mobilen HTTP-Aufrufen im lokalen Netzwerk verschwindet die QR-Aktion, waehrend localhost, HTTPS und die mobile App den Scanner weiterhin anzeigen. ([#28](https://github.com/cedricbetke/Church_INV/issues/28))
+Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen.
 
 - Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet
 - Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung
 - Der Scanner bleibt ueber localhost, HTTPS und in der mobilen App sichtbar
 - Falls der Scanner trotzdem in einem unsicheren Browser-Kontext geoeffnet wird, erscheint eine lesbare Hinweismeldung statt schlecht erkennbarem Text
+- Unter Spalten kann die Inventaruebersicht jetzt Seriennummer, Objekttyp, Kategorie, Verantwortlichen, Kaufdatum, Einkaufspreis und Zustandshinweis einblenden
 
 ## 0.7.16
 

@@ -17,15 +17,22 @@ const DEFAULT_COLUMNS: Column[] = [
     { title: "InvNr", key: "invNr", numeric: false, sortDirection: "ascending", visible: true, locked: true },
     { title: "Status", key: "status", numeric: false, sortDirection: undefined, visible: true },
     { title: "Hersteller", key: "hersteller", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Objekttyp", key: "objekttyp", numeric: false, sortDirection: undefined, visible: false },
     { title: "Modell", key: "modell", numeric: false, sortDirection: undefined, visible: true },
     { title: "Standort", key: "standort", numeric: false, sortDirection: undefined, visible: true },
     { title: "Bereich", key: "bereich", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Kategorie", key: "kategorie", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Verantwortlicher", key: "verantwortlicher", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Seriennummer", key: "seriennummer", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Kaufdatum", key: "kaufdatum", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Einkaufspreis", key: "einkaufspreis", numeric: true, sortDirection: undefined, visible: false },
+    { title: "Zustandshinweis", key: "zustandshinweis", numeric: false, sortDirection: undefined, visible: false },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined, visible: true },
 ];
 
 const compareValues = (
-    left: string | number | undefined,
-    right: string | number | undefined,
+    left: string | number | Date | undefined,
+    right: string | number | Date | undefined,
     direction: "ascending" | "descending",
 ) => {
     const leftValue = left ?? "";
@@ -33,7 +40,11 @@ const compareValues = (
 
     let result = 0;
 
-    if (typeof leftValue === "number" && typeof rightValue === "number") {
+    if (leftValue instanceof Date || rightValue instanceof Date) {
+        const leftTime = leftValue instanceof Date ? leftValue.getTime() : 0;
+        const rightTime = rightValue instanceof Date ? rightValue.getTime() : 0;
+        result = leftTime - rightTime;
+    } else if (typeof leftValue === "number" && typeof rightValue === "number") {
         result = leftValue - rightValue;
     } else {
         result = String(leftValue).localeCompare(String(rightValue), "de", { sensitivity: "base" });
@@ -287,12 +298,26 @@ const InvTable = () => {
                 return compareValues(left.status, right.status, activeSortColumn.sortDirection);
             case "hersteller":
                 return compareValues(left.hersteller, right.hersteller, activeSortColumn.sortDirection);
+            case "objekttyp":
+                return compareValues(left.objekttyp, right.objekttyp, activeSortColumn.sortDirection);
             case "modell":
                 return compareValues(left.modell, right.modell, activeSortColumn.sortDirection);
             case "standort":
                 return compareValues(left.standort, right.standort, activeSortColumn.sortDirection);
             case "bereich":
                 return compareValues(left.bereich, right.bereich, activeSortColumn.sortDirection);
+            case "kategorie":
+                return compareValues(left.kategorie, right.kategorie, activeSortColumn.sortDirection);
+            case "verantwortlicher":
+                return compareValues(left.verantwortlicher, right.verantwortlicher, activeSortColumn.sortDirection);
+            case "seriennummer":
+                return compareValues(left.seriennummer, right.seriennummer, activeSortColumn.sortDirection);
+            case "kaufdatum":
+                return compareValues(left.kaufdatum, right.kaufdatum, activeSortColumn.sortDirection);
+            case "einkaufspreis":
+                return compareValues(left.einkaufspreis, right.einkaufspreis, activeSortColumn.sortDirection);
+            case "zustandshinweis":
+                return compareValues(left.zustandshinweis, right.zustandshinweis, activeSortColumn.sortDirection);
             case "foto":
                 return compareValues(
                     left.geraeteFoto ? 1 : 0,
