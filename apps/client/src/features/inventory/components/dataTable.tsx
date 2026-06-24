@@ -13,7 +13,6 @@ import {
     Text,
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getValueOrFallback } from "@/src/shared/utils/helpers";
 import { useInventory } from "@/src/features/inventory/context/InventoryContext";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
@@ -108,6 +107,47 @@ const getInventorySearchTerms = (item: InventoryItem) => {
         .filter(Boolean);
 
     return Array.from(new Set(normalizedTerms));
+};
+
+const formatTableDate = (value?: Date) => {
+    if (!value) {
+        return "N/A";
+    }
+
+    return new Intl.DateTimeFormat("de-DE").format(new Date(value));
+};
+
+const formatTableCurrency = (value?: number) => {
+    if (value == null) {
+        return "N/A";
+    }
+
+    return new Intl.NumberFormat("de-DE", {
+        style: "currency",
+        currency: "EUR",
+    }).format(value);
+};
+
+const getInventoryCellValue = (item: InventoryItem, key: Column["key"]) => {
+    if (key === "foto") {
+        return "";
+    }
+
+    if (key === "kaufdatum") {
+        return formatTableDate(item.kaufdatum);
+    }
+
+    if (key === "einkaufspreis") {
+        return formatTableCurrency(item.einkaufspreis);
+    }
+
+    const value = item[key];
+
+    if (value == null || value === "") {
+        return "N/A";
+    }
+
+    return String(value);
 };
 
 const DataTableComponent: React.FC<DataTableProps> = ({
@@ -551,6 +591,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             sortDirection={column.sortDirection}
                             numeric={column.numeric}
                             onPress={() => onSort(column.key)}
+                            style={column.key === "foto" ? styles.photoColumn : undefined}
                             textStyle={[styles.tableHeaderText, isDarkMode && styles.tableHeaderTextDark]}
                         >
                             {column.title}
@@ -566,7 +607,11 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             style={[styles.tableRow, isDarkMode && styles.tableRowDark]}
                         >
                             {visibleColumns.map((column) => (
-                                <DataTable.Cell key={column.key} numeric={column.numeric}>
+                                <DataTable.Cell
+                                    key={column.key}
+                                    numeric={column.numeric}
+                                    style={column.key === "foto" ? styles.photoColumn : undefined}
+                                >
                                     {column.key === "foto" ? (
                                         item.geraeteFoto ? (
                                             <View style={[styles.thumbnailFrame, isDarkMode && styles.thumbnailFrameDark]}>
@@ -592,7 +637,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                         )
                                     ) : (
                                         <Text style={[styles.cellText, isDarkMode && styles.cellTextDark]}>
-                                            {getValueOrFallback(item, column.key)}
+                                            {getInventoryCellValue(item, column.key)}
                                         </Text>
                                     )}
                                 </DataTable.Cell>
@@ -1135,6 +1180,12 @@ const styles = StyleSheet.create({
     },
     cellTextDark: {
         color: "#f4f7fb",
+    },
+    photoColumn: {
+        flex: 0,
+        width: 74,
+        minWidth: 74,
+        justifyContent: "center",
     },
     pagination: {
         width: "100%",
