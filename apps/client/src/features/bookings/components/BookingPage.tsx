@@ -14,6 +14,7 @@ import pcoPlanSuggestionService from "@/src/features/bookings/services/pcoPlanSu
 import { PcoPlanSuggestion } from "@/src/features/bookings/types/PcoPlanSuggestion";
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
+import { useQrScannerAvailability } from "@/src/features/scanner/utils/scannerAvailability";
 
 const parseDateInput = (value: string) => {
     const normalized = value.trim().replace(" ", "T");
@@ -1058,7 +1059,7 @@ const BookingPage = () => {
     const [feedback, setFeedback] = useState<string | null>(null);
     const [mappingFeedback, setMappingFeedback] = useState<string | null>(null);
     const [isScannerVisible, setIsScannerVisible] = useState(false);
-    const showScannerAction = Platform.OS !== "web" || width < 768;
+    const showScannerAction = useQrScannerAvailability();
 
     const loadBookings = async () => {
         setIsLoading(true);

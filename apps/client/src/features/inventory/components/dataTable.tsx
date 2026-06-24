@@ -18,6 +18,7 @@ import { useInventory } from "@/src/features/inventory/context/InventoryContext"
 import InventoryItem from "@/src/features/inventory/types/InventoryItem";
 import QrCodeScanner from "@/src/features/scanner/components/QrCodeScanner";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
+import { useQrScannerAvailability } from "@/src/features/scanner/utils/scannerAvailability";
 
 export interface Column {
     sortDirection: "ascending" | "descending" | undefined;
@@ -147,7 +148,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
     const [isItemsPerPageMenuVisible, setIsItemsPerPageMenuVisible] = React.useState(false);
     const [expandedFilterKey, setExpandedFilterKey] = React.useState<keyof typeof filters | null>(null);
     const isCompactMobile = width < 640;
-    const showScannerAction = Platform.OS !== "web" || isCompactMobile;
+    const showScannerAction = useQrScannerAvailability();
     const webSearchbarShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.028)" } : null;
     const webTableShadowStyle = Platform.OS === "web" ? { boxShadow: "0px 10px 24px rgba(0, 0, 0, 0.028)" } : null;
     const shouldWrapFilterChips = Platform.OS === "web";
