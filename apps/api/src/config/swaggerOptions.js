@@ -23,6 +23,7 @@ const options = {
             { name: 'Hersteller', description: 'Pflege der Hersteller-Stammdaten' },
             { name: 'Modell', description: 'Pflege der Modell-Stammdaten' },
             { name: 'Objekttyp', description: 'Pflege der Objekttyp-Stammdaten' },
+            { name: 'Stammdaten', description: 'Uebersicht und Nutzungsinformationen fuer Stammdaten' },
         ],
         components: {
             securitySchemes: {
