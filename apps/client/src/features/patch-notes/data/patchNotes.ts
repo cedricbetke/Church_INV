@@ -20,6 +20,20 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.17",
+            date: "2026-06-24",
+            title: "Mobiler QR-Scan robuster",
+            summary: "Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Auf mobilen HTTP-Aufrufen im lokalen Netzwerk verschwindet die QR-Aktion, waehrend localhost, HTTPS und die mobile App den Scanner weiterhin anzeigen.",
+            issueUrl: "https://github.com/cedricbetke/Church_INV/issues/28",
+            issueLabel: "#28",
+            items: [
+                "Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet",
+                "Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung",
+                "Der Scanner bleibt ueber localhost, HTTPS und in der mobilen App sichtbar",
+                "Falls der Scanner trotzdem in einem unsicheren Browser-Kontext geoeffnet wird, erscheint eine lesbare Hinweismeldung statt schlecht erkennbarem Text",
+            ],
+        },
+        {
             version: "0.7.16",
             date: "2026-06-21",
             title: "Dokumentauswahl in Safari stabilisiert",
