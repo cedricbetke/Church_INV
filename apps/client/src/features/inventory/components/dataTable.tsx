@@ -591,6 +591,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             sortDirection={column.sortDirection}
                             numeric={column.numeric}
                             onPress={() => onSort(column.key)}
+                            style={column.key === "foto" ? styles.photoColumn : undefined}
                             textStyle={[styles.tableHeaderText, isDarkMode && styles.tableHeaderTextDark]}
                         >
                             {column.title}
@@ -606,7 +607,11 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             style={[styles.tableRow, isDarkMode && styles.tableRowDark]}
                         >
                             {visibleColumns.map((column) => (
-                                <DataTable.Cell key={column.key} numeric={column.numeric}>
+                                <DataTable.Cell
+                                    key={column.key}
+                                    numeric={column.numeric}
+                                    style={column.key === "foto" ? styles.photoColumn : undefined}
+                                >
                                     {column.key === "foto" ? (
                                         item.geraeteFoto ? (
                                             <View style={[styles.thumbnailFrame, isDarkMode && styles.thumbnailFrameDark]}>
@@ -1175,6 +1180,12 @@ const styles = StyleSheet.create({
     },
     cellTextDark: {
         color: "#f4f7fb",
+    },
+    photoColumn: {
+        flex: 0,
+        width: 74,
+        minWidth: 74,
+        justifyContent: "center",
     },
     pagination: {
         width: "100%",

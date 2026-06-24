@@ -25,7 +25,7 @@ const DEFAULT_COLUMNS: Column[] = [
     { title: "Verantwortlicher", key: "verantwortlicher", numeric: false, sortDirection: undefined, visible: false },
     { title: "Seriennummer", key: "seriennummer", numeric: false, sortDirection: undefined, visible: false },
     { title: "Kaufdatum", key: "kaufdatum", numeric: false, sortDirection: undefined, visible: false },
-    { title: "Einkaufspreis", key: "einkaufspreis", numeric: true, sortDirection: undefined, visible: false },
+    { title: "Einkaufspreis", key: "einkaufspreis", numeric: false, sortDirection: undefined, visible: false },
     { title: "Zustandshinweis", key: "zustandshinweis", numeric: false, sortDirection: undefined, visible: false },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined, visible: true },
 ];
@@ -397,7 +397,6 @@ const styles = StyleSheet.create({
 });
 
 export default InvTable;
-
 
 
 
