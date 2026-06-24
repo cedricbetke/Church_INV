@@ -16,20 +16,14 @@ const Standort = {
         return Number(rows[0]?.count ?? 0);
     },
 
-    create: async (name, adresse) => {
-        const [result] = await db.query(
-            'INSERT INTO standort (name, adresse) VALUES (?, ?)',
-            [name, adresse]
-        );
-        return { id: result.insertId, name, adresse };
+    create: async (name) => {
+        const [result] = await db.query('INSERT INTO standort (name) VALUES (?)', [name]);
+        return { id: result.insertId, name };
     },
 
-    update: async (id, name, adresse) => {
-        await db.query(
-            'UPDATE standort SET name = ?, adresse = ? WHERE id = ?',
-            [name, adresse, id]
-        );
-        return { id, name, adresse };
+    update: async (id, name) => {
+        await db.query('UPDATE standort SET name = ? WHERE id = ?', [name, id]);
+        return { id, name };
     },
 
     delete: async (id) => {

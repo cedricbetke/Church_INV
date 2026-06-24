@@ -33,7 +33,13 @@ Im aktuellen Stand werden diese Stammdaten genutzt:
 - Person
 - Status
 
-Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
+Admins koennen alle Stammdaten direkt in der Stammdaten-Maske anlegen und bearbeiten.
+
+Die API und die Stammdaten-Maske nutzen dabei die vorhandenen Datenbankfelder:
+
+- Standort: `name`
+- Person: `vorname`, `nachname`
+- Kategorie: `name`, `bereich_id`
 
 Beim Anlegen eines Geraets gilt aktuell:
 

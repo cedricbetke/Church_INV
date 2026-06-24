@@ -16,20 +16,20 @@ const Person = {
         return Number(rows[0]?.count ?? 0);
     },
 
-    create: async (vorname, nachname, email) => {
+    create: async (vorname, nachname) => {
         const [result] = await db.query(
-            'INSERT INTO person (vorname, nachname, email) VALUES (?, ?, ?)',
-            [vorname, nachname, email]
+            'INSERT INTO person (vorname, nachname) VALUES (?, ?)',
+            [vorname, nachname]
         );
-        return { id: result.insertId, vorname, nachname, email };
+        return { id: result.insertId, vorname, nachname };
     },
 
-    update: async (id, vorname, nachname, email) => {
+    update: async (id, vorname, nachname) => {
         await db.query(
-            'UPDATE person SET vorname = ?, nachname = ?, email = ? WHERE id = ?',
-            [vorname, nachname, email, id]
+            'UPDATE person SET vorname = ?, nachname = ? WHERE id = ?',
+            [vorname, nachname, id]
         );
-        return { id, vorname, nachname, email };
+        return { id, vorname, nachname };
     },
 
     delete: async (id) => {

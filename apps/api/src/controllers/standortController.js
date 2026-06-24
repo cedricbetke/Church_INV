@@ -21,12 +21,12 @@ const getStandortById = async (req, res) => {
 
 const createStandort = async (req, res) => {
     try {
-        const { name, adresse } = req.body;
-        if (!name || !adresse) {
-            return res.status(400).json({ error: 'Name und Adresse sind erforderlich' });
+        const { name } = req.body;
+        if (!name) {
+            return res.status(400).json({ error: 'Name ist erforderlich' });
         }
 
-        const newStandort = await Standort.create(name, adresse);
+        const newStandort = await Standort.create(name);
         res.status(201).json(newStandort);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -35,12 +35,12 @@ const createStandort = async (req, res) => {
 
 const updateStandort = async (req, res) => {
     try {
-        const { name, adresse } = req.body;
-        if (!name || !adresse) {
-            return res.status(400).json({ error: 'Name und Adresse sind erforderlich' });
+        const { name } = req.body;
+        if (!name) {
+            return res.status(400).json({ error: 'Name ist erforderlich' });
         }
 
-        const updatedStandort = await Standort.update(req.params.id, name, adresse);
+        const updatedStandort = await Standort.update(req.params.id, name);
         res.json(updatedStandort);
     } catch (error) {
         res.status(500).json({ error: error.message });

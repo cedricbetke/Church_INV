@@ -1,5 +1,7 @@
 import { createCrudService } from "@/src/shared/api/createCrudService";
 
-const personService = createCrudService<Person, { vorname: string; nachname: string; email: string }>("person");
+type PersonPayload = { vorname: string; nachname: string };
+
+const personService = createCrudService<Person, PersonPayload, PersonPayload>("person");
 
 export default personService;
