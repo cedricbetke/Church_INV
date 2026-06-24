@@ -45,6 +45,17 @@ const updateHersteller = async (req, res) => {
 
 const deleteHersteller = async (req, res) => {
     try {
+        const hersteller = await Hersteller.getById(req.params.id);
+        if (!hersteller) return res.status(404).json({ error: 'Hersteller nicht gefunden' });
+
+        const usageCount = await Hersteller.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Hersteller wird noch von Modellen verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Hersteller.delete(req.params.id);
         res.json(result);
     } catch (error) {

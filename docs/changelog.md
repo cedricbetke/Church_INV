@@ -6,15 +6,20 @@
 ## 0.7.17
 
 **24.06.2026**  
-**Mobile Bedienung und Inventaruebersicht verbessert**
+**Mobile Bedienung, Inventaruebersicht und Stammdaten verbessert**
 
-Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen.
+Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen, und unbenutzte Stammdaten koennen kontrolliert entfernt werden.
 
 - Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet
 - Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung
 - Der Scanner bleibt ueber localhost, HTTPS und in der mobilen App sichtbar
 - Falls der Scanner trotzdem in einem unsicheren Browser-Kontext geoeffnet wird, erscheint eine lesbare Hinweismeldung statt schlecht erkennbarem Text
 - Unter Spalten kann die Inventaruebersicht jetzt Seriennummer, Objekttyp, Kategorie, Verantwortlichen, Kaufdatum, Einkaufspreis und Zustandshinweis einblenden
+- Admins sehen in der Stammdaten-Maske jetzt Hersteller, Objekttypen, Modelle, Status, Bereiche, Standorte, Kategorien und Personen in einer uebersichtlicheren Tab-Navigation
+- Admins koennen dort unbenutzte Stammdaten loeschen
+- Stammdaten, die noch von anderen Stammdaten oder Geraeten verwendet werden, werden beim Loeschen serverseitig blockiert
+- Die Nutzungsanzeige der Stammdaten wird jetzt zentral von der API berechnet statt im Browser pro Zeile aus der Inventarliste abgeleitet
+- Die Stammdaten-Maske rendert nur noch den aktiven Tab und wird nach Admin-Freigabe im Hintergrund vorgeladen
 
 ## 0.7.16
 

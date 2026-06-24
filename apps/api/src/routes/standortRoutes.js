@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const standortController = require('../controllers/standortController');
+const requireAdmin = require('../middleware/requireAdmin');
 
 /**
  * @swagger
@@ -135,6 +136,6 @@ router.put('/:id', standortController.updateStandort);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', standortController.deleteStandort);
+router.delete('/:id', requireAdmin, standortController.deleteStandort);
 
 module.exports = router;

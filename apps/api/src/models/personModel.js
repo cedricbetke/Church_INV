@@ -11,6 +11,11 @@ const Person = {
         return rows[0];
     },
 
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE verantwortlicher_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
+    },
+
     create: async (vorname, nachname, email) => {
         const [result] = await db.query(
             'INSERT INTO person (vorname, nachname, email) VALUES (?, ?, ?)',

@@ -14,7 +14,8 @@ const BUG_ISSUE_URL =
 const FEATURE_ISSUE_URL =
     "https://github.com/cedricbetke/Church_INV/issues/new?labels=enhancement&title=Feature%3A%20&body=Bitte%20hier%20kurz%20beschreiben%3A%0A%0A-%20Was%20wuenschst%20du%20dir%3F%0A-%20Welches%20Problem%20wuerde%20das%20loesen%3F%0A-%20Wie%20sollte%20es%20sich%20verhalten%3F%0A";
 const CURRENT_VERSION = patchNotesData.entries[0]?.version ?? "0.0.0";
-const MasterdataAdminModal = React.lazy(() => import("@/src/features/masterdata/components/MasterdataAdminModal"));
+const loadMasterdataAdminModal = () => import("@/src/features/masterdata/components/MasterdataAdminModal");
+const MasterdataAdminModal = React.lazy(loadMasterdataAdminModal);
 const PatchNotesModal = React.lazy(() => import("@/src/features/patch-notes/components/PatchNotesModal"));
 
 const TopBar = () => {
@@ -37,9 +38,16 @@ const TopBar = () => {
         brands,
         objekttypen,
         models,
+        states,
+        bereiche,
+        standorte,
+        kategorien,
+        personen,
+        masterdataUsage,
         addBrand,
         addObjectType,
         addModel,
+        refreshMasterdata,
         activateAdminSession,
         clearAdminSession,
     } = useInventory();
@@ -83,6 +91,12 @@ const TopBar = () => {
         writeSeenUpdateVersion(latestPatchNote.version);
         setShowUpdateNotice(true);
     }, [latestPatchNote?.version]);
+
+    React.useEffect(() => {
+        if (canManageInventory) {
+            void loadMasterdataAdminModal();
+        }
+    }, [canManageInventory]);
 
     const renderAction = (
         icon: string,
@@ -258,9 +272,16 @@ const TopBar = () => {
                             brands={brands}
                             objekttypen={objekttypen}
                             models={models}
+                            states={states}
+                            bereiche={bereiche}
+                            standorte={standorte}
+                            kategorien={kategorien}
+                            personen={personen}
+                            masterdataUsage={masterdataUsage}
                             addBrand={addBrand}
                             addObjectType={addObjectType}
                             addModel={addModel}
+                            onMasterdataChanged={refreshMasterdata}
                         />
                     </React.Suspense>
                 )}
@@ -563,4 +584,3 @@ const styles = StyleSheet.create({
 });
 
 export default TopBar;
-

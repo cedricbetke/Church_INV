@@ -49,6 +49,17 @@ const updatePerson = async (req, res) => {
 
 const deletePerson = async (req, res) => {
     try {
+        const person = await Person.getById(req.params.id);
+        if (!person) return res.status(404).json({ error: 'Person nicht gefunden' });
+
+        const usageCount = await Person.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Person wird noch als Verantwortlicher verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Person.delete(req.params.id);
         res.json(result);
     } catch (error) {

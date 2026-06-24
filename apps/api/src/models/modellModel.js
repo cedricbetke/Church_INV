@@ -11,6 +11,11 @@ const Modell = {
         return rows[0];
     },
 
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE modell_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
+    },
+
     create: async (name, hersteller_id, objekttyp_id = null) => {
         const [result] = await db.query(
             'INSERT INTO modell (name, hersteller_id, objekttyp_id) VALUES (?, ?, ?)',

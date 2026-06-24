@@ -10,6 +10,7 @@ import standortService from "@/src/features/masterdata/services/standortService"
 import kategorieService from "@/src/features/masterdata/services/kategorieService";
 import personService from "@/src/features/masterdata/services/personService";
 import objekttypService from "@/src/features/masterdata/services/objekttypService";
+import masterdataUsageService, { emptyMasterdataUsage, MasterdataUsage } from "@/src/features/masterdata/services/masterdataUsageService";
 
 export interface InventoryDataState {
     items: InventoryItem[];
@@ -30,7 +31,10 @@ export interface InventoryDataState {
     setPersonen: Dispatch<SetStateAction<Person[]>>;
     objekttypen: Array<{ id: number; name: string }>;
     setObjekttypen: Dispatch<SetStateAction<Array<{ id: number; name: string }>>>;
+    masterdataUsage: MasterdataUsage;
+    setMasterdataUsage: Dispatch<SetStateAction<MasterdataUsage>>;
     fetchItems: () => Promise<InventoryItem[]>;
+    refreshMasterdata: () => Promise<void>;
     fetchMaxGeraeteId: () => Promise<number>;
     addBrand: (brandName: string) => Promise<Hersteller>;
     addObjectType: (name: string) => Promise<{ id: number; name: string }>;
@@ -47,6 +51,7 @@ export const useInventoryData = (): InventoryDataState => {
     const [kategorien, setKategorien] = useState<Kategorie[]>([]);
     const [personen, setPersonen] = useState<Person[]>([]);
     const [objekttypen, setObjekttypen] = useState<Array<{ id: number; name: string }>>([]);
+    const [masterdataUsage, setMasterdataUsage] = useState<MasterdataUsage>(emptyMasterdataUsage);
 
     const fetchItems = async () => {
         try {
@@ -131,6 +136,30 @@ export const useInventoryData = (): InventoryDataState => {
         }
     };
 
+    const fetchMasterdataUsage = async () => {
+        try {
+            const response = await masterdataUsageService.getAll();
+            setMasterdataUsage(response);
+        } catch (error) {
+            console.error("Fehler beim Laden der Stammdaten-Nutzung:", error);
+            setMasterdataUsage(emptyMasterdataUsage);
+        }
+    };
+
+    const refreshMasterdata = async () => {
+        await Promise.all([
+            fetchStates(),
+            fetchModels(),
+            fetchBrands(),
+            fetchBereiche(),
+            fetchStandorte(),
+            fetchKategorien(),
+            fetchPersonen(),
+            fetchObjekttypen(),
+            fetchMasterdataUsage(),
+        ]);
+    };
+
     const fetchMaxGeraeteId = async (): Promise<number> => {
         try {
             const response = await geraeteService.getMaxId();
@@ -181,14 +210,7 @@ export const useInventoryData = (): InventoryDataState => {
 
     useEffect(() => {
         fetchItems();
-        fetchStates();
-        fetchModels();
-        fetchBrands();
-        fetchBereiche();
-        fetchStandorte();
-        fetchKategorien();
-        fetchPersonen();
-        fetchObjekttypen();
+        refreshMasterdata();
     }, []);
 
     return {
@@ -210,7 +232,10 @@ export const useInventoryData = (): InventoryDataState => {
         setPersonen,
         objekttypen,
         setObjekttypen,
+        masterdataUsage,
+        setMasterdataUsage,
         fetchItems,
+        refreshMasterdata,
         fetchMaxGeraeteId,
         addBrand,
         addObjectType,

@@ -49,6 +49,17 @@ const updateStandort = async (req, res) => {
 
 const deleteStandort = async (req, res) => {
     try {
+        const standort = await Standort.getById(req.params.id);
+        if (!standort) return res.status(404).json({ error: 'Standort nicht gefunden' });
+
+        const usageCount = await Standort.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Standort wird noch von Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Standort.delete(req.params.id);
         res.json(result);
     } catch (error) {

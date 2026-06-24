@@ -11,6 +11,11 @@ const Standort = {
         return rows[0];
     },
 
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE standort_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
+    },
+
     create: async (name, adresse) => {
         const [result] = await db.query(
             'INSERT INTO standort (name, adresse) VALUES (?, ?)',

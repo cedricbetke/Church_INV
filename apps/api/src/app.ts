@@ -18,6 +18,7 @@ const geraetRoutes = require("./routes/geraetRoutes");
 const buchungRoutes = require("./routes/buchungRoutes");
 const pcoMappingRoutes = require("./routes/pcoMappingRoutes");
 const pcoPlanSuggestionRoutes = require("./routes/pcoPlanSuggestionRoutes");
+const masterdataUsageRoutes = require("./routes/masterdataUsageRoutes");
 
 export const app = express();
 const uploadsDir = path.resolve(__dirname, "..", "uploads");
@@ -37,6 +38,7 @@ app.use("/api/objekttyp", objekttypRoutes);
 app.use("/api/person", personRoutes);
 app.use("/api/standort", standortRoutes);
 app.use("/api/status", statusRoutes);
+app.use("/api/masterdata/usage", masterdataUsageRoutes);
 app.use("/api/geraet", geraetRoutes);
 app.use("/api/buchung", buchungRoutes);
 app.use("/api/pco-mapping", pcoMappingRoutes);

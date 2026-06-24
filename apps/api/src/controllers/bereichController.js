@@ -45,6 +45,17 @@ const updateBereich = async (req, res) => {
 
 const deleteBereich = async (req, res) => {
     try {
+        const bereich = await Bereich.getById(req.params.id);
+        if (!bereich) return res.status(404).json({ error: 'Bereich nicht gefunden' });
+
+        const usageCount = await Bereich.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Bereich wird noch von Kategorien oder Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Bereich.delete(req.params.id);
         res.json(result);
     } catch (error) {

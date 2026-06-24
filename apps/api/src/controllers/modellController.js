@@ -52,6 +52,19 @@ const updateModell = async (req, res) => {
 
 const deleteModell = async (req, res) => {
     try {
+        const modell = await Modell.getById(req.params.id);
+        if (!modell) {
+            return res.status(404).json({ error: 'Modell nicht gefunden' });
+        }
+
+        const usageCount = await Modell.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Modell wird noch von Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Modell.delete(req.params.id);
         res.json(result);
     } catch (error) {

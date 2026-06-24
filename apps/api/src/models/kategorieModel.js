@@ -11,6 +11,11 @@ const Kategorie = {
         return rows[0];
     },
 
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE kategorie_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
+    },
+
     create: async (name, bereich_id) => {
         const [result] = await db.query('INSERT INTO kategorie (name, bereich_id) VALUES (?, ?)', [name, bereich_id]);
         return { id: result.insertId, name, bereich_id };

@@ -1,10 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Divider, HelperText, Modal, Text, TextInput } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
 import objekttypService from "@/src/features/masterdata/services/objekttypService";
 import modellService from "@/src/features/masterdata/services/modellService";
+import statusService from "@/src/features/masterdata/services/statusService";
+import bereichService from "@/src/features/masterdata/services/bereichService";
+import standortService from "@/src/features/masterdata/services/standortService";
+import kategorieService from "@/src/features/masterdata/services/kategorieService";
+import personService from "@/src/features/masterdata/services/personService";
+import { MasterdataUsage } from "@/src/features/masterdata/services/masterdataUsageService";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
 
 interface MasterdataAdminModalProps {
@@ -13,12 +19,49 @@ interface MasterdataAdminModalProps {
     brands: Hersteller[];
     objekttypen: Array<{ id: number; name: string }>;
     models: Modell[];
+    states: Status[];
+    bereiche: Bereich[];
+    standorte: Standort[];
+    kategorien: Kategorie[];
+    personen: Person[];
+    masterdataUsage: MasterdataUsage;
     addBrand: (brandName: string) => Promise<Hersteller>;
     addObjectType: (name: string) => Promise<{ id: number; name: string }>;
     addModel: (name: string, herstellerId: number, objekttypId: number) => Promise<Modell>;
+    onMasterdataChanged: () => Promise<void>;
 }
 
 const normalize = (value: string) => value.trim().toLowerCase();
+
+const confirmDelete = (label: string): Promise<boolean> => {
+    const message = `${label} wirklich loeschen? Das geht nur, wenn der Eintrag nicht verwendet wird.`;
+
+    if (Platform.OS === "web" && typeof globalThis.confirm === "function") {
+        return Promise.resolve(globalThis.confirm(message));
+    }
+
+    return new Promise((resolve) => {
+        Alert.alert("Stammdatum loeschen", message, [
+            { text: "Abbrechen", style: "cancel", onPress: () => resolve(false) },
+            { text: "Loeschen", style: "destructive", onPress: () => resolve(true) },
+        ]);
+    });
+};
+
+const getErrorMessage = (unknownError: unknown, fallback: string) => {
+    const apiError = unknownError as { response?: { data?: { error?: string } } };
+    return apiError.response?.data?.error ?? fallback;
+};
+
+type MasterdataSectionKey =
+    | "brands"
+    | "objectTypes"
+    | "models"
+    | "states"
+    | "bereiche"
+    | "standorte"
+    | "kategorien"
+    | "personen";
 
 const HoverRow = ({
     children,
@@ -53,9 +96,16 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     brands,
     objekttypen,
     models,
+    states,
+    bereiche,
+    standorte,
+    kategorien,
+    personen,
+    masterdataUsage,
     addBrand,
     addObjectType,
     addModel,
+    onMasterdataChanged,
 }) => {
     const { isDarkMode } = useAppThemeMode();
     const [brandName, setBrandName] = useState("");
@@ -70,11 +120,18 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [brandListQuery, setBrandListQuery] = useState("");
     const [objectTypeListQuery, setObjectTypeListQuery] = useState("");
     const [modelListQuery, setModelListQuery] = useState("");
+    const [statusListQuery, setStatusListQuery] = useState("");
+    const [bereichListQuery, setBereichListQuery] = useState("");
+    const [standortListQuery, setStandortListQuery] = useState("");
+    const [kategorieListQuery, setKategorieListQuery] = useState("");
+    const [personListQuery, setPersonListQuery] = useState("");
     const [editingBrandId, setEditingBrandId] = useState<number | null>(null);
     const [editingObjectTypeId, setEditingObjectTypeId] = useState<number | null>(null);
     const [editingModelId, setEditingModelId] = useState<number | null>(null);
+    const [activeSection, setActiveSection] = useState<MasterdataSectionKey>("models");
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [deletingTarget, setDeletingTarget] = useState<string | null>(null);
     const [isContentReady, setIsContentReady] = useState(false);
 
     if (!visible) {
@@ -98,6 +155,48 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         () => (isContentReady ? [...objekttypen].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
         [objekttypen, isContentReady],
     );
+    const sortedStates = useMemo(
+        () => (isContentReady ? [...states].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
+        [states, isContentReady],
+    );
+    const sortedBereiche = useMemo(
+        () => (isContentReady ? [...bereiche].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
+        [bereiche, isContentReady],
+    );
+    const sortedStandorte = useMemo(
+        () => (isContentReady ? [...standorte].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
+        [standorte, isContentReady],
+    );
+    const sortedKategorien = useMemo(
+        () => (
+            isContentReady
+                ? [...kategorien]
+                    .sort((left, right) => left.name.localeCompare(right.name, "de"))
+                    .map((kategorie) => {
+                        const bereich = bereiche.find((entry) => entry.id === kategorie.bereich_id)?.name ?? "Unbekannt";
+                        return {
+                            id: kategorie.id,
+                            label: `${kategorie.name} - ${bereich}`,
+                            name: kategorie.name,
+                        };
+                    })
+                : []
+        ),
+        [bereiche, kategorien, isContentReady],
+    );
+    const sortedPersonen = useMemo(
+        () => (
+            isContentReady
+                ? [...personen]
+                    .sort((left, right) => `${left.vorname} ${left.nachname}`.localeCompare(`${right.vorname} ${right.nachname}`, "de"))
+                    .map((person) => ({
+                        id: person.id,
+                        label: [person.vorname, person.nachname].filter(Boolean).join(" ") || person.email,
+                    }))
+                : []
+        ),
+        [personen, isContentReady],
+    );
     const modelRows = useMemo(
         () => (
             isContentReady
@@ -108,7 +207,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         const objectType = objekttypen.find((entry) => entry.id === model.objekttyp_id)?.name ?? "Unbekannt";
                         return {
                             id: model.id,
-                            label: `${model.name} · ${brand} · ${objectType}`,
+                            label: `${model.name} - ${brand} - ${objectType}`,
                         };
                     })
                 : []
@@ -128,6 +227,45 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         () => modelRows.filter((model) => normalize(model.label).includes(normalize(modelListQuery))),
         [modelRows, modelListQuery],
     );
+    const filteredStates = useMemo(
+        () => sortedStates.filter((state) => normalize(state.name).includes(normalize(statusListQuery))),
+        [sortedStates, statusListQuery],
+    );
+    const filteredBereiche = useMemo(
+        () => sortedBereiche.filter((bereich) => normalize(bereich.name).includes(normalize(bereichListQuery))),
+        [sortedBereiche, bereichListQuery],
+    );
+    const filteredStandorte = useMemo(
+        () => sortedStandorte.filter((standort) => normalize(standort.name).includes(normalize(standortListQuery))),
+        [sortedStandorte, standortListQuery],
+    );
+    const filteredKategorien = useMemo(
+        () => sortedKategorien.filter((kategorie) => normalize(kategorie.label).includes(normalize(kategorieListQuery))),
+        [sortedKategorien, kategorieListQuery],
+    );
+    const filteredPersonen = useMemo(
+        () => sortedPersonen.filter((person) => normalize(person.label).includes(normalize(personListQuery))),
+        [sortedPersonen, personListQuery],
+    );
+    const hasUsage = (usage: Record<number, number>, id: number) => Number(usage[id] ?? 0) > 0;
+    const isStatusUsed = (status: Status) => hasUsage(masterdataUsage.states, status.id);
+    const isBereichUsed = (bereich: Bereich) => hasUsage(masterdataUsage.bereiche, bereich.id);
+    const isStandortUsed = (standort: Standort) => hasUsage(masterdataUsage.standorte, standort.id);
+    const isKategorieUsed = (kategorieId: number) => hasUsage(masterdataUsage.kategorien, kategorieId);
+    const isPersonUsed = (personId: number) => hasUsage(masterdataUsage.personen, personId);
+    const sectionTabs = useMemo(
+        () => [
+            { key: "brands" as const, label: "Hersteller", count: brands.length },
+            { key: "objectTypes" as const, label: "Objekttypen", count: objekttypen.length },
+            { key: "models" as const, label: "Modelle", count: models.length },
+            { key: "states" as const, label: "Status", count: states.length },
+            { key: "bereiche" as const, label: "Bereiche", count: bereiche.length },
+            { key: "standorte" as const, label: "Standorte", count: standorte.length },
+            { key: "kategorien" as const, label: "Kategorien", count: kategorien.length },
+            { key: "personen" as const, label: "Personen", count: personen.length },
+        ],
+        [bereiche.length, brands.length, kategorien.length, models.length, objekttypen.length, personen.length, standorte.length, states.length],
+    );
 
     const resetForm = () => {
         setBrandName("");
@@ -142,11 +280,17 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setBrandListQuery("");
         setObjectTypeListQuery("");
         setModelListQuery("");
+        setStatusListQuery("");
+        setBereichListQuery("");
+        setStandortListQuery("");
+        setKategorieListQuery("");
+        setPersonListQuery("");
         setEditingBrandId(null);
         setEditingObjectTypeId(null);
         setEditingModelId(null);
         setError(null);
         setIsSaving(false);
+        setDeletingTarget(null);
     };
 
     const handleDismiss = () => {
@@ -175,6 +319,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             setBrandName("");
             setSelectedBrandName(createdBrand.name);
             setEditingBrandId(null);
+            await onMasterdataChanged();
         } catch (createError) {
             console.error("Fehler beim Anlegen des Herstellers:", createError);
             setError(editingBrandId ? "Hersteller konnte nicht aktualisiert werden." : "Hersteller konnte nicht angelegt werden.");
@@ -204,6 +349,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             setObjectTypeName("");
             setSelectedObjectTypeName(createdObjectType.name);
             setEditingObjectTypeId(null);
+            await onMasterdataChanged();
         } catch (createError) {
             console.error("Fehler beim Anlegen des Objekttyps:", createError);
             setError(editingObjectTypeId ? "Objekttyp konnte nicht aktualisiert werden." : "Objekttyp konnte nicht angelegt werden.");
@@ -261,6 +407,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             setSelectedBrandName("");
             setSelectedObjectTypeName("");
             setEditingModelId(null);
+            await onMasterdataChanged();
         } catch (createError) {
             console.error("Fehler beim Anlegen des Modells:", createError);
             setError(editingModelId ? "Modell konnte nicht aktualisiert werden." : "Modell konnte nicht angelegt werden.");
@@ -269,13 +416,303 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         }
     };
 
+    const handleDeleteBrand = async (brand: Hersteller) => {
+        if (!brand.id) {
+            setError("Hersteller kann nicht geloescht werden, weil die ID fehlt.");
+            return;
+        }
+
+        if (hasUsage(masterdataUsage.brands, brand.id)) {
+            setError("Hersteller wird noch von Modellen verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Hersteller "${brand.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`brand-${brand.id}`);
+            setError(null);
+            await herstellerService.delete(brand.id);
+            if (editingBrandId === brand.id) {
+                setBrandName("");
+                setEditingBrandId(null);
+            }
+            if (normalize(selectedBrandName) === normalize(brand.name)) {
+                setSelectedBrandName("");
+            }
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen des Herstellers:", deleteError);
+            setError(getErrorMessage(deleteError, "Hersteller konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteObjectType = async (objectType: { id: number; name: string }) => {
+        if (hasUsage(masterdataUsage.objectTypes, objectType.id)) {
+            setError("Objekttyp wird noch von Modellen verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Objekttyp "${objectType.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`objectType-${objectType.id}`);
+            setError(null);
+            await objekttypService.delete(objectType.id);
+            if (editingObjectTypeId === objectType.id) {
+                setObjectTypeName("");
+                setEditingObjectTypeId(null);
+            }
+            if (normalize(selectedObjectTypeName) === normalize(objectType.name)) {
+                setSelectedObjectTypeName("");
+            }
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen des Objekttyps:", deleteError);
+            setError(getErrorMessage(deleteError, "Objekttyp konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteModel = async (modelId: number) => {
+        const currentModel = models.find((entry) => entry.id === modelId);
+        if (!currentModel) {
+            return;
+        }
+
+        if (hasUsage(masterdataUsage.models, modelId)) {
+            setError("Modell wird noch von Geraeten verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Modell "${currentModel.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`model-${modelId}`);
+            setError(null);
+            await modellService.delete(modelId);
+            if (editingModelId === modelId) {
+                setModelName("");
+                setSelectedBrandName("");
+                setSelectedObjectTypeName("");
+                setEditingModelId(null);
+            }
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen des Modells:", deleteError);
+            setError(getErrorMessage(deleteError, "Modell konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteStatus = async (status: Status) => {
+        if (isStatusUsed(status)) {
+            setError("Status wird noch von Geraeten verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Status "${status.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`status-${status.id}`);
+            setError(null);
+            await statusService.delete(status.id);
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen des Status:", deleteError);
+            setError(getErrorMessage(deleteError, "Status konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteBereich = async (bereich: Bereich) => {
+        if (isBereichUsed(bereich)) {
+            setError("Bereich wird noch von Kategorien oder Geraeten verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Bereich "${bereich.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`bereich-${bereich.id}`);
+            setError(null);
+            await bereichService.delete(bereich.id);
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen des Bereichs:", deleteError);
+            setError(getErrorMessage(deleteError, "Bereich konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteStandort = async (standort: Standort) => {
+        if (isStandortUsed(standort)) {
+            setError("Standort wird noch von Geraeten verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Standort "${standort.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`standort-${standort.id}`);
+            setError(null);
+            await standortService.delete(standort.id);
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen des Standorts:", deleteError);
+            setError(getErrorMessage(deleteError, "Standort konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteKategorie = async (kategorie: { id: number; name: string }) => {
+        if (isKategorieUsed(kategorie.id)) {
+            setError("Kategorie wird noch von Geraeten verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Kategorie "${kategorie.name}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`kategorie-${kategorie.id}`);
+            setError(null);
+            await kategorieService.delete(kategorie.id);
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen der Kategorie:", deleteError);
+            setError(getErrorMessage(deleteError, "Kategorie konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeletePerson = async (person: { id: number; label: string }) => {
+        if (isPersonUsed(person.id)) {
+            setError("Person wird noch als Verantwortlicher verwendet und kann nicht geloescht werden.");
+            return;
+        }
+
+        if (!(await confirmDelete(`Person "${person.label}"`))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setDeletingTarget(`person-${person.id}`);
+            setError(null);
+            await personService.delete(person.id);
+            await onMasterdataChanged();
+        } catch (deleteError) {
+            console.error("Fehler beim Loeschen der Person:", deleteError);
+            setError(getErrorMessage(deleteError, "Person konnte nicht geloescht werden."));
+        } finally {
+            setDeletingTarget(null);
+            setIsSaving(false);
+        }
+    };
+
+    const renderReadOnlySection = ({
+        title,
+        searchLabel,
+        query,
+        onQueryChange,
+        rows,
+        emptyMessage,
+    }: {
+        title: string;
+        searchLabel: string;
+        query: string;
+        onQueryChange: (value: string) => void;
+        rows: Array<{
+            id: number;
+            label: string;
+            isUsed: boolean;
+            deleteTarget: string;
+            onDelete: () => void;
+        }>;
+        emptyMessage: string;
+    }) => (
+        <>
+            <Divider />
+
+            <View style={styles.section}>
+                <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>{title}</Text>
+                <TextInput
+                    mode="outlined"
+                    label={searchLabel}
+                    value={query}
+                    onChangeText={onQueryChange}
+                    style={isDarkMode ? styles.inputDark : undefined}
+                />
+                <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
+                    {rows.map((row) => (
+                        <View key={row.id} style={[styles.rowItem, isDarkMode && styles.rowItemDark]}>
+                            <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
+                                {row.label}
+                            </Text>
+                            <Button
+                                mode="text"
+                                textColor="#b3261e"
+                                disabled={isSaving || row.isUsed || deletingTarget === row.deleteTarget}
+                                loading={deletingTarget === row.deleteTarget}
+                                onPress={row.onDelete}
+                            >
+                                {row.isUsed ? "Genutzt" : "Loeschen"}
+                            </Button>
+                        </View>
+                    ))}
+                    {rows.length === 0 && (
+                        <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
+                            {emptyMessage}
+                        </Text>
+                    )}
+                </ScrollView>
+            </View>
+        </>
+    );
+
     return (
         <Modal visible={visible} onDismiss={handleDismiss} contentContainerStyle={[styles.modal, isDarkMode && styles.modalDark]}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
                     <Text variant="titleLarge" style={isDarkMode ? styles.titleDark : undefined}>Stammdaten</Text>
                     <Text variant="bodyMedium" style={[styles.subtleText, isDarkMode && styles.subtleTextDark]}>
-                        Erste Admin-Version zum Pflegen von Herstellern, Objekttypen und Modellen.
+                        Admin-Uebersicht fuer Inventar-Stammdaten.
                     </Text>
                 </View>
 
@@ -287,7 +724,41 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     </View>
                 ) : (
                     <>
+                <View style={[styles.sectionNavigation, isDarkMode && styles.sectionNavigationDark]}>
+                    {sectionTabs.map((section) => {
+                        const isActive = activeSection === section.key;
 
+                        return (
+                            <Pressable
+                                key={section.key}
+                                onPress={() => {
+                                    setActiveSection(section.key);
+                                    setError(null);
+                                }}
+                            >
+                                {({ hovered, pressed }) => (
+                                    <View
+                                        style={[
+                                            styles.sectionTab,
+                                            isDarkMode && styles.sectionTabDark,
+                                            (hovered || pressed) && styles.sectionTabHover,
+                                            isActive && styles.sectionTabActive,
+                                        ]}
+                                    >
+                                        <Text style={[styles.sectionTabText, isDarkMode && styles.sectionTabTextDark, isActive && styles.sectionTabTextActive]}>
+                                            {section.label}
+                                        </Text>
+                                        <Text style={[styles.sectionTabCount, isDarkMode && styles.sectionTabCountDark, isActive && styles.sectionTabTextActive]}>
+                                            {section.count}
+                                        </Text>
+                                    </View>
+                                )}
+                            </Pressable>
+                        );
+                    })}
+                </View>
+
+                {activeSection === "brands" && (
                 <View style={styles.section}>
                     <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Hersteller</Text>
                     <View style={styles.formRow}>
@@ -310,32 +781,48 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         style={isDarkMode ? styles.inputDark : undefined}
                     />
                     <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
-                        {filteredBrands.map((brand) => (
-                            <HoverRow
-                                key={brand.id}
-                                active={editingBrandId === brand.id}
-                                onPress={() => {
-                                    setBrandName(brand.name);
-                                    setEditingBrandId(brand.id);
-                                    setError(null);
-                                }}
-                                isDarkMode={isDarkMode}
-                            >
-                                <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
-                                    {brand.name}
-                                </Text>
-                                <Button
-                                    mode="text"
+                        {filteredBrands.map((brand) => {
+                            const isUsed = Boolean(brand.id && hasUsage(masterdataUsage.brands, brand.id));
+                            const deleteTarget = brand.id ? `brand-${brand.id}` : null;
+
+                            return (
+                                <HoverRow
+                                    key={brand.id}
+                                    active={editingBrandId === brand.id}
                                     onPress={() => {
                                         setBrandName(brand.name);
-                                        setEditingBrandId(brand.id);
+                                        setEditingBrandId(brand.id ?? null);
                                         setError(null);
                                     }}
+                                    isDarkMode={isDarkMode}
                                 >
-                                    Bearbeiten
-                                </Button>
-                            </HoverRow>
-                        ))}
+                                    <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
+                                        {brand.name}
+                                    </Text>
+                                    <View style={styles.rowActions}>
+                                        <Button
+                                            mode="text"
+                                            onPress={() => {
+                                                setBrandName(brand.name);
+                                                setEditingBrandId(brand.id ?? null);
+                                                setError(null);
+                                            }}
+                                        >
+                                            Bearbeiten
+                                        </Button>
+                                        <Button
+                                            mode="text"
+                                            textColor="#b3261e"
+                                            disabled={isSaving || isUsed || deletingTarget === deleteTarget}
+                                            loading={deletingTarget === deleteTarget}
+                                            onPress={() => void handleDeleteBrand(brand)}
+                                        >
+                                            {isUsed ? "Genutzt" : "Loeschen"}
+                                        </Button>
+                                    </View>
+                                </HoverRow>
+                            );
+                        })}
                         {filteredBrands.length === 0 && (
                             <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
                                 Keine Hersteller für diese Suche.
@@ -343,7 +830,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         )}
                     </ScrollView>
                 </View>
+                )}
 
+                {activeSection === "objectTypes" && (
+                <>
                 <Divider />
 
                 <View style={styles.section}>
@@ -368,32 +858,48 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         style={isDarkMode ? styles.inputDark : undefined}
                     />
                     <ScrollView style={[styles.listPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
-                        {filteredObjectTypes.map((objectType) => (
-                            <HoverRow
-                                key={objectType.id}
-                                active={editingObjectTypeId === objectType.id}
-                                onPress={() => {
-                                    setObjectTypeName(objectType.name);
-                                    setEditingObjectTypeId(objectType.id);
-                                    setError(null);
-                                }}
-                                isDarkMode={isDarkMode}
-                            >
-                                <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
-                                    {objectType.name}
-                                </Text>
-                                <Button
-                                    mode="text"
+                        {filteredObjectTypes.map((objectType) => {
+                            const isUsed = hasUsage(masterdataUsage.objectTypes, objectType.id);
+                            const deleteTarget = `objectType-${objectType.id}`;
+
+                            return (
+                                <HoverRow
+                                    key={objectType.id}
+                                    active={editingObjectTypeId === objectType.id}
                                     onPress={() => {
                                         setObjectTypeName(objectType.name);
                                         setEditingObjectTypeId(objectType.id);
                                         setError(null);
                                     }}
+                                    isDarkMode={isDarkMode}
                                 >
-                                    Bearbeiten
-                                </Button>
-                            </HoverRow>
-                        ))}
+                                    <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
+                                        {objectType.name}
+                                    </Text>
+                                    <View style={styles.rowActions}>
+                                        <Button
+                                            mode="text"
+                                            onPress={() => {
+                                                setObjectTypeName(objectType.name);
+                                                setEditingObjectTypeId(objectType.id);
+                                                setError(null);
+                                            }}
+                                        >
+                                            Bearbeiten
+                                        </Button>
+                                        <Button
+                                            mode="text"
+                                            textColor="#b3261e"
+                                            disabled={isSaving || isUsed || deletingTarget === deleteTarget}
+                                            loading={deletingTarget === deleteTarget}
+                                            onPress={() => void handleDeleteObjectType(objectType)}
+                                        >
+                                            {isUsed ? "Genutzt" : "Loeschen"}
+                                        </Button>
+                                    </View>
+                                </HoverRow>
+                            );
+                        })}
                         {filteredObjectTypes.length === 0 && (
                             <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
                                 Keine Objekttypen für diese Suche.
@@ -401,7 +907,11 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         )}
                     </ScrollView>
                 </View>
+                </>
+                )}
 
+                {activeSection === "models" && (
+                <>
                 <Divider />
 
                 <View style={styles.section}>
@@ -449,32 +959,14 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         Hersteller und Objekttyp werden über die vorhandenen Stammdaten ausgewählt.
                     </Text>
                     <ScrollView style={[styles.largeListPanel, isDarkMode && styles.listPanelDark]} contentContainerStyle={styles.list}>
-                        {filteredModelRows.map((model) => (
-                            <HoverRow
-                                key={model.id}
-                                active={editingModelId === model.id}
-                                onPress={() => {
-                                    const currentModel = models.find((entry) => entry.id === model.id);
-                                    if (!currentModel) {
-                                        return;
-                                    }
+                        {filteredModelRows.map((model) => {
+                            const isUsed = hasUsage(masterdataUsage.models, model.id);
+                            const deleteTarget = `model-${model.id}`;
 
-                                    const currentBrand = brands.find((entry) => entry.id === currentModel.hersteller_id);
-                                    const currentObjectType = objekttypen.find((entry) => entry.id === currentModel.objekttyp_id);
-
-                                    setModelName(currentModel.name);
-                                    setSelectedBrandName(currentBrand?.name ?? "");
-                                    setSelectedObjectTypeName(currentObjectType?.name ?? "");
-                                    setEditingModelId(currentModel.id);
-                                    setError(null);
-                                }}
-                                isDarkMode={isDarkMode}
-                            >
-                                <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
-                                    {model.label}
-                                </Text>
-                                <Button
-                                    mode="text"
+                            return (
+                                <HoverRow
+                                    key={model.id}
+                                    active={editingModelId === model.id}
                                     onPress={() => {
                                         const currentModel = models.find((entry) => entry.id === model.id);
                                         if (!currentModel) {
@@ -490,11 +982,45 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                         setEditingModelId(currentModel.id);
                                         setError(null);
                                     }}
+                                    isDarkMode={isDarkMode}
                                 >
-                                    Bearbeiten
-                                </Button>
-                            </HoverRow>
-                        ))}
+                                    <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
+                                        {model.label}
+                                    </Text>
+                                    <View style={styles.rowActions}>
+                                        <Button
+                                            mode="text"
+                                            onPress={() => {
+                                                const currentModel = models.find((entry) => entry.id === model.id);
+                                                if (!currentModel) {
+                                                    return;
+                                                }
+
+                                                const currentBrand = brands.find((entry) => entry.id === currentModel.hersteller_id);
+                                                const currentObjectType = objekttypen.find((entry) => entry.id === currentModel.objekttyp_id);
+
+                                                setModelName(currentModel.name);
+                                                setSelectedBrandName(currentBrand?.name ?? "");
+                                                setSelectedObjectTypeName(currentObjectType?.name ?? "");
+                                                setEditingModelId(currentModel.id);
+                                                setError(null);
+                                            }}
+                                        >
+                                            Bearbeiten
+                                        </Button>
+                                        <Button
+                                            mode="text"
+                                            textColor="#b3261e"
+                                            disabled={isSaving || isUsed || deletingTarget === deleteTarget}
+                                            loading={deletingTarget === deleteTarget}
+                                            onPress={() => void handleDeleteModel(model.id)}
+                                        >
+                                            {isUsed ? "Genutzt" : "Loeschen"}
+                                        </Button>
+                                    </View>
+                                </HoverRow>
+                            );
+                        })}
                         {filteredModelRows.length === 0 && (
                             <Text style={[styles.emptyListText, isDarkMode && styles.emptyListTextDark]}>
                                 Keine Modelle für diese Suche.
@@ -502,6 +1028,93 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         )}
                     </ScrollView>
                 </View>
+                </>
+                )}
+
+                {activeSection === "states" && (
+                    renderReadOnlySection({
+                        title: "Status",
+                        searchLabel: "Status suchen",
+                        query: statusListQuery,
+                        onQueryChange: setStatusListQuery,
+                        rows: filteredStates.map((status) => ({
+                            id: status.id,
+                            label: status.name,
+                            isUsed: isStatusUsed(status),
+                            deleteTarget: `status-${status.id}`,
+                            onDelete: () => void handleDeleteStatus(status),
+                        })),
+                        emptyMessage: "Keine Status fuer diese Suche.",
+                    })
+                )}
+
+                {activeSection === "bereiche" && (
+                    renderReadOnlySection({
+                        title: "Bereiche",
+                        searchLabel: "Bereiche suchen",
+                        query: bereichListQuery,
+                        onQueryChange: setBereichListQuery,
+                        rows: filteredBereiche.map((bereich) => ({
+                            id: bereich.id,
+                            label: bereich.name,
+                            isUsed: isBereichUsed(bereich),
+                            deleteTarget: `bereich-${bereich.id}`,
+                            onDelete: () => void handleDeleteBereich(bereich),
+                        })),
+                        emptyMessage: "Keine Bereiche fuer diese Suche.",
+                    })
+                )}
+
+                {activeSection === "standorte" && (
+                    renderReadOnlySection({
+                        title: "Standorte",
+                        searchLabel: "Standorte suchen",
+                        query: standortListQuery,
+                        onQueryChange: setStandortListQuery,
+                        rows: filteredStandorte.map((standort) => ({
+                            id: standort.id,
+                            label: standort.name,
+                            isUsed: isStandortUsed(standort),
+                            deleteTarget: `standort-${standort.id}`,
+                            onDelete: () => void handleDeleteStandort(standort),
+                        })),
+                        emptyMessage: "Keine Standorte fuer diese Suche.",
+                    })
+                )}
+
+                {activeSection === "kategorien" && (
+                    renderReadOnlySection({
+                        title: "Kategorien",
+                        searchLabel: "Kategorien suchen",
+                        query: kategorieListQuery,
+                        onQueryChange: setKategorieListQuery,
+                        rows: filteredKategorien.map((kategorie) => ({
+                            id: kategorie.id,
+                            label: kategorie.label,
+                            isUsed: isKategorieUsed(kategorie.id),
+                            deleteTarget: `kategorie-${kategorie.id}`,
+                            onDelete: () => void handleDeleteKategorie(kategorie),
+                        })),
+                        emptyMessage: "Keine Kategorien fuer diese Suche.",
+                    })
+                )}
+
+                {activeSection === "personen" && (
+                    renderReadOnlySection({
+                        title: "Personen",
+                        searchLabel: "Personen suchen",
+                        query: personListQuery,
+                        onQueryChange: setPersonListQuery,
+                        rows: filteredPersonen.map((person) => ({
+                            id: person.id,
+                            label: person.label,
+                            isUsed: isPersonUsed(person.id),
+                            deleteTarget: `person-${person.id}`,
+                            onDelete: () => void handleDeletePerson(person),
+                        })),
+                        emptyMessage: "Keine Personen fuer diese Suche.",
+                    })
+                )}
 
                 {error && <HelperText type="error">{error}</HelperText>}
 
@@ -577,6 +1190,60 @@ const styles = StyleSheet.create({
     section: {
         gap: 12,
     },
+    sectionNavigation: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 8,
+        padding: 8,
+        borderWidth: 1,
+        borderColor: "#e3e7ee",
+        borderRadius: 12,
+        backgroundColor: "#fafbfc",
+    },
+    sectionNavigationDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
+    sectionTab: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        minHeight: 36,
+        paddingHorizontal: 12,
+        borderWidth: 1,
+        borderColor: "#d6dce6",
+        borderRadius: 8,
+        backgroundColor: "#ffffff",
+    },
+    sectionTabDark: {
+        backgroundColor: "#161b22",
+        borderColor: "#263140",
+    },
+    sectionTabHover: {
+        borderColor: "#8fb4ff",
+        backgroundColor: "#f3f7ff",
+    },
+    sectionTabActive: {
+        borderColor: "#1f6fb2",
+        backgroundColor: "#e8f0fe",
+    },
+    sectionTabText: {
+        color: "#2f343b",
+        fontWeight: "600",
+    },
+    sectionTabTextDark: {
+        color: "#f3f4f6",
+    },
+    sectionTabTextActive: {
+        color: "#174f80",
+    },
+    sectionTabCount: {
+        color: "#5f6368",
+        fontWeight: "600",
+    },
+    sectionTabCountDark: {
+        color: "#9aa4b2",
+    },
     titleDark: {
         color: "#f3f4f6",
     },
@@ -599,14 +1266,14 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     listPanel: {
-        maxHeight: 180,
+        maxHeight: 420,
         borderWidth: 1,
         borderColor: "#e3e7ee",
         borderRadius: 12,
         backgroundColor: "#fafbfc",
     },
     largeListPanel: {
-        maxHeight: 220,
+        maxHeight: 420,
         borderWidth: 1,
         borderColor: "#e3e7ee",
         borderRadius: 12,
@@ -620,6 +1287,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        flexWrap: "wrap",
         gap: 12,
         paddingHorizontal: 10,
         paddingVertical: 8,
@@ -641,9 +1309,16 @@ const styles = StyleSheet.create({
     },
     rowItemText: {
         flex: 1,
+        minWidth: 160,
     },
     rowItemTextDark: {
         color: "#f3f4f6",
+    },
+    rowActions: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        gap: 4,
     },
     subtleText: {
         color: "#5f6368",

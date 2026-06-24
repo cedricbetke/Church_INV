@@ -49,6 +49,17 @@ const updateStatus = async (req, res) => {
 
 const deleteStatus = async (req, res) => {
     try {
+        const status = await Status.getById(req.params.id);
+        if (!status) return res.status(404).json({ error: 'Status nicht gefunden' });
+
+        const usageCount = await Status.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Status wird noch von Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Status.delete(req.params.id);
         res.json(result);
     } catch (error) {

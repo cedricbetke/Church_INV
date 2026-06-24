@@ -11,6 +11,11 @@ const Status = {
         return rows[0];
     },
 
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE status_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
+    },
+
     create: async (name) => {
         const [result] = await db.query('INSERT INTO status (name) VALUES (?)', [name]);
         return { id: result.insertId, name };
