@@ -62,6 +62,12 @@ Der Client wird mit Build-Args aus `docker-compose.yml` gebaut:
 
 Damit gibt es fuer das Admin-Passwort auf dem Server nur eine Quelle: `apps/api/.env`.
 
+## Arbeitsweise fuer Bugfixes und Features
+
+- Fuer jeden Bugfix und jedes neue Feature wird zuerst eine neue Branch erstellt.
+- Die Branch soll anhand des Tickets benannt werden, entweder nach dem Ticket-Namen oder nach einer kurzen Beschreibung des Tickets.
+- Ob ein Stand zuerst auf `testserver` getestet werden soll, wird individuell entschieden.
+
 ## GitHub Actions
 
 - `deploy-test-server.yml` deployed Branch `testserver` per SSH/rsync auf den Testserver.
