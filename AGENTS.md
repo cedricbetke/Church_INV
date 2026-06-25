@@ -108,12 +108,22 @@ Aktuelle Buchungslogik:
 
 - Pro Ticket, Bugfix oder Feature soll eine neue Codex-Session verwendet werden.
 - Alte Codex-Sessions sollen nicht fuer neue Tickets weitergefuehrt werden.
-- Nach sehr langen Debug-Sessions, grossen Tool-Ausgaben oder Context-Compaction soll fuer die naechste Aufgabe eine neue Session gestartet werden.
-- Grosse Datei-, Log- und Testausgaben sollen vermieden werden.
-- Statt ganze Dateien zu lesen, sollen gezielte Suchen und kleine relevante Ausschnitte verwendet werden.
-- Bei Tests oder Builds soll nur der relevante Fehlerbereich ausgegeben werden, nicht der komplette Log.
+- Codex darf lange Test-, Build- und Log-Ausgaben nicht ungefiltert in den Kontext uebernehmen.
+- Fuer potenziell lange Commands wie `npm test`, `npm run build`, `npx expo export --platform web --clear`, `docker logs` und CI-Logs soll Codex standardmaessig `scripts/codex-log-summary.ps1` verwenden.
+- Codex soll diese Commands nicht direkt mit ungefilterter Ausgabe ausfuehren, wenn die Ausgabe lang werden kann.
+- Dafuer sollen Commands in PowerShell z. B. so ausgefuehrt werden:
+  `npm test 2>&1 | powershell -ExecutionPolicy Bypass -File scripts/codex-log-summary.ps1`
+- Bei UI-Aenderungen soll der Web-Export standardmaessig so geprueft werden:
+  `npx expo export --platform web --clear 2>&1 | powershell -ExecutionPolicy Bypass -File scripts/codex-log-summary.ps1 -Prompt "Check if export succeeded. If failed, return only the real error, relevant file and shortest useful stacktrace."`
+- Codex soll nach der Zusammenfassung nur gezielt relevante Originalstellen nachpruefen.
 - Bei grossen Diffs zuerst `git diff --stat` oder `git diff --name-only` verwenden und danach gezielt einzelne Dateien pruefen.
-- Bekannte generierte Ordner und Abhaengigkeiten wie `node_modules`, `dist`, `build`, `.expo`, `.next`, `coverage` und grosse Export-Dateien sollen nicht durchsucht oder gelesen werden, ausser es ist explizit noetig.
+
+## Session-Hygiene fuer Codex
+
+- Codex soll den Nutzer aktiv darauf hinweisen, eine neue Session zu starten, wenn ein neues Ticket, ein neuer Bugfix oder ein neues Feature begonnen wird.
+- Codex soll den Nutzer ebenfalls auf eine neue Session hinweisen, wenn die aktuelle Aufgabe abgeschlossen ist und danach ein anderes Thema beginnt.
+- Nach sehr langen Debug-Sessions, grossen Tool-Ausgaben, vielen Dateiänderungen oder Context-Compaction soll Codex empfehlen, fuer die naechste Aufgabe eine neue Session zu starten.
+- Wenn Codex empfiehlt, eine neue Session zu starten, soll es einen kurzen Copy-Paste-Startprompt fuer die neue Session liefern.
 
 ```bash
 npx expo export --platform web --clear
