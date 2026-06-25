@@ -1,4 +1,5 @@
 const db = require('../config/db'); // Import der DB-Verbindung
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Status = {
     getAll: async () => {
@@ -29,7 +30,15 @@ const Status = {
     delete: async (id) => {
         await db.query('DELETE FROM status WHERE id = ?', [id]);
         return { message: `Status mit ID ${id} gelöscht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'status',
+        label: 'Status',
+        references: [{ table: 'geraet', column: 'status_id' }],
+        sourceId,
+        targetId,
+    })
 };
 
 module.exports = Status;

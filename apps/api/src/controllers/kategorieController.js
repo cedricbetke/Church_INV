@@ -63,4 +63,14 @@ const deleteKategorie = async (req, res) => {
     }
 };
 
-module.exports = { getAllKategorie, getKategorieById, createKategorie, updateKategorie, deleteKategorie };
+const mergeKategorie = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Kategorie ist erforderlich' });
+        res.json(await Kategorie.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllKategorie, getKategorieById, createKategorie, updateKategorie, deleteKategorie, mergeKategorie };

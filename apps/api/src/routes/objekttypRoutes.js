@@ -137,6 +137,7 @@ router.put('/:id', objekttypController.updateObjekttyp);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, objekttypController.mergeObjekttyp);
 router.delete('/:id', requireAdmin, objekttypController.deleteObjekttyp);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const db = require('../config/db'); // Import der DB-Verbindung
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Objekttyp = {
     getAll: async () => {
@@ -29,7 +30,15 @@ const Objekttyp = {
     delete: async (id) => {
         await db.query('DELETE FROM objekttyp WHERE id = ?', [id]);
         return { message: `Objekttyp mit ID ${id} gelöscht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'objekttyp',
+        label: 'Objekttyp',
+        references: [{ table: 'modell', column: 'objekttyp_id' }],
+        sourceId,
+        targetId,
+    })
 };
 
 module.exports = Objekttyp;

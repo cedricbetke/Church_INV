@@ -136,6 +136,7 @@ router.put('/:id', bereichController.updateBereich);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, bereichController.mergeBereich);
 router.delete('/:id', requireAdmin, bereichController.deleteBereich);
 
 module.exports = router;

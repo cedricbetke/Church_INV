@@ -23,7 +23,7 @@ export const patchNotesData: PatchNotesData = {
             version: "0.7.17",
             date: "2026-06-24",
             title: "Mobile Bedienung, Inventaruebersicht und Stammdaten verbessert",
-            summary: "Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen, und unbenutzte Stammdaten koennen kontrolliert entfernt werden.",
+            summary: "Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen, und Stammdaten koennen kontrolliert bereinigt werden.",
             issueUrl: undefined,
             issueLabel: undefined,
             items: [
@@ -39,7 +39,8 @@ export const patchNotesData: PatchNotesData = {
                 "Die Stammdaten-Maske rendert nur noch den aktiven Tab und wird nach Admin-Freigabe im Hintergrund vorgeladen",
                 "Alle Stammdaten-Tabs koennen jetzt direkt in der Maske angelegt und bearbeitet werden",
                 "Die Stammdaten-Maske ist jetzt als kompakter Admin-Arbeitsbereich mit seitlicher Navigation und klarerem Editor aufgebaut",
-                "Standorte koennen in der Stammdaten-Maske zusammengefuehrt werden, um doppelte oder falsch angelegte Standorte sauber zu bereinigen",
+                "Stammdaten koennen in allen Tabs per Auswahlmodus zusammengefuehrt werden, um doppelte oder falsch angelegte Eintraege sauber zu bereinigen",
+                "Beim Zusammenfuehren verschiebt die API bestehende Verwendungen auf den gewaehlten Zieleintrag und loescht danach den doppelten Quelleintrag",
             ],
         },
         {

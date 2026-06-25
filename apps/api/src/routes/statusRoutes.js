@@ -151,6 +151,7 @@ router.put('/:id', statusController.updateStatus);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, statusController.mergeStatus);
 router.delete('/:id', requireAdmin, statusController.deleteStatus);
 
 module.exports = router;

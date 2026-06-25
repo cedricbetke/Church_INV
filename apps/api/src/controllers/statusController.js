@@ -67,4 +67,14 @@ const deleteStatus = async (req, res) => {
     }
 };
 
-module.exports = { getAllStatus, getStatusById, createStatus, updateStatus, deleteStatus };
+const mergeStatus = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Status ist erforderlich' });
+        res.json(await Status.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllStatus, getStatusById, createStatus, updateStatus, deleteStatus, mergeStatus };

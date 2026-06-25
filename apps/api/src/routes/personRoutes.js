@@ -145,6 +145,7 @@ router.put('/:id', personController.updatePerson);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, personController.mergePerson);
 router.delete('/:id', requireAdmin, personController.deletePerson);
 
 module.exports = router;

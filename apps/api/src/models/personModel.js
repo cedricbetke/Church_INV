@@ -1,4 +1,5 @@
 const db = require('../config/db'); // Import der DB-Verbindung
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Person = {
     getAll: async () => {
@@ -35,7 +36,16 @@ const Person = {
     delete: async (id) => {
         await db.query('DELETE FROM person WHERE id = ?', [id]);
         return { message: `Person mit ID ${id} gelöscht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'person',
+        label: 'Person',
+        references: [{ table: 'geraet', column: 'verantwortlicher_id' }],
+        sourceId,
+        targetId,
+        selectColumns: 'id, vorname, nachname',
+    })
 };
 
 module.exports = Person;

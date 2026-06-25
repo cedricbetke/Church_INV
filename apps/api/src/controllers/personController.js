@@ -67,4 +67,14 @@ const deletePerson = async (req, res) => {
     }
 };
 
-module.exports = { getAllPersonen, getPersonById, createPerson, updatePerson, deletePerson };
+const mergePerson = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Person ist erforderlich' });
+        res.json(await Person.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllPersonen, getPersonById, createPerson, updatePerson, deletePerson, mergePerson };
