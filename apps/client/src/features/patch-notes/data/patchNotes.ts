@@ -38,6 +38,7 @@ export const patchNotesData: PatchNotesData = {
                 "Die Nutzungsanzeige der Stammdaten wird jetzt zentral von der API berechnet statt im Browser pro Zeile aus der Inventarliste abgeleitet",
                 "Die Stammdaten-Maske rendert nur noch den aktiven Tab und wird nach Admin-Freigabe im Hintergrund vorgeladen",
                 "Alle Stammdaten-Tabs koennen jetzt direkt in der Maske angelegt und bearbeitet werden",
+                "Die Stammdaten-Maske ist jetzt als kompakter Admin-Arbeitsbereich mit seitlicher Navigation und klarerem Editor aufgebaut",
             ],
         },
         {

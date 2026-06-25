@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Divider, HelperText, Modal, Text, TextInput } from "react-native-paper";
+import { Button, HelperText, Modal, Text, TextInput } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
 import objekttypService from "@/src/features/masterdata/services/objekttypService";
@@ -283,6 +283,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         ],
         [bereiche.length, brands.length, kategorien.length, models.length, objekttypen.length, personen.length, standorte.length, states.length],
     );
+    const activeSectionMeta = sectionTabs.find((section) => section.key === activeSection) ?? sectionTabs[0];
 
     const resetForm = () => {
         setBrandName("");
@@ -878,7 +879,6 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     };
 
     const renderReadOnlySection = ({
-        title,
         searchLabel,
         query,
         onQueryChange,
@@ -886,7 +886,6 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         rows,
         emptyMessage,
     }: {
-        title: string;
         searchLabel: string;
         query: string;
         onQueryChange: (value: string) => void;
@@ -902,11 +901,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         }>;
         emptyMessage: string;
     }) => (
-        <>
-            <Divider />
-
-            <View style={styles.section}>
-                <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>{title}</Text>
+        <View style={styles.section}>
                 {form}
                 <TextInput
                     mode="outlined"
@@ -958,7 +953,6 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     )}
                 </ScrollView>
             </View>
-        </>
     );
 
     return (
@@ -978,8 +972,11 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         </Text>
                     </View>
                 ) : (
-                    <>
+                    <View style={styles.adminLayout}>
                 <View style={[styles.sectionNavigation, isDarkMode && styles.sectionNavigationDark]}>
+                    <Text variant="labelLarge" style={[styles.navigationTitle, isDarkMode && styles.navigationTitleDark]}>
+                        Bereiche
+                    </Text>
                     {sectionTabs.map((section) => {
                         const isActive = activeSection === section.key;
 
@@ -1025,9 +1022,23 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     })}
                 </View>
 
+                <View style={[styles.activePanel, isDarkMode && styles.activePanelDark]}>
+                    <View style={styles.activePanelHeader}>
+                        <View>
+                            <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>
+                                {activeSectionMeta.label}
+                            </Text>
+                            <Text variant="bodySmall" style={[styles.subtleText, isDarkMode && styles.subtleTextDark]}>
+                                {activeSectionMeta.count} Eintraege
+                            </Text>
+                        </View>
+                        <Button mode="outlined" onPress={resetForm} disabled={isSaving}>
+                            Zuruecksetzen
+                        </Button>
+                    </View>
+
                 {activeSection === "brands" && (
                 <View style={styles.section}>
-                    <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Hersteller</Text>
                     <View style={styles.formRow}>
                         <TextInput
                             mode="outlined"
@@ -1100,11 +1111,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 )}
 
                 {activeSection === "objectTypes" && (
-                <>
-                <Divider />
-
                 <View style={styles.section}>
-                    <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Objekttypen</Text>
                     <View style={styles.formRow}>
                         <TextInput
                             mode="outlined"
@@ -1174,45 +1181,42 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         )}
                     </ScrollView>
                 </View>
-                </>
                 )}
 
                 {activeSection === "models" && (
-                <>
-                <Divider />
-
                 <View style={styles.section}>
-                    <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>Modelle</Text>
-                    <View style={styles.formColumn}>
-                        <TextInput
-                            mode="outlined"
-                            label={editingModelId ? "Modell bearbeiten" : "Modellname"}
-                            value={modelName}
-                            onChangeText={setModelName}
-                            style={isDarkMode ? styles.inputDark : undefined}
-                        />
-                        <TextInput
-                            mode="outlined"
-                            label="Hersteller"
-                            value={selectedBrandName}
-                            onFocus={() => setShowBrandDialog(true)}
-                            onPressIn={() => setShowBrandDialog(true)}
-                            showSoftInputOnFocus={false}
-                            right={<TextInput.Icon icon="chevron-down" />}
-                            style={isDarkMode ? styles.inputDark : undefined}
-                        />
-                        <TextInput
-                            mode="outlined"
-                            label="Objekttyp"
-                            value={selectedObjectTypeName}
-                            onFocus={() => setShowObjectTypeDialog(true)}
-                            onPressIn={() => setShowObjectTypeDialog(true)}
-                            showSoftInputOnFocus={false}
-                            right={<TextInput.Icon icon="chevron-down" />}
-                            style={isDarkMode ? styles.inputDark : undefined}
-                        />
-                        <Button mode="contained" onPress={handleCreateModel} disabled={isSaving}>
-                            {editingModelId ? "Speichern" : "Modell anlegen"}
+                    <View style={styles.editorRow}>
+                        <View style={styles.editorFields}>
+                            <TextInput
+                                mode="outlined"
+                                label={editingModelId ? "Modell bearbeiten" : "Modellname"}
+                                value={modelName}
+                                onChangeText={setModelName}
+                                style={isDarkMode ? styles.inputDark : undefined}
+                            />
+                            <TextInput
+                                mode="outlined"
+                                label="Hersteller"
+                                value={selectedBrandName}
+                                onFocus={() => setShowBrandDialog(true)}
+                                onPressIn={() => setShowBrandDialog(true)}
+                                showSoftInputOnFocus={false}
+                                right={<TextInput.Icon icon="chevron-down" />}
+                                style={isDarkMode ? styles.inputDark : undefined}
+                            />
+                            <TextInput
+                                mode="outlined"
+                                label="Objekttyp"
+                                value={selectedObjectTypeName}
+                                onFocus={() => setShowObjectTypeDialog(true)}
+                                onPressIn={() => setShowObjectTypeDialog(true)}
+                                showSoftInputOnFocus={false}
+                                right={<TextInput.Icon icon="chevron-down" />}
+                                style={isDarkMode ? styles.inputDark : undefined}
+                            />
+                        </View>
+                        <Button mode="contained" onPress={handleCreateModel} disabled={isSaving} style={styles.editorAction}>
+                            {editingModelId ? "Speichern" : "Anlegen"}
                         </Button>
                     </View>
                     <TextInput
@@ -1295,12 +1299,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         )}
                     </ScrollView>
                 </View>
-                </>
                 )}
 
                 {activeSection === "states" && (
                     renderReadOnlySection({
-                        title: "Status",
                         searchLabel: "Status suchen",
                         query: statusListQuery,
                         onQueryChange: setStatusListQuery,
@@ -1336,7 +1338,6 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 
                 {activeSection === "bereiche" && (
                     renderReadOnlySection({
-                        title: "Bereiche",
                         searchLabel: "Bereiche suchen",
                         query: bereichListQuery,
                         onQueryChange: setBereichListQuery,
@@ -1372,7 +1373,6 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 
                 {activeSection === "standorte" && (
                     renderReadOnlySection({
-                        title: "Standorte",
                         searchLabel: "Standorte suchen",
                         query: standortListQuery,
                         onQueryChange: setStandortListQuery,
@@ -1408,31 +1408,32 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 
                 {activeSection === "kategorien" && (
                     renderReadOnlySection({
-                        title: "Kategorien",
                         searchLabel: "Kategorien suchen",
                         query: kategorieListQuery,
                         onQueryChange: setKategorieListQuery,
                         form: (
-                            <View style={styles.formColumn}>
-                                <TextInput
-                                    mode="outlined"
-                                    label={editingKategorieId ? "Kategorie bearbeiten" : "Neue Kategorie"}
-                                    value={kategorieName}
-                                    onChangeText={setKategorieName}
-                                    style={isDarkMode ? styles.inputDark : undefined}
-                                />
-                                <TextInput
-                                    mode="outlined"
-                                    label="Bereich"
-                                    value={selectedKategorieBereichName}
-                                    onFocus={() => setShowKategorieBereichDialog(true)}
-                                    onPressIn={() => setShowKategorieBereichDialog(true)}
-                                    showSoftInputOnFocus={false}
-                                    right={<TextInput.Icon icon="chevron-down" />}
-                                    style={isDarkMode ? styles.inputDark : undefined}
-                                />
-                                <Button mode="contained" onPress={handleCreateKategorie} disabled={isSaving}>
-                                    {editingKategorieId ? "Speichern" : "Kategorie anlegen"}
+                            <View style={styles.editorRow}>
+                                <View style={styles.editorFields}>
+                                    <TextInput
+                                        mode="outlined"
+                                        label={editingKategorieId ? "Kategorie bearbeiten" : "Neue Kategorie"}
+                                        value={kategorieName}
+                                        onChangeText={setKategorieName}
+                                        style={isDarkMode ? styles.inputDark : undefined}
+                                    />
+                                    <TextInput
+                                        mode="outlined"
+                                        label="Bereich"
+                                        value={selectedKategorieBereichName}
+                                        onFocus={() => setShowKategorieBereichDialog(true)}
+                                        onPressIn={() => setShowKategorieBereichDialog(true)}
+                                        showSoftInputOnFocus={false}
+                                        right={<TextInput.Icon icon="chevron-down" />}
+                                        style={isDarkMode ? styles.inputDark : undefined}
+                                    />
+                                </View>
+                                <Button mode="contained" onPress={handleCreateKategorie} disabled={isSaving} style={styles.editorAction}>
+                                    {editingKategorieId ? "Speichern" : "Anlegen"}
                                 </Button>
                             </View>
                         ),
@@ -1456,7 +1457,6 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 
                 {activeSection === "personen" && (
                     renderReadOnlySection({
-                        title: "Personen",
                         searchLabel: "Personen suchen",
                         query: personListQuery,
                         onQueryChange: setPersonListQuery,
@@ -1505,7 +1505,8 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         Schließen
                     </Button>
                 </View>
-                    </>
+                    </View>
+                    </View>
                 )}
             </ScrollView>
 
@@ -1588,14 +1589,44 @@ const styles = StyleSheet.create({
     header: {
         gap: 6,
     },
+    adminLayout: {
+        flexDirection: "row",
+        alignItems: "stretch",
+        flexWrap: "wrap",
+        gap: 16,
+        minHeight: 560,
+    },
+    activePanel: {
+        flex: 1,
+        minWidth: 300,
+        gap: 16,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: "#e3e7ee",
+        borderRadius: 12,
+        backgroundColor: "#ffffff",
+    },
+    activePanelDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#263140",
+    },
+    activePanelHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        flexWrap: "wrap",
+    },
     section: {
         gap: 12,
     },
     sectionNavigation: {
-        flexDirection: "row",
-        flexWrap: "wrap",
+        width: 210,
+        flexGrow: 0,
+        flexShrink: 0,
+        flexDirection: "column",
         gap: 8,
-        padding: 8,
+        padding: 10,
         borderWidth: 1,
         borderColor: "#e3e7ee",
         borderRadius: 12,
@@ -1605,9 +1636,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#0f141b",
         borderColor: "#263140",
     },
+    navigationTitle: {
+        color: "#5f6368",
+        paddingHorizontal: 4,
+        paddingBottom: 4,
+    },
+    navigationTitleDark: {
+        color: "#9aa4b2",
+    },
     sectionTab: {
         flexDirection: "row",
         alignItems: "center",
+        justifyContent: "space-between",
         gap: 8,
         minHeight: 36,
         paddingHorizontal: 12,
@@ -1637,6 +1677,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#202938",
     },
     sectionTabText: {
+        flex: 1,
         color: "#2f343b",
         fontWeight: "600",
     },
@@ -1666,9 +1707,25 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 12,
         alignItems: "center",
+        flexWrap: "wrap",
     },
     formColumn: {
         gap: 10,
+    },
+    editorRow: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 12,
+        flexWrap: "wrap",
+    },
+    editorFields: {
+        flex: 1,
+        minWidth: 260,
+        gap: 10,
+    },
+    editorAction: {
+        minWidth: 120,
+        marginTop: 6,
     },
     input: {
         flex: 1,
@@ -1681,17 +1738,17 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     listPanel: {
-        maxHeight: 420,
+        maxHeight: 460,
         borderWidth: 1,
         borderColor: "#e3e7ee",
-        borderRadius: 12,
+        borderRadius: 8,
         backgroundColor: "#fafbfc",
     },
     largeListPanel: {
-        maxHeight: 420,
+        maxHeight: 460,
         borderWidth: 1,
         borderColor: "#e3e7ee",
-        borderRadius: 12,
+        borderRadius: 8,
         backgroundColor: "#fafbfc",
     },
     listPanelDark: {
@@ -1705,8 +1762,8 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
         gap: 12,
         paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderRadius: 10,
+        paddingVertical: 6,
+        borderRadius: 6,
         borderWidth: 1,
         borderColor: "transparent",
         backgroundColor: "#ffffff",
@@ -1742,6 +1799,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-end",
         gap: 4,
+        minWidth: 170,
     },
     subtleText: {
         color: "#5f6368",
