@@ -37,3 +37,4 @@ expo-env.d.ts
 # local deploy keys
 github-actions-churchinv
 github-actions-churchinv.pub
+codex-usage.json
