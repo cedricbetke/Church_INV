@@ -112,6 +112,74 @@ router.put('/:id', standortController.updateStandort);
 
 /**
  * @swagger
+ * /api/standort/{id}/merge:
+ *   post:
+ *     tags: [Standort]
+ *     summary: Standort in einen anderen Standort zusammenfuehren
+ *     description: Haengt alle Geraete vom Quell-Standort auf den Ziel-Standort um und loescht den Quell-Standort anschliessend, wenn er nicht mehr verwendet wird.
+ *     security:
+ *       - AdminPassword: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID des Quell-Standorts
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [targetId]
+ *             properties:
+ *               targetId:
+ *                 type: integer
+ *                 example: 12
+ *     responses:
+ *       200:
+ *         description: Standort erfolgreich zusammengefuehrt
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sourceId:
+ *                   type: integer
+ *                   example: 4
+ *                 sourceName:
+ *                   type: string
+ *                   example: Werkzeugcontainer alt
+ *                 targetId:
+ *                   type: integer
+ *                   example: 12
+ *                 targetName:
+ *                   type: string
+ *                   example: Werkzeugcontainer
+ *                 updatedDevices:
+ *                   type: integer
+ *                   example: 8
+ *                 deletedSource:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Ungueltige Anfrage
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Quell- oder Ziel-Standort nicht gefunden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/:id/merge', requireAdmin, standortController.mergeStandort);
+
+/**
+ * @swagger
  * /api/standort/{id}:
  *   delete:
  *     tags: [Standort]

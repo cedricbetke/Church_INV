@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, HelperText, Modal, Text, TextInput } from "react-native-paper";
+import { Button, Dialog, HelperText, Modal, Portal, Text, TextInput, Tooltip } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
 import objekttypService from "@/src/features/masterdata/services/objekttypService";
@@ -47,6 +47,34 @@ const confirmDelete = (label: string): Promise<boolean> => {
         ]);
     });
 };
+
+const confirmMergeStandort = (sourceName: string, targetName: string, usageCount: number): Promise<boolean> => {
+    const deviceText = usageCount === 1 ? "1 Geraet" : `${usageCount} Geraete`;
+    const message = `${deviceText} werden von "${sourceName}" nach "${targetName}" verschoben. "${sourceName}" wird danach geloescht. Fortfahren?`;
+
+    if (Platform.OS === "web" && typeof globalThis.confirm === "function") {
+        return Promise.resolve(globalThis.confirm(message));
+    }
+
+    return new Promise((resolve) => {
+        Alert.alert("Standorte zusammenfuehren", message, [
+            { text: "Abbrechen", style: "cancel", onPress: () => resolve(false) },
+            { text: "Zusammenfuehren", style: "destructive", onPress: () => resolve(true) },
+        ]);
+    });
+};
+
+const renderMergeDirectionLabel = (sourceName: string, targetName: string, isDarkMode: boolean) => (
+    <View style={styles.mergeDirectionLabel}>
+        <Text style={[styles.mergeDirectionName, styles.mergeDirectionRemoveName, isDarkMode && styles.mergeDirectionRemoveNameDark]}>
+            {sourceName}
+        </Text>
+        <Text style={[styles.mergeDirectionArrow, isDarkMode && styles.mergeDirectionArrowDark]}>wird zu</Text>
+        <Text style={[styles.mergeDirectionName, styles.mergeDirectionKeepName, isDarkMode && styles.mergeDirectionKeepNameDark]}>
+            {targetName}
+        </Text>
+    </View>
+);
 
 const getErrorMessage = (unknownError: unknown, fallback: string) => {
     const apiError = unknownError as { response?: { data?: { error?: string } } };
@@ -123,6 +151,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [showBrandDialog, setShowBrandDialog] = useState(false);
     const [showObjectTypeDialog, setShowObjectTypeDialog] = useState(false);
     const [showKategorieBereichDialog, setShowKategorieBereichDialog] = useState(false);
+    const [standortMergeSource, setStandortMergeSource] = useState<Standort | null>(null);
+    const [standortMergeTarget, setStandortMergeTarget] = useState<Standort | null>(null);
+    const [isStandortMergeMode, setIsStandortMergeMode] = useState(false);
+    const [selectedStandortMergeIds, setSelectedStandortMergeIds] = useState<number[]>([]);
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [objectTypeSearchQuery, setObjectTypeSearchQuery] = useState("");
     const [kategorieBereichSearchQuery, setKategorieBereichSearchQuery] = useState("");
@@ -146,6 +178,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [deletingTarget, setDeletingTarget] = useState<string | null>(null);
+    const [mergingStandortId, setMergingStandortId] = useState<number | null>(null);
     const [isContentReady, setIsContentReady] = useState(false);
 
     if (!visible) {
@@ -301,6 +334,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setShowBrandDialog(false);
         setShowObjectTypeDialog(false);
         setShowKategorieBereichDialog(false);
+        setStandortMergeSource(null);
+        setStandortMergeTarget(null);
+        setIsStandortMergeMode(false);
+        setSelectedStandortMergeIds([]);
         setBrandSearchQuery("");
         setObjectTypeSearchQuery("");
         setKategorieBereichSearchQuery("");
@@ -323,6 +360,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setError(null);
         setIsSaving(false);
         setDeletingTarget(null);
+        setMergingStandortId(null);
     };
 
     const handleDismiss = () => {
@@ -818,6 +856,75 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         }
     };
 
+    const resetStandortMergeSelection = () => {
+        setSelectedStandortMergeIds([]);
+        setStandortMergeSource(null);
+        setStandortMergeTarget(null);
+    };
+
+    const toggleStandortMergeMode = () => {
+        setIsStandortMergeMode((current) => !current);
+        resetStandortMergeSelection();
+        setError(null);
+    };
+
+    const handleSelectStandortForMerge = (standort: Standort) => {
+        if (!isStandortMergeMode) {
+            return;
+        }
+
+        if (selectedStandortMergeIds.includes(standort.id)) {
+            setSelectedStandortMergeIds((current) => current.filter((id) => id !== standort.id));
+            return;
+        }
+
+        const nextSelectedIds = [...selectedStandortMergeIds, standort.id].slice(-2);
+        setSelectedStandortMergeIds(nextSelectedIds);
+
+        if (nextSelectedIds.length === 2) {
+            const firstStandort = sortedStandorte.find((entry) => entry.id === nextSelectedIds[0]);
+            const secondStandort = sortedStandorte.find((entry) => entry.id === nextSelectedIds[1]);
+
+            if (firstStandort && secondStandort) {
+                setStandortMergeSource(firstStandort);
+                setStandortMergeTarget(secondStandort);
+            }
+        }
+    };
+
+    const handleMergeStandort = async (source: Standort, target: Standort) => {
+        if (!source || !target) {
+            return;
+        }
+
+        const usageCount = Number(masterdataUsage.standorte[source.id] ?? 0);
+        if (!(await confirmMergeStandort(source.name, target.name, usageCount))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setMergingStandortId(source.id);
+            setError(null);
+            await standortService.merge(source.id, target.id);
+            if (editingStandortId === source.id) {
+                setStandortName("");
+                setEditingStandortId(null);
+            }
+            setStandortMergeSource(null);
+            setStandortMergeTarget(null);
+            setSelectedStandortMergeIds([]);
+            setIsStandortMergeMode(false);
+            await onMasterdataChanged();
+        } catch (mergeError) {
+            console.error("Fehler beim Zusammenfuehren der Standorte:", mergeError);
+            setError(getErrorMessage(mergeError, "Standorte konnten nicht zusammengefuehrt werden."));
+        } finally {
+            setMergingStandortId(null);
+            setIsSaving(false);
+        }
+    };
+
     const handleDeleteKategorie = async (kategorie: { id: number; name: string }) => {
         if (isKategorieUsed(kategorie.id)) {
             setError("Kategorie wird noch von Geraeten verwendet und kann nicht geloescht werden.");
@@ -898,6 +1005,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             deleteTarget: string;
             onEdit: () => void;
             onDelete: () => void;
+            extraActions?: React.ReactNode;
+            hideActions?: boolean;
+            selectionIndex?: number | null;
         }>;
         emptyMessage: string;
     }) => (
@@ -924,26 +1034,34 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                 {row.label}
                             </Text>
-                            <View style={styles.rowActions}>
-                                <Button
-                                    mode="text"
-                                    onPress={() => {
-                                        row.onEdit();
-                                        setError(null);
-                                    }}
-                                >
-                                    Bearbeiten
-                                </Button>
-                                <Button
-                                    mode="text"
-                                    textColor="#b3261e"
-                                    disabled={isSaving || row.isUsed || deletingTarget === row.deleteTarget}
-                                    loading={deletingTarget === row.deleteTarget}
-                                    onPress={row.onDelete}
-                                >
-                                    {row.isUsed ? "Genutzt" : "Loeschen"}
-                                </Button>
-                            </View>
+                            {row.selectionIndex ? (
+                                <Text style={[styles.mergeSelectionBadge, isDarkMode && styles.mergeSelectionBadgeDark]}>
+                                    {row.selectionIndex}
+                                </Text>
+                            ) : null}
+                            {!row.hideActions && (
+                                <View style={styles.rowActions}>
+                                    {row.extraActions}
+                                    <Button
+                                        mode="text"
+                                        onPress={() => {
+                                            row.onEdit();
+                                            setError(null);
+                                        }}
+                                    >
+                                        Bearbeiten
+                                    </Button>
+                                    <Button
+                                        mode="text"
+                                        textColor="#b3261e"
+                                        disabled={isSaving || row.isUsed || deletingTarget === row.deleteTarget}
+                                        loading={deletingTarget === row.deleteTarget}
+                                        onPress={row.onDelete}
+                                    >
+                                        {row.isUsed ? "Genutzt" : "Loeschen"}
+                                    </Button>
+                                </View>
+                            )}
                         </HoverRow>
                     ))}
                     {rows.length === 0 && (
@@ -985,6 +1103,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 key={section.key}
                                 onPress={() => {
                                     setActiveSection(section.key);
+                                    if (section.key !== "standorte") {
+                                        setIsStandortMergeMode(false);
+                                        resetStandortMergeSelection();
+                                    }
                                     setError(null);
                                 }}
                             >
@@ -1032,9 +1154,21 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 {activeSectionMeta.count} Eintraege
                             </Text>
                         </View>
-                        <Button mode="outlined" onPress={resetForm} disabled={isSaving}>
-                            Zuruecksetzen
-                        </Button>
+                        <View style={styles.panelHeaderActions}>
+                            {activeSection === "standorte" && (
+                                <Button
+                                    mode={isStandortMergeMode ? "contained" : "outlined"}
+                                    icon="source-merge"
+                                    onPress={toggleStandortMergeMode}
+                                    disabled={isSaving || sortedStandorte.length <= 1}
+                                >
+                                    {isStandortMergeMode ? "Auswahl beenden" : "Zusammenfuehren"}
+                                </Button>
+                            )}
+                            <Button mode="outlined" onPress={resetForm} disabled={isSaving}>
+                                Zuruecksetzen
+                            </Button>
+                        </View>
                     </View>
 
                 {activeSection === "brands" && (
@@ -1377,26 +1511,49 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         query: standortListQuery,
                         onQueryChange: setStandortListQuery,
                         form: (
-                            <View style={styles.formRow}>
-                                <TextInput
-                                    mode="outlined"
-                                    label={editingStandortId ? "Standort bearbeiten" : "Neuer Standort"}
-                                    value={standortName}
-                                    onChangeText={setStandortName}
-                                    style={[styles.input, isDarkMode && styles.inputDark]}
-                                />
-                                <Button mode="contained" onPress={handleCreateStandort} disabled={isSaving}>
-                                    {editingStandortId ? "Speichern" : "Anlegen"}
-                                </Button>
-                            </View>
+                            <>
+                                <View style={styles.formRow}>
+                                    <TextInput
+                                        mode="outlined"
+                                        label={editingStandortId ? "Standort bearbeiten" : "Neuer Standort"}
+                                        value={standortName}
+                                        onChangeText={setStandortName}
+                                        style={[styles.input, isDarkMode && styles.inputDark]}
+                                    />
+                                    <Button mode="contained" onPress={handleCreateStandort} disabled={isSaving || isStandortMergeMode}>
+                                        {editingStandortId ? "Speichern" : "Anlegen"}
+                                    </Button>
+                                </View>
+                                {isStandortMergeMode && (
+                                    <View style={[styles.mergeModeHint, isDarkMode && styles.mergeModeHintDark]}>
+                                        <Text style={[styles.mergeModeHintText, isDarkMode && styles.mergeModeHintTextDark]}>
+                                            Zwei Standorte auswaehlen. Danach entscheidest du, welche Bezeichnung erhalten bleibt.
+                                        </Text>
+                                        <Text style={[styles.mergeModeHintText, isDarkMode && styles.mergeModeHintTextDark]}>
+                                            {selectedStandortMergeIds.length}/2 ausgewaehlt
+                                        </Text>
+                                    </View>
+                                )}
+                            </>
                         ),
                         rows: filteredStandorte.map((standort) => ({
                             id: standort.id,
                             label: standort.name,
-                            active: editingStandortId === standort.id,
+                            active: isStandortMergeMode
+                                ? selectedStandortMergeIds.includes(standort.id)
+                                : editingStandortId === standort.id,
                             isUsed: isStandortUsed(standort),
                             deleteTarget: `standort-${standort.id}`,
+                            hideActions: isStandortMergeMode,
+                            selectionIndex: isStandortMergeMode
+                                ? selectedStandortMergeIds.indexOf(standort.id) + 1 || null
+                                : null,
                             onEdit: () => {
+                                if (isStandortMergeMode) {
+                                    handleSelectStandortForMerge(standort);
+                                    return;
+                                }
+
                                 setStandortName(standort.name);
                                 setEditingStandortId(standort.id);
                             },
@@ -1566,6 +1723,57 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 onAddNew={async () => Promise.resolve()}
                 isNewItem={false}
             />
+
+            <Portal>
+                <Dialog
+                    visible={Boolean(standortMergeSource && standortMergeTarget)}
+                    onDismiss={() => {
+                        setStandortMergeTarget(null);
+                    }}
+                    style={isDarkMode ? styles.dialogDark : undefined}
+                >
+                    <Dialog.Title>Richtung auswaehlen</Dialog.Title>
+                    <Dialog.Content>
+                        <View style={styles.mergeHelpRow}>
+                            <Text style={isDarkMode ? styles.rowItemTextDark : undefined}>
+                                Welche Standortbezeichnung soll erhalten bleiben?
+                            </Text>
+                            <Tooltip title="Alle Geraete vom ersten Standort werden auf den zweiten Standort verschoben. Der erste Standort wird danach geloescht.">
+                                <Text style={[styles.helpIcon, isDarkMode && styles.helpIconDark]}>?</Text>
+                            </Tooltip>
+                        </View>
+                    </Dialog.Content>
+                    <Dialog.Actions style={styles.mergeDialogActions}>
+                        <Button onPress={() => setStandortMergeTarget(null)} disabled={isSaving}>
+                            Abbrechen
+                        </Button>
+                        {standortMergeSource && standortMergeTarget && (
+                            <>
+                                <Button
+                                    mode="outlined"
+                                    disabled={isSaving}
+                                    loading={mergingStandortId === standortMergeSource.id}
+                                    style={[styles.mergeDirectionButton, isDarkMode && styles.mergeDirectionButtonDark]}
+                                    contentStyle={styles.mergeDirectionButtonContent}
+                                    onPress={() => void handleMergeStandort(standortMergeSource, standortMergeTarget)}
+                                >
+                                    {renderMergeDirectionLabel(standortMergeSource.name, standortMergeTarget.name, isDarkMode)}
+                                </Button>
+                                <Button
+                                    mode="outlined"
+                                    disabled={isSaving}
+                                    loading={mergingStandortId === standortMergeTarget.id}
+                                    style={[styles.mergeDirectionButton, isDarkMode && styles.mergeDirectionButtonDark]}
+                                    contentStyle={styles.mergeDirectionButtonContent}
+                                    onPress={() => void handleMergeStandort(standortMergeTarget, standortMergeSource)}
+                                >
+                                    {renderMergeDirectionLabel(standortMergeTarget.name, standortMergeSource.name, isDarkMode)}
+                                </Button>
+                            </>
+                        )}
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </Modal>
     );
 };
@@ -1615,6 +1823,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
+        flexWrap: "wrap",
+    },
+    panelHeaderActions: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        gap: 8,
         flexWrap: "wrap",
     },
     section: {
@@ -1727,6 +1942,30 @@ const styles = StyleSheet.create({
         minWidth: 120,
         marginTop: 6,
     },
+    mergeModeHint: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        flexWrap: "wrap",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: "#dbe3ec",
+        backgroundColor: "#f3f6fa",
+    },
+    mergeModeHintDark: {
+        borderColor: "#2a3340",
+        backgroundColor: "#151922",
+    },
+    mergeModeHintText: {
+        color: "#475569",
+        fontWeight: "600",
+    },
+    mergeModeHintTextDark: {
+        color: "#cbd5e1",
+    },
     input: {
         flex: 1,
     },
@@ -1801,6 +2040,21 @@ const styles = StyleSheet.create({
         gap: 4,
         minWidth: 170,
     },
+    mergeSelectionBadge: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        overflow: "hidden",
+        textAlign: "center",
+        lineHeight: 28,
+        color: "#174f80",
+        backgroundColor: "#e8f0fe",
+        fontWeight: "800",
+    },
+    mergeSelectionBadgeDark: {
+        color: "#dbeafe",
+        backgroundColor: "#1e3a5f",
+    },
     subtleText: {
         color: "#5f6368",
     },
@@ -1837,6 +2091,74 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         marginTop: 4,
+    },
+    dialogDark: {
+        backgroundColor: "#161b22",
+    },
+    mergeHelpRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        flexWrap: "wrap",
+    },
+    helpIcon: {
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+        textAlign: "center",
+        lineHeight: 22,
+        color: "#5f6368",
+        backgroundColor: "#eef2f6",
+        fontWeight: "700",
+    },
+    helpIconDark: {
+        color: "#cbd5e1",
+        backgroundColor: "#202938",
+    },
+    mergeDialogActions: {
+        flexWrap: "wrap",
+        gap: 8,
+    },
+    mergeDirectionButton: {
+        borderColor: "#cbd5e1",
+        backgroundColor: "#f8fafc",
+    },
+    mergeDirectionButtonDark: {
+        borderColor: "#2a3340",
+        backgroundColor: "#11161d",
+    },
+    mergeDirectionButtonContent: {
+        minHeight: 48,
+        justifyContent: "flex-start",
+    },
+    mergeDirectionLabel: {
+        flexDirection: "row",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 6,
+        maxWidth: 420,
+    },
+    mergeDirectionName: {
+        fontWeight: "700",
+    },
+    mergeDirectionRemoveName: {
+        color: "#b3261e",
+    },
+    mergeDirectionRemoveNameDark: {
+        color: "#fca5a5",
+    },
+    mergeDirectionKeepName: {
+        color: "#1f7a3f",
+    },
+    mergeDirectionKeepNameDark: {
+        color: "#86efac",
+    },
+    mergeDirectionArrow: {
+        color: "#5f6368",
+        fontWeight: "600",
+    },
+    mergeDirectionArrowDark: {
+        color: "#9aa4b2",
     },
 });
 

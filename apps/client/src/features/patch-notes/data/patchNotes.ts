@@ -39,6 +39,7 @@ export const patchNotesData: PatchNotesData = {
                 "Die Stammdaten-Maske rendert nur noch den aktiven Tab und wird nach Admin-Freigabe im Hintergrund vorgeladen",
                 "Alle Stammdaten-Tabs koennen jetzt direkt in der Maske angelegt und bearbeitet werden",
                 "Die Stammdaten-Maske ist jetzt als kompakter Admin-Arbeitsbereich mit seitlicher Navigation und klarerem Editor aufgebaut",
+                "Standorte koennen in der Stammdaten-Maske zusammengefuehrt werden, um doppelte oder falsch angelegte Standorte sauber zu bereinigen",
             ],
         },
         {
