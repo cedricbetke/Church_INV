@@ -74,6 +74,18 @@ Damit gibt es fuer das Admin-Passwort auf dem Server nur eine Quelle: `apps/api/
 - Lokale Aenderungen, die nicht zur aktuellen Aufgabe gehoeren, duerfen nicht ueberschrieben oder zurueckgesetzt werden.
 - Ob ein Stand zuerst auf `testserver` getestet werden soll, entscheidet der Nutzer individuell.
 
+## Patchnotes- und Merge-Hygiene fuer Codex
+
+- Bei Bugfixes und Features soll Codex waehrend der Arbeit kurz mitfuehren, welche relevanten Aenderungen gemacht wurden.
+- Am Ende einer Aufgabe soll Codex daraus kompakte Patchnotes erstellen, ohne nochmal ungefragt grosse Diffs oder ganze Dateien zu lesen.
+- Fuer Patchnotes soll Codex zuerst die eigene Arbeitszusammenfassung verwenden.
+- Wenn Git-Details noetig sind, soll Codex zuerst kompakte Befehle verwenden: `git status --short`, `git log --oneline`, `git diff --stat` und `git diff --name-only`.
+- Codex soll fuer Patchnotes nicht ungefragt komplette grosse Diffs oder ganze Dateien in den Kontext laden.
+- Patchnotes sollen kurz und praktisch sein: geaenderte Bereiche, wichtigste Aenderungen, Tests/Checks und offene Risiken.
+- Vor einem Merge nach `master` soll Codex kurz zusammenfassen, welcher Branch gemerged wird, ob lokale Aenderungen vorhanden sind und welche Deploy-Folge dadurch ausgeloest wird.
+- Merges nach `master` duerfen nur ausgefuehrt werden, wenn der Nutzer das explizit verlangt.
+- Nach einem abgeschlossenen Merge oder Release soll Codex empfehlen, fuer die naechste Aufgabe eine neue Session zu starten.
+
 ## GitHub Actions
 
 - `deploy-test-server.yml` deployed Branch `testserver` per SSH/rsync auf den Testserver.
@@ -103,6 +115,14 @@ Aktuelle Buchungslogik:
 - `apps/api/.env` ist server-/lokale API-Konfiguration.
 - Keine unaufgeforderten destruktiven Git-Befehle verwenden.
 - Bei UI-Aenderungen den Web-Export pruefen:
+
+## Sprache und UI-Texte
+
+- In sichtbaren UI-Texten sollen deutsche Umlaute korrekt verwendet werden: `ä`, `ö`, `ü`, `Ä`, `Ö`, `Ü`, `ß`.
+- Schreibweisen wie `ae`, `oe`, `ue` oder `ss` sollen in sichtbaren UI-Texten vermieden werden, wenn eigentlich Umlaute oder `ß` gemeint sind.
+- In Code, Dateinamen, Variablennamen, API-Feldern, Datenbankfeldern, URLs, Branch-Namen und technischen IDs sollen weiterhin ASCII-Schreibweisen verwendet werden.
+- Bestehende technische Namen sollen nicht nur wegen Umlauten umbenannt werden.
+- Bei UI-Aenderungen soll Codex sichtbare deutsche Texte kurz auf korrekte Umlaute pruefen.
 
 ## Kontext- und Token-Hygiene fuer Codex
 
