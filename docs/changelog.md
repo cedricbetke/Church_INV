@@ -3,6 +3,18 @@
 > Diese Datei wird aus `docs/patch-notes/patch-notes.json` erzeugt.
 > Änderungen daher bitte in der JSON-Datei pflegen und danach `npm run sync:patch-notes` ausführen.
 
+## 0.7.18
+
+**25.06.2026**  
+**Spaltenauswahl der Inventarliste gespeichert**
+
+Die Web-App merkt sich die ausgewaehlten Spalten der Inventaruebersicht im Browser und stellt sie beim naechsten Oeffnen wieder her.
+
+- Die Sichtbarkeit der Inventarspalten wird lokal im Browser gespeichert
+- Beim erneuten Oeffnen der Inventaruebersicht wird die letzte Spaltenauswahl wiederhergestellt
+- Gesperrte Pflichtspalten bleiben weiterhin sichtbar
+- Neue oder unbekannte Spalten fallen automatisch auf die Standardauswahl zurueck
+
 ## 0.7.17
 
 **24.06.2026**  

@@ -20,6 +20,20 @@ export const patchNotesData: PatchNotesData = {
     app: "ChurchINV",
     entries: [
         {
+            version: "0.7.18",
+            date: "2026-06-25",
+            title: "Spaltenauswahl der Inventarliste gespeichert",
+            summary: "Die Web-App merkt sich die ausgewaehlten Spalten der Inventaruebersicht im Browser und stellt sie beim naechsten Oeffnen wieder her.",
+            issueUrl: undefined,
+            issueLabel: undefined,
+            items: [
+                "Die Sichtbarkeit der Inventarspalten wird lokal im Browser gespeichert",
+                "Beim erneuten Oeffnen der Inventaruebersicht wird die letzte Spaltenauswahl wiederhergestellt",
+                "Gesperrte Pflichtspalten bleiben weiterhin sichtbar",
+                "Neue oder unbekannte Spalten fallen automatisch auf die Standardauswahl zurueck",
+            ],
+        },
+        {
             version: "0.7.17",
             date: "2026-06-24",
             title: "Mobile Bedienung, Inventaruebersicht und Stammdaten verbessert",

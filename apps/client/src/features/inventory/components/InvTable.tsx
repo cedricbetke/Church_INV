@@ -8,7 +8,12 @@ import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraet
 import { Column } from "./dataTable";
 import DataTableComponent from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
-import { readStoredItemsPerPage, writeStoredItemsPerPage } from "@/src/shared/utils/inventoryTableStorage";
+import {
+    readStoredColumnVisibility,
+    readStoredItemsPerPage,
+    writeStoredColumnVisibility,
+    writeStoredItemsPerPage,
+} from "@/src/shared/utils/inventoryTableStorage";
 
 const DetailModal = React.lazy(() => import("./DetailPage"));
 const AddPage = React.lazy(() => import("./AddPage"));
@@ -132,7 +137,7 @@ const InvTable = () => {
     const [itemsPerPage, setItemsPerPage] = useState(() => readStoredItemsPerPage(numberOfItemsPerPageList, defaultItemsPerPage));
     const [visibleModal, setVisibleModal] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-    const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
+    const [columns, setColumns] = useState<Column[]>(() => readStoredColumnVisibility(DEFAULT_COLUMNS));
     const [isMounted, setIsMounted] = useState(Platform.OS !== "web");
 
     useEffect(() => {
@@ -178,6 +183,10 @@ const InvTable = () => {
     useEffect(() => {
         writeStoredItemsPerPage(itemsPerPage);
     }, [itemsPerPage]);
+
+    useEffect(() => {
+        writeStoredColumnVisibility(columns);
+    }, [columns]);
 
     const handleItemsPerPageChange = (nextItemsPerPage: number) => {
         setItemsPerPage(nextItemsPerPage);
@@ -397,6 +406,5 @@ const styles = StyleSheet.create({
 });
 
 export default InvTable;
-
 
 
