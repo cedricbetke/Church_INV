@@ -151,6 +151,12 @@ const getInventoryCellValue = (item: InventoryItem, key: Column["key"]) => {
     return String(value);
 };
 
+const getColumnStyle = (columnKey: Column["key"]) => [
+    styles.tableCell,
+    columnKey === "foto" && styles.photoColumn,
+    columnKey === "zustandshinweis" && styles.conditionNoteColumn,
+];
+
 const DataTableComponent: React.FC<DataTableProps> = ({
     columns,
     from,
@@ -592,7 +598,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                             sortDirection={column.sortDirection}
                             numeric={column.numeric}
                             onPress={() => onSort(column.key)}
-                            style={column.key === "foto" ? styles.photoColumn : undefined}
+                            style={getColumnStyle(column.key)}
                             textStyle={[styles.tableHeaderText, isDarkMode && styles.tableHeaderTextDark]}
                         >
                             {column.title}
@@ -611,7 +617,7 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                 <DataTable.Cell
                                     key={column.key}
                                     numeric={column.numeric}
-                                    style={column.key === "foto" ? styles.photoColumn : undefined}
+                                    style={getColumnStyle(column.key)}
                                 >
                                     {column.key === "foto" ? (
                                         item.geraeteFoto ? (
@@ -637,7 +643,15 @@ const DataTableComponent: React.FC<DataTableProps> = ({
                                             </View>
                                         )
                                     ) : (
-                                        <Text style={[styles.cellText, isDarkMode && styles.cellTextDark]}>
+                                        <Text
+                                            numberOfLines={column.key === "zustandshinweis" ? 2 : 1}
+                                            ellipsizeMode="tail"
+                                            style={[
+                                                styles.cellText,
+                                                column.key === "zustandshinweis" && styles.conditionNoteText,
+                                                isDarkMode && styles.cellTextDark,
+                                            ]}
+                                        >
                                             {getInventoryCellValue(item, column.key)}
                                         </Text>
                                     )}
@@ -1175,9 +1189,29 @@ const styles = StyleSheet.create({
     tableRowDark: {
         borderBottomColor: "#202733",
     },
+    tableCell: {
+        minWidth: 0,
+        paddingRight: 8,
+    },
+    conditionNoteColumn: {
+        flex: 1.4,
+        maxWidth: 280,
+        minWidth: 120,
+    },
     cellText: {
         color: "#1d1d1f",
+        flexShrink: 1,
         fontSize: 14,
+        maxWidth: "100%",
+    },
+    conditionNoteText: {
+        lineHeight: 18,
+        ...(Platform.OS === "web"
+            ? {
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+            }
+            : null),
     },
     cellTextDark: {
         color: "#f4f7fb",
