@@ -8,7 +8,7 @@
 **24.06.2026**  
 **Mobile Bedienung, Inventaruebersicht und Stammdaten verbessert**
 
-Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen, und unbenutzte Stammdaten koennen kontrolliert entfernt werden.
+Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen, und Stammdaten koennen kontrolliert bereinigt werden.
 
 - Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet
 - Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung
@@ -22,6 +22,8 @@ Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch
 - Die Stammdaten-Maske rendert nur noch den aktiven Tab und wird nach Admin-Freigabe im Hintergrund vorgeladen
 - Alle Stammdaten-Tabs koennen jetzt direkt in der Maske angelegt und bearbeitet werden
 - Die Stammdaten-Maske ist jetzt als kompakter Admin-Arbeitsbereich mit seitlicher Navigation und klarerem Editor aufgebaut
+- Stammdaten koennen in allen Tabs per Auswahlmodus zusammengefuehrt werden, um doppelte oder falsch angelegte Eintraege sauber zu bereinigen
+- Beim Zusammenfuehren verschiebt die API bestehende Verwendungen auf den gewaehlten Zieleintrag und loescht danach den doppelten Quelleintrag
 
 ## 0.7.16
 

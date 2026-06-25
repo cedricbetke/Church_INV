@@ -72,4 +72,14 @@ const deleteModell = async (req, res) => {
     }
 };
 
-module.exports = { getAllModelle, getModellById, createModell, updateModell, deleteModell };
+const mergeModell = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Modell ist erforderlich' });
+        res.json(await Modell.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllModelle, getModellById, createModell, updateModell, deleteModell, mergeModell };

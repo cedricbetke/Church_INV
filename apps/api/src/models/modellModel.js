@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Modell = {
     getAll: async () => {
@@ -37,7 +38,15 @@ const Modell = {
     delete: async (id) => {
         await db.query('DELETE FROM modell WHERE id = ?', [id]);
         return { message: `Modell mit ID ${id} geloescht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'modell',
+        label: 'Modell',
+        references: [{ table: 'geraet', column: 'modell_id' }],
+        sourceId,
+        targetId,
+    })
 };
 
 module.exports = Modell;

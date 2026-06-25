@@ -63,4 +63,14 @@ const deleteHersteller = async (req, res) => {
     }
 };
 
-module.exports = { getAllHersteller, getHerstellerById, createHersteller, updateHersteller, deleteHersteller };
+const mergeHersteller = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Hersteller ist erforderlich' });
+        res.json(await Hersteller.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllHersteller, getHerstellerById, createHersteller, updateHersteller, deleteHersteller, mergeHersteller };

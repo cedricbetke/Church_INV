@@ -64,9 +64,15 @@ Damit gibt es fuer das Admin-Passwort auf dem Server nur eine Quelle: `apps/api/
 
 ## Arbeitsweise fuer Bugfixes und Features
 
-- Fuer jeden Bugfix und jedes neue Feature wird zuerst eine neue Branch erstellt.
-- Die Branch soll anhand des Tickets benannt werden, entweder nach dem Ticket-Namen oder nach einer kurzen Beschreibung des Tickets.
-- Ob ein Stand zuerst auf `testserver` getestet werden soll, wird individuell entschieden.
+- Fuer jeden Bugfix und jedes neue Feature wird zuerst eine eigene Branch erstellt.
+- Die Branch wird anhand des Tickets benannt, z. B. nach Ticketnummer und kurzer Beschreibung:
+  - `fix/123-masterdata-delete-error`
+  - `feature/124-location-merge`
+  - `chore/125-cleanup-import-script`
+- Wenn keine Ticketnummer vorhanden ist, wird ein kurzer beschreibender Branchname verwendet.
+- Vor dem Erstellen einer Branch wird der aktuelle Git-Status geprueft.
+- Lokale Aenderungen, die nicht zur aktuellen Aufgabe gehoeren, duerfen nicht ueberschrieben oder zurueckgesetzt werden.
+- Ob ein Stand zuerst auf `testserver` getestet werden soll, entscheidet der Nutzer individuell.
 
 ## GitHub Actions
 
@@ -97,6 +103,17 @@ Aktuelle Buchungslogik:
 - `apps/api/.env` ist server-/lokale API-Konfiguration.
 - Keine unaufgeforderten destruktiven Git-Befehle verwenden.
 - Bei UI-Aenderungen den Web-Export pruefen:
+
+## Kontext- und Token-Hygiene fuer Codex
+
+- Pro Ticket, Bugfix oder Feature soll eine neue Codex-Session verwendet werden.
+- Alte Codex-Sessions sollen nicht fuer neue Tickets weitergefuehrt werden.
+- Nach sehr langen Debug-Sessions, grossen Tool-Ausgaben oder Context-Compaction soll fuer die naechste Aufgabe eine neue Session gestartet werden.
+- Grosse Datei-, Log- und Testausgaben sollen vermieden werden.
+- Statt ganze Dateien zu lesen, sollen gezielte Suchen und kleine relevante Ausschnitte verwendet werden.
+- Bei Tests oder Builds soll nur der relevante Fehlerbereich ausgegeben werden, nicht der komplette Log.
+- Bei grossen Diffs zuerst `git diff --stat` oder `git diff --name-only` verwenden und danach gezielt einzelne Dateien pruefen.
+- Bekannte generierte Ordner und Abhaengigkeiten wie `node_modules`, `dist`, `build`, `.expo`, `.next`, `coverage` und grosse Export-Dateien sollen nicht durchsucht oder gelesen werden, ausser es ist explizit noetig.
 
 ```bash
 npx expo export --platform web --clear

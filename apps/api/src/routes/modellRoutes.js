@@ -137,6 +137,7 @@ router.put('/:id', modellController.updateModell);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, modellController.mergeModell);
 router.delete('/:id', requireAdmin, modellController.deleteModell);
 
 module.exports = router;

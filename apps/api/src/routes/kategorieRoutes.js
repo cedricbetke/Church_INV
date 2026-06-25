@@ -145,6 +145,7 @@ router.put('/:id', kategorieController.updateKategorie);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, kategorieController.mergeKategorie);
 router.delete('/:id', requireAdmin, kategorieController.deleteKategorie);
 
 module.exports = router;

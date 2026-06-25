@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, HelperText, Modal, Text, TextInput } from "react-native-paper";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Alert, Dimensions, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Button, Dialog, HelperText, Modal, Portal, Text, TextInput, Tooltip } from "react-native-paper";
 import SelectionDialog from "@/src/features/inventory/components/SelectionDialog";
 import herstellerService from "@/src/features/masterdata/services/herstellerService";
 import objekttypService from "@/src/features/masterdata/services/objekttypService";
@@ -48,6 +48,34 @@ const confirmDelete = (label: string): Promise<boolean> => {
     });
 };
 
+const confirmMergeStandort = (sourceName: string, targetName: string, usageCount: number): Promise<boolean> => {
+    const usageText = usageCount === 1 ? "1 Verwendung" : `${usageCount} Verwendungen`;
+    const message = `${usageText} werden von "${sourceName}" nach "${targetName}" verschoben. "${sourceName}" wird danach geloescht. Fortfahren?`;
+
+    if (Platform.OS === "web" && typeof globalThis.confirm === "function") {
+        return Promise.resolve(globalThis.confirm(message));
+    }
+
+    return new Promise((resolve) => {
+        Alert.alert("Stammdaten zusammenfuehren", message, [
+            { text: "Abbrechen", style: "cancel", onPress: () => resolve(false) },
+            { text: "Zusammenfuehren", style: "destructive", onPress: () => resolve(true) },
+        ]);
+    });
+};
+
+const renderMergeDirectionLabel = (sourceName: string, targetName: string, isDarkMode: boolean) => (
+    <View style={styles.mergeDirectionLabel}>
+        <Text style={[styles.mergeDirectionName, styles.mergeDirectionRemoveName, isDarkMode && styles.mergeDirectionRemoveNameDark]}>
+            {sourceName}
+        </Text>
+        <Text style={[styles.mergeDirectionArrow, isDarkMode && styles.mergeDirectionArrowDark]}>wird zu</Text>
+        <Text style={[styles.mergeDirectionName, styles.mergeDirectionKeepName, isDarkMode && styles.mergeDirectionKeepNameDark]}>
+            {targetName}
+        </Text>
+    </View>
+);
+
 const getErrorMessage = (unknownError: unknown, fallback: string) => {
     const apiError = unknownError as { response?: { data?: { error?: string } } };
     return apiError.response?.data?.error ?? fallback;
@@ -62,6 +90,8 @@ type MasterdataSectionKey =
     | "standorte"
     | "kategorien"
     | "personen";
+
+type MergeItem = { id: number; label: string };
 
 const HoverRow = ({
     children,
@@ -108,6 +138,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     onMasterdataChanged,
 }) => {
     const { isDarkMode } = useAppThemeMode();
+    const isCompactLayout = Dimensions.get("window").width < 700;
     const [brandName, setBrandName] = useState("");
     const [objectTypeName, setObjectTypeName] = useState("");
     const [modelName, setModelName] = useState("");
@@ -123,6 +154,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [showBrandDialog, setShowBrandDialog] = useState(false);
     const [showObjectTypeDialog, setShowObjectTypeDialog] = useState(false);
     const [showKategorieBereichDialog, setShowKategorieBereichDialog] = useState(false);
+    const [standortMergeSource, setStandortMergeSource] = useState<MergeItem | null>(null);
+    const [standortMergeTarget, setStandortMergeTarget] = useState<MergeItem | null>(null);
+    const [isStandortMergeMode, setIsStandortMergeMode] = useState(false);
+    const [selectedStandortMergeIds, setSelectedStandortMergeIds] = useState<number[]>([]);
     const [brandSearchQuery, setBrandSearchQuery] = useState("");
     const [objectTypeSearchQuery, setObjectTypeSearchQuery] = useState("");
     const [kategorieBereichSearchQuery, setKategorieBereichSearchQuery] = useState("");
@@ -146,7 +181,38 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [deletingTarget, setDeletingTarget] = useState<string | null>(null);
+    const [mergingStandortId, setMergingStandortId] = useState<number | null>(null);
     const [isContentReady, setIsContentReady] = useState(false);
+    const brandInputRef = useRef<any>(null);
+    const objectTypeInputRef = useRef<any>(null);
+    const modelInputRef = useRef<any>(null);
+    const statusInputRef = useRef<any>(null);
+    const bereichInputRef = useRef<any>(null);
+    const standortInputRef = useRef<any>(null);
+    const kategorieInputRef = useRef<any>(null);
+    const personVornameInputRef = useRef<any>(null);
+    const focusTimersRef = useRef<Array<ReturnType<typeof setTimeout>>>([]);
+
+    const focusFormInput = (section: MasterdataSectionKey) => {
+        const inputRefBySection: Record<MasterdataSectionKey, React.RefObject<any>> = {
+            brands: brandInputRef,
+            objectTypes: objectTypeInputRef,
+            models: modelInputRef,
+            states: statusInputRef,
+            bereiche: bereichInputRef,
+            standorte: standortInputRef,
+            kategorien: kategorieInputRef,
+            personen: personVornameInputRef,
+        };
+        const targetRef = inputRefBySection[section];
+
+        focusTimersRef.current.forEach(clearTimeout);
+        focusTimersRef.current = [0, 50, 150].map((delay) =>
+            setTimeout(() => {
+                targetRef.current?.focus?.();
+            }, delay),
+        );
+    };
 
     if (!visible) {
         return null;
@@ -160,6 +226,13 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 
         return () => clearTimeout(timer);
     }, []);
+
+    useEffect(
+        () => () => {
+            focusTimersRef.current.forEach(clearTimeout);
+        },
+        [],
+    );
 
     const sortedBrands = useMemo(
         () => (isContentReady ? [...brands].sort((left, right) => left.name.localeCompare(right.name, "de")) : []),
@@ -264,7 +337,51 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         () => sortedPersonen.filter((person) => normalize(person.label).includes(normalize(personListQuery))),
         [sortedPersonen, personListQuery],
     );
+    const activeMergeItems = useMemo<MergeItem[]>(() => {
+        switch (activeSection) {
+            case "brands":
+                return filteredBrands.map((entry) => ({ id: entry.id, label: entry.name }));
+            case "objectTypes":
+                return filteredObjectTypes.map((entry) => ({ id: entry.id, label: entry.name }));
+            case "models":
+                return filteredModelRows.map((entry) => ({ id: entry.id, label: entry.label }));
+            case "states":
+                return filteredStates.map((entry) => ({ id: entry.id, label: entry.name }));
+            case "bereiche":
+                return filteredBereiche.map((entry) => ({ id: entry.id, label: entry.name }));
+            case "standorte":
+                return filteredStandorte.map((entry) => ({ id: entry.id, label: entry.name }));
+            case "kategorien":
+                return filteredKategorien.map((entry) => ({ id: entry.id, label: entry.label }));
+            case "personen":
+                return filteredPersonen.map((entry) => ({ id: entry.id, label: entry.label }));
+            default:
+                return [];
+        }
+    }, [activeSection, filteredBereiche, filteredBrands, filteredKategorien, filteredModelRows, filteredObjectTypes, filteredPersonen, filteredStandorte, filteredStates]);
     const hasUsage = (usage: Record<number, number>, id: number) => Number(usage[id] ?? 0) > 0;
+    const getUsageCountForSection = (section: MasterdataSectionKey, id: number) => {
+        switch (section) {
+            case "brands":
+                return Number(masterdataUsage.brands[id] ?? 0);
+            case "objectTypes":
+                return Number(masterdataUsage.objectTypes[id] ?? 0);
+            case "models":
+                return Number(masterdataUsage.models[id] ?? 0);
+            case "states":
+                return Number(masterdataUsage.states[id] ?? 0);
+            case "bereiche":
+                return Number(masterdataUsage.bereiche[id] ?? 0);
+            case "standorte":
+                return Number(masterdataUsage.standorte[id] ?? 0);
+            case "kategorien":
+                return Number(masterdataUsage.kategorien[id] ?? 0);
+            case "personen":
+                return Number(masterdataUsage.personen[id] ?? 0);
+            default:
+                return 0;
+        }
+    };
     const isStatusUsed = (status: Status) => hasUsage(masterdataUsage.states, status.id);
     const isBereichUsed = (bereich: Bereich) => hasUsage(masterdataUsage.bereiche, bereich.id);
     const isStandortUsed = (standort: Standort) => hasUsage(masterdataUsage.standorte, standort.id);
@@ -301,6 +418,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setShowBrandDialog(false);
         setShowObjectTypeDialog(false);
         setShowKategorieBereichDialog(false);
+        setStandortMergeSource(null);
+        setStandortMergeTarget(null);
+        setIsStandortMergeMode(false);
+        setSelectedStandortMergeIds([]);
         setBrandSearchQuery("");
         setObjectTypeSearchQuery("");
         setKategorieBereichSearchQuery("");
@@ -323,6 +444,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         setError(null);
         setIsSaving(false);
         setDeletingTarget(null);
+        setMergingStandortId(null);
     };
 
     const handleDismiss = () => {
@@ -818,6 +940,103 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
         }
     };
 
+    const resetStandortMergeSelection = () => {
+        setSelectedStandortMergeIds([]);
+        setStandortMergeSource(null);
+        setStandortMergeTarget(null);
+    };
+
+    const toggleStandortMergeMode = () => {
+        setIsStandortMergeMode((current) => !current);
+        resetStandortMergeSelection();
+        setError(null);
+    };
+
+    const handleSelectItemForMerge = (item: MergeItem) => {
+        if (!isStandortMergeMode) {
+            return;
+        }
+
+        if (selectedStandortMergeIds.includes(item.id)) {
+            setSelectedStandortMergeIds((current) => current.filter((id) => id !== item.id));
+            return;
+        }
+
+        const nextSelectedIds = [...selectedStandortMergeIds, item.id].slice(-2);
+        setSelectedStandortMergeIds(nextSelectedIds);
+
+        if (nextSelectedIds.length === 2) {
+            const firstItem = activeMergeItems.find((entry) => entry.id === nextSelectedIds[0]);
+            const secondItem = activeMergeItems.find((entry) => entry.id === nextSelectedIds[1]);
+
+            if (firstItem && secondItem) {
+                setStandortMergeSource(firstItem);
+                setStandortMergeTarget(secondItem);
+            }
+        }
+    };
+
+    const getActiveMergeService = () => {
+        switch (activeSection) {
+            case "brands":
+                return herstellerService;
+            case "objectTypes":
+                return objekttypService;
+            case "models":
+                return modellService;
+            case "states":
+                return statusService;
+            case "bereiche":
+                return bereichService;
+            case "standorte":
+                return standortService;
+            case "kategorien":
+                return kategorieService;
+            case "personen":
+                return personService;
+            default:
+                return null;
+        }
+    };
+
+    const handleMergeStandort = async (source: MergeItem, target: MergeItem) => {
+        if (!source || !target) {
+            return;
+        }
+
+        const service = getActiveMergeService();
+        if (!service) {
+            return;
+        }
+
+        const usageCount = getUsageCountForSection(activeSection, source.id);
+        if (!(await confirmMergeStandort(source.label, target.label, usageCount))) {
+            return;
+        }
+
+        try {
+            setIsSaving(true);
+            setMergingStandortId(source.id);
+            setError(null);
+            await service.merge(source.id, target.id);
+            if (editingStandortId === source.id) {
+                setStandortName("");
+                setEditingStandortId(null);
+            }
+            setStandortMergeSource(null);
+            setStandortMergeTarget(null);
+            setSelectedStandortMergeIds([]);
+            setIsStandortMergeMode(false);
+            await onMasterdataChanged();
+        } catch (mergeError) {
+            console.error("Fehler beim Zusammenfuehren der Stammdaten:", mergeError);
+            setError(getErrorMessage(mergeError, "Stammdaten konnten nicht zusammengefuehrt werden."));
+        } finally {
+            setMergingStandortId(null);
+            setIsSaving(false);
+        }
+    };
+
     const handleDeleteKategorie = async (kategorie: { id: number; name: string }) => {
         if (isKategorieUsed(kategorie.id)) {
             setError("Kategorie wird noch von Geraeten verwendet und kann nicht geloescht werden.");
@@ -898,6 +1117,9 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
             deleteTarget: string;
             onEdit: () => void;
             onDelete: () => void;
+            extraActions?: React.ReactNode;
+            hideActions?: boolean;
+            selectionIndex?: number | null;
         }>;
         emptyMessage: string;
     }) => (
@@ -914,36 +1136,50 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     {rows.map((row) => (
                         <HoverRow
                             key={row.id}
-                            active={row.active}
+                            active={isStandortMergeMode ? selectedStandortMergeIds.includes(row.id) : row.active}
                             onPress={() => {
+                                if (isStandortMergeMode) {
+                                    handleSelectItemForMerge({ id: row.id, label: row.label });
+                                    return;
+                                }
                                 row.onEdit();
                                 setError(null);
+                                focusFormInput(activeSection);
                             }}
                             isDarkMode={isDarkMode}
                         >
                             <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                 {row.label}
                             </Text>
-                            <View style={styles.rowActions}>
-                                <Button
-                                    mode="text"
-                                    onPress={() => {
-                                        row.onEdit();
-                                        setError(null);
-                                    }}
-                                >
-                                    Bearbeiten
-                                </Button>
-                                <Button
-                                    mode="text"
-                                    textColor="#b3261e"
-                                    disabled={isSaving || row.isUsed || deletingTarget === row.deleteTarget}
-                                    loading={deletingTarget === row.deleteTarget}
-                                    onPress={row.onDelete}
-                                >
-                                    {row.isUsed ? "Genutzt" : "Loeschen"}
-                                </Button>
-                            </View>
+                            {(isStandortMergeMode ? selectedStandortMergeIds.indexOf(row.id) + 1 : row.selectionIndex) ? (
+                                <Text style={[styles.mergeSelectionBadge, isDarkMode && styles.mergeSelectionBadgeDark]}>
+                                    {isStandortMergeMode ? selectedStandortMergeIds.indexOf(row.id) + 1 : row.selectionIndex}
+                                </Text>
+                            ) : null}
+                            {!isStandortMergeMode && !row.hideActions && (
+                                <View style={styles.rowActions}>
+                                    {row.extraActions}
+                                    <Button
+                                        mode="text"
+                                        onPress={() => {
+                                            row.onEdit();
+                                            setError(null);
+                                            focusFormInput(activeSection);
+                                        }}
+                                    >
+                                        Bearbeiten
+                                    </Button>
+                                    <Button
+                                        mode="text"
+                                        textColor="#b3261e"
+                                        disabled={isSaving || row.isUsed || deletingTarget === row.deleteTarget}
+                                        loading={deletingTarget === row.deleteTarget}
+                                        onPress={row.onDelete}
+                                    >
+                                        {row.isUsed ? "Genutzt" : "Loeschen"}
+                                    </Button>
+                                </View>
+                            )}
                         </HoverRow>
                     ))}
                     {rows.length === 0 && (
@@ -972,8 +1208,8 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         </Text>
                     </View>
                 ) : (
-                    <View style={styles.adminLayout}>
-                <View style={[styles.sectionNavigation, isDarkMode && styles.sectionNavigationDark]}>
+                    <View style={[styles.adminLayout, isCompactLayout && styles.adminLayoutCompact]}>
+                <View style={[styles.sectionNavigation, isCompactLayout && styles.sectionNavigationCompact, isDarkMode && styles.sectionNavigationDark]}>
                     <Text variant="labelLarge" style={[styles.navigationTitle, isDarkMode && styles.navigationTitleDark]}>
                         Bereiche
                     </Text>
@@ -985,6 +1221,10 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 key={section.key}
                                 onPress={() => {
                                     setActiveSection(section.key);
+                                    if (section.key !== activeSection) {
+                                        setIsStandortMergeMode(false);
+                                        resetStandortMergeSelection();
+                                    }
                                     setError(null);
                                 }}
                             >
@@ -1022,7 +1262,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     })}
                 </View>
 
-                <View style={[styles.activePanel, isDarkMode && styles.activePanelDark]}>
+                <View style={[styles.activePanel, isCompactLayout && styles.activePanelCompact, isDarkMode && styles.activePanelDark]}>
                     <View style={styles.activePanelHeader}>
                         <View>
                             <Text variant="titleMedium" style={isDarkMode ? styles.titleDark : undefined}>
@@ -1032,15 +1272,26 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                 {activeSectionMeta.count} Eintraege
                             </Text>
                         </View>
-                        <Button mode="outlined" onPress={resetForm} disabled={isSaving}>
-                            Zuruecksetzen
-                        </Button>
+                        <View style={styles.panelHeaderActions}>
+                            <Button
+                                mode={isStandortMergeMode ? "contained" : "outlined"}
+                                icon="source-merge"
+                                onPress={toggleStandortMergeMode}
+                                disabled={isSaving || activeMergeItems.length <= 1}
+                            >
+                                {isStandortMergeMode ? "Auswahl beenden" : "Zusammenfuehren"}
+                            </Button>
+                            <Button mode="outlined" onPress={resetForm} disabled={isSaving}>
+                                Zuruecksetzen
+                            </Button>
+                        </View>
                     </View>
 
                 {activeSection === "brands" && (
                 <View style={styles.section}>
                     <View style={styles.formRow}>
                         <TextInput
+                            ref={brandInputRef}
                             mode="outlined"
                             label={editingBrandId ? "Hersteller bearbeiten" : "Neuer Hersteller"}
                             value={brandName}
@@ -1066,24 +1317,35 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             return (
                                 <HoverRow
                                     key={brand.id}
-                                    active={editingBrandId === brand.id}
+                                    active={isStandortMergeMode ? selectedStandortMergeIds.includes(brand.id) : editingBrandId === brand.id}
                                     onPress={() => {
+                                        if (isStandortMergeMode) {
+                                            handleSelectItemForMerge({ id: brand.id, label: brand.name });
+                                            return;
+                                        }
                                         setBrandName(brand.name);
                                         setEditingBrandId(brand.id ?? null);
                                         setError(null);
+                                        focusFormInput("brands");
                                     }}
                                     isDarkMode={isDarkMode}
                                 >
                                     <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                         {brand.name}
                                     </Text>
-                                    <View style={styles.rowActions}>
+                                    {isStandortMergeMode && selectedStandortMergeIds.includes(brand.id) ? (
+                                        <Text style={[styles.mergeSelectionBadge, isDarkMode && styles.mergeSelectionBadgeDark]}>
+                                            {selectedStandortMergeIds.indexOf(brand.id) + 1}
+                                        </Text>
+                                    ) : null}
+                                    {!isStandortMergeMode && <View style={styles.rowActions}>
                                         <Button
                                             mode="text"
                                             onPress={() => {
                                                 setBrandName(brand.name);
                                                 setEditingBrandId(brand.id ?? null);
                                                 setError(null);
+                                                focusFormInput("brands");
                                             }}
                                         >
                                             Bearbeiten
@@ -1097,7 +1359,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                         >
                                             {isUsed ? "Genutzt" : "Loeschen"}
                                         </Button>
-                                    </View>
+                                    </View>}
                                 </HoverRow>
                             );
                         })}
@@ -1114,6 +1376,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 <View style={styles.section}>
                     <View style={styles.formRow}>
                         <TextInput
+                            ref={objectTypeInputRef}
                             mode="outlined"
                             label={editingObjectTypeId ? "Objekttyp bearbeiten" : "Neuer Objekttyp"}
                             value={objectTypeName}
@@ -1139,24 +1402,35 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             return (
                                 <HoverRow
                                     key={objectType.id}
-                                    active={editingObjectTypeId === objectType.id}
+                                    active={isStandortMergeMode ? selectedStandortMergeIds.includes(objectType.id) : editingObjectTypeId === objectType.id}
                                     onPress={() => {
+                                        if (isStandortMergeMode) {
+                                            handleSelectItemForMerge({ id: objectType.id, label: objectType.name });
+                                            return;
+                                        }
                                         setObjectTypeName(objectType.name);
                                         setEditingObjectTypeId(objectType.id);
                                         setError(null);
+                                        focusFormInput("objectTypes");
                                     }}
                                     isDarkMode={isDarkMode}
                                 >
                                     <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                         {objectType.name}
                                     </Text>
-                                    <View style={styles.rowActions}>
+                                    {isStandortMergeMode && selectedStandortMergeIds.includes(objectType.id) ? (
+                                        <Text style={[styles.mergeSelectionBadge, isDarkMode && styles.mergeSelectionBadgeDark]}>
+                                            {selectedStandortMergeIds.indexOf(objectType.id) + 1}
+                                        </Text>
+                                    ) : null}
+                                    {!isStandortMergeMode && <View style={styles.rowActions}>
                                         <Button
                                             mode="text"
                                             onPress={() => {
                                                 setObjectTypeName(objectType.name);
                                                 setEditingObjectTypeId(objectType.id);
                                                 setError(null);
+                                                focusFormInput("objectTypes");
                                             }}
                                         >
                                             Bearbeiten
@@ -1170,7 +1444,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                         >
                                             {isUsed ? "Genutzt" : "Loeschen"}
                                         </Button>
-                                    </View>
+                                    </View>}
                                 </HoverRow>
                             );
                         })}
@@ -1188,6 +1462,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                     <View style={styles.editorRow}>
                         <View style={styles.editorFields}>
                             <TextInput
+                                ref={modelInputRef}
                                 mode="outlined"
                                 label={editingModelId ? "Modell bearbeiten" : "Modellname"}
                                 value={modelName}
@@ -1237,8 +1512,13 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             return (
                                 <HoverRow
                                     key={model.id}
-                                    active={editingModelId === model.id}
+                                    active={isStandortMergeMode ? selectedStandortMergeIds.includes(model.id) : editingModelId === model.id}
                                     onPress={() => {
+                                        if (isStandortMergeMode) {
+                                            handleSelectItemForMerge({ id: model.id, label: model.label });
+                                            return;
+                                        }
+
                                         const currentModel = models.find((entry) => entry.id === model.id);
                                         if (!currentModel) {
                                             return;
@@ -1252,13 +1532,19 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                         setSelectedObjectTypeName(currentObjectType?.name ?? "");
                                         setEditingModelId(currentModel.id);
                                         setError(null);
+                                        focusFormInput("models");
                                     }}
                                     isDarkMode={isDarkMode}
                                 >
                                     <Text variant="bodyMedium" style={[styles.rowItemText, isDarkMode && styles.rowItemTextDark]}>
                                         {model.label}
                                     </Text>
-                                    <View style={styles.rowActions}>
+                                    {isStandortMergeMode && selectedStandortMergeIds.includes(model.id) ? (
+                                        <Text style={[styles.mergeSelectionBadge, isDarkMode && styles.mergeSelectionBadgeDark]}>
+                                            {selectedStandortMergeIds.indexOf(model.id) + 1}
+                                        </Text>
+                                    ) : null}
+                                    {!isStandortMergeMode && <View style={styles.rowActions}>
                                         <Button
                                             mode="text"
                                             onPress={() => {
@@ -1275,6 +1561,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                                 setSelectedObjectTypeName(currentObjectType?.name ?? "");
                                                 setEditingModelId(currentModel.id);
                                                 setError(null);
+                                                focusFormInput("models");
                                             }}
                                         >
                                             Bearbeiten
@@ -1288,7 +1575,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                                         >
                                             {isUsed ? "Genutzt" : "Loeschen"}
                                         </Button>
-                                    </View>
+                                    </View>}
                                 </HoverRow>
                             );
                         })}
@@ -1309,6 +1596,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         form: (
                             <View style={styles.formRow}>
                                 <TextInput
+                                    ref={statusInputRef}
                                     mode="outlined"
                                     label={editingStatusId ? "Status bearbeiten" : "Neuer Status"}
                                     value={statusName}
@@ -1344,6 +1632,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         form: (
                             <View style={styles.formRow}>
                                 <TextInput
+                                    ref={bereichInputRef}
                                     mode="outlined"
                                     label={editingBereichId ? "Bereich bearbeiten" : "Neuer Bereich"}
                                     value={bereichName}
@@ -1377,26 +1666,50 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         query: standortListQuery,
                         onQueryChange: setStandortListQuery,
                         form: (
-                            <View style={styles.formRow}>
-                                <TextInput
-                                    mode="outlined"
-                                    label={editingStandortId ? "Standort bearbeiten" : "Neuer Standort"}
-                                    value={standortName}
-                                    onChangeText={setStandortName}
-                                    style={[styles.input, isDarkMode && styles.inputDark]}
-                                />
-                                <Button mode="contained" onPress={handleCreateStandort} disabled={isSaving}>
-                                    {editingStandortId ? "Speichern" : "Anlegen"}
-                                </Button>
-                            </View>
+                            <>
+                                <View style={styles.formRow}>
+                                    <TextInput
+                                        ref={standortInputRef}
+                                        mode="outlined"
+                                        label={editingStandortId ? "Standort bearbeiten" : "Neuer Standort"}
+                                        value={standortName}
+                                        onChangeText={setStandortName}
+                                        style={[styles.input, isDarkMode && styles.inputDark]}
+                                    />
+                                    <Button mode="contained" onPress={handleCreateStandort} disabled={isSaving || isStandortMergeMode}>
+                                        {editingStandortId ? "Speichern" : "Anlegen"}
+                                    </Button>
+                                </View>
+                                {isStandortMergeMode && (
+                                    <View style={[styles.mergeModeHint, isDarkMode && styles.mergeModeHintDark]}>
+                                        <Text style={[styles.mergeModeHintText, isDarkMode && styles.mergeModeHintTextDark]}>
+                                            Zwei Eintraege auswaehlen. Danach entscheidest du, welcher Eintrag erhalten bleibt.
+                                        </Text>
+                                        <Text style={[styles.mergeModeHintText, isDarkMode && styles.mergeModeHintTextDark]}>
+                                            {selectedStandortMergeIds.length}/2 ausgewaehlt
+                                        </Text>
+                                    </View>
+                                )}
+                            </>
                         ),
                         rows: filteredStandorte.map((standort) => ({
                             id: standort.id,
                             label: standort.name,
-                            active: editingStandortId === standort.id,
+                            active: isStandortMergeMode
+                                ? selectedStandortMergeIds.includes(standort.id)
+                                : editingStandortId === standort.id,
                             isUsed: isStandortUsed(standort),
                             deleteTarget: `standort-${standort.id}`,
+                            hideActions: isStandortMergeMode,
+                            selectionIndex: isStandortMergeMode
+                                ? selectedStandortMergeIds.indexOf(standort.id) + 1 || null
+                                : null,
                             onEdit: () => {
+                                if (isStandortMergeMode) {
+                                    handleSelectStandortForMerge(standort);
+                                    return;
+                                }
+
                                 setStandortName(standort.name);
                                 setEditingStandortId(standort.id);
                             },
@@ -1415,6 +1728,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                             <View style={styles.editorRow}>
                                 <View style={styles.editorFields}>
                                     <TextInput
+                                        ref={kategorieInputRef}
                                         mode="outlined"
                                         label={editingKategorieId ? "Kategorie bearbeiten" : "Neue Kategorie"}
                                         value={kategorieName}
@@ -1463,6 +1777,7 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                         form: (
                             <View style={styles.formRow}>
                                 <TextInput
+                                    ref={personVornameInputRef}
                                     mode="outlined"
                                     label="Vorname"
                                     value={personVorname}
@@ -1566,6 +1881,57 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
                 onAddNew={async () => Promise.resolve()}
                 isNewItem={false}
             />
+
+            <Portal>
+                <Dialog
+                    visible={Boolean(standortMergeSource && standortMergeTarget)}
+                    onDismiss={() => {
+                        setStandortMergeTarget(null);
+                    }}
+                    style={isDarkMode ? styles.dialogDark : undefined}
+                >
+                    <Dialog.Title>Richtung auswaehlen</Dialog.Title>
+                    <Dialog.Content>
+                        <View style={styles.mergeHelpRow}>
+                            <Text style={isDarkMode ? styles.rowItemTextDark : undefined}>
+                                Welcher Eintrag soll erhalten bleiben?
+                            </Text>
+                            <Tooltip title="Alle Verwendungen vom roten Eintrag werden auf den gruenen Eintrag verschoben. Der rote Eintrag wird danach geloescht.">
+                                <Text style={[styles.helpIcon, isDarkMode && styles.helpIconDark]}>?</Text>
+                            </Tooltip>
+                        </View>
+                    </Dialog.Content>
+                    <Dialog.Actions style={styles.mergeDialogActions}>
+                        <Button onPress={() => setStandortMergeTarget(null)} disabled={isSaving}>
+                            Abbrechen
+                        </Button>
+                        {standortMergeSource && standortMergeTarget && (
+                            <>
+                                <Button
+                                    mode="outlined"
+                                    disabled={isSaving}
+                                    loading={mergingStandortId === standortMergeSource.id}
+                                    style={[styles.mergeDirectionButton, isDarkMode && styles.mergeDirectionButtonDark]}
+                                    contentStyle={styles.mergeDirectionButtonContent}
+                                    onPress={() => void handleMergeStandort(standortMergeSource, standortMergeTarget)}
+                                >
+                                    {renderMergeDirectionLabel(standortMergeSource.label, standortMergeTarget.label, isDarkMode)}
+                                </Button>
+                                <Button
+                                    mode="outlined"
+                                    disabled={isSaving}
+                                    loading={mergingStandortId === standortMergeTarget.id}
+                                    style={[styles.mergeDirectionButton, isDarkMode && styles.mergeDirectionButtonDark]}
+                                    contentStyle={styles.mergeDirectionButtonContent}
+                                    onPress={() => void handleMergeStandort(standortMergeTarget, standortMergeSource)}
+                                >
+                                    {renderMergeDirectionLabel(standortMergeTarget.label, standortMergeSource.label, isDarkMode)}
+                                </Button>
+                            </>
+                        )}
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </Modal>
     );
 };
@@ -1573,9 +1939,11 @@ const MasterdataAdminModal: React.FC<MasterdataAdminModalProps> = ({
 const styles = StyleSheet.create({
     modal: {
         backgroundColor: "#ffffff",
-        margin: 20,
+        margin: Platform.OS === "web" ? 8 : 12,
         borderRadius: 12,
         maxHeight: "90%",
+        width: Platform.OS === "web" ? "calc(100% - 16px)" : undefined,
+        alignSelf: "center",
     },
     modalDark: {
         backgroundColor: "#151a22",
@@ -1583,7 +1951,7 @@ const styles = StyleSheet.create({
         borderColor: "#263140",
     },
     content: {
-        padding: 20,
+        padding: 16,
         gap: 16,
     },
     header: {
@@ -1596,15 +1964,22 @@ const styles = StyleSheet.create({
         gap: 16,
         minHeight: 560,
     },
+    adminLayoutCompact: {
+        minHeight: 0,
+    },
     activePanel: {
         flex: 1,
-        minWidth: 300,
+        minWidth: 0,
+        width: "100%",
         gap: 16,
         padding: 16,
         borderWidth: 1,
         borderColor: "#e3e7ee",
         borderRadius: 12,
         backgroundColor: "#ffffff",
+    },
+    activePanelCompact: {
+        padding: 12,
     },
     activePanelDark: {
         backgroundColor: "#11161d",
@@ -1617,12 +1992,21 @@ const styles = StyleSheet.create({
         gap: 12,
         flexWrap: "wrap",
     },
+    panelHeaderActions: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        gap: 8,
+        flexWrap: "wrap",
+        flexShrink: 1,
+    },
     section: {
         gap: 12,
     },
     sectionNavigation: {
-        width: 210,
-        flexGrow: 0,
+        width: "100%",
+        maxWidth: 210,
+        flexGrow: 1,
         flexShrink: 0,
         flexDirection: "column",
         gap: 8,
@@ -1631,6 +2015,9 @@ const styles = StyleSheet.create({
         borderColor: "#e3e7ee",
         borderRadius: 12,
         backgroundColor: "#fafbfc",
+    },
+    sectionNavigationCompact: {
+        maxWidth: "100%",
     },
     sectionNavigationDark: {
         backgroundColor: "#0f141b",
@@ -1720,15 +2107,40 @@ const styles = StyleSheet.create({
     },
     editorFields: {
         flex: 1,
-        minWidth: 260,
+        minWidth: 0,
         gap: 10,
     },
     editorAction: {
         minWidth: 120,
         marginTop: 6,
     },
+    mergeModeHint: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 12,
+        flexWrap: "wrap",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderWidth: 1,
+        borderRadius: 8,
+        borderColor: "#dbe3ec",
+        backgroundColor: "#f3f6fa",
+    },
+    mergeModeHintDark: {
+        borderColor: "#2a3340",
+        backgroundColor: "#151922",
+    },
+    mergeModeHintText: {
+        color: "#475569",
+        fontWeight: "600",
+    },
+    mergeModeHintTextDark: {
+        color: "#cbd5e1",
+    },
     input: {
         flex: 1,
+        minWidth: 0,
     },
     inputDark: {
         backgroundColor: "#0f141b",
@@ -1799,7 +2211,23 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "flex-end",
         gap: 4,
-        minWidth: 170,
+        minWidth: 0,
+        flexWrap: "wrap",
+    },
+    mergeSelectionBadge: {
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        overflow: "hidden",
+        textAlign: "center",
+        lineHeight: 28,
+        color: "#174f80",
+        backgroundColor: "#e8f0fe",
+        fontWeight: "800",
+    },
+    mergeSelectionBadgeDark: {
+        color: "#dbeafe",
+        backgroundColor: "#1e3a5f",
     },
     subtleText: {
         color: "#5f6368",
@@ -1837,6 +2265,74 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         marginTop: 4,
+    },
+    dialogDark: {
+        backgroundColor: "#161b22",
+    },
+    mergeHelpRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        flexWrap: "wrap",
+    },
+    helpIcon: {
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+        textAlign: "center",
+        lineHeight: 22,
+        color: "#5f6368",
+        backgroundColor: "#eef2f6",
+        fontWeight: "700",
+    },
+    helpIconDark: {
+        color: "#cbd5e1",
+        backgroundColor: "#202938",
+    },
+    mergeDialogActions: {
+        flexWrap: "wrap",
+        gap: 8,
+    },
+    mergeDirectionButton: {
+        borderColor: "#cbd5e1",
+        backgroundColor: "#f8fafc",
+    },
+    mergeDirectionButtonDark: {
+        borderColor: "#2a3340",
+        backgroundColor: "#11161d",
+    },
+    mergeDirectionButtonContent: {
+        minHeight: 48,
+        justifyContent: "flex-start",
+    },
+    mergeDirectionLabel: {
+        flexDirection: "row",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 6,
+        maxWidth: 420,
+    },
+    mergeDirectionName: {
+        fontWeight: "700",
+    },
+    mergeDirectionRemoveName: {
+        color: "#b3261e",
+    },
+    mergeDirectionRemoveNameDark: {
+        color: "#fca5a5",
+    },
+    mergeDirectionKeepName: {
+        color: "#1f7a3f",
+    },
+    mergeDirectionKeepNameDark: {
+        color: "#86efac",
+    },
+    mergeDirectionArrow: {
+        color: "#5f6368",
+        fontWeight: "600",
+    },
+    mergeDirectionArrowDark: {
+        color: "#9aa4b2",
     },
 });
 

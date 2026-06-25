@@ -137,6 +137,7 @@ router.put('/:id', herstellerController.updateHersteller);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.post('/:id/merge', requireAdmin, herstellerController.mergeHersteller);
 router.delete('/:id', requireAdmin, herstellerController.deleteHersteller);
 
 module.exports = router;

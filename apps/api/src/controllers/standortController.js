@@ -67,4 +67,18 @@ const deleteStandort = async (req, res) => {
     }
 };
 
-module.exports = { getAllStandorte, getStandortById, createStandort, updateStandort, deleteStandort };
+const mergeStandort = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) {
+            return res.status(400).json({ error: 'Ziel-Standort ist erforderlich' });
+        }
+
+        const result = await Standort.merge(req.params.id, targetId);
+        res.json(result);
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllStandorte, getStandortById, createStandort, updateStandort, deleteStandort, mergeStandort };
