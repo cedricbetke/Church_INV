@@ -8,6 +8,7 @@ interface InventoryListItemDto {
     einkaufspreis: number | null;
     serien_nr: string | number | null;
     zustandshinweis: string | null;
+    packliste: string | null;
     geraetefoto_url: string | null;
     geraetefoto_thumb_url?: string | null;
     Status: string;
@@ -36,6 +37,7 @@ const inventoryMapper = {
             kaufdatum: item.kaufdatum ? new Date(item.kaufdatum) : undefined,
             einkaufspreis: item.einkaufspreis ?? undefined,
             zustandshinweis: item.zustandshinweis ?? undefined,
+            packliste: item.packliste ?? undefined,
             standort: item.Standort ?? "",
             verantwortlicher: item.Verantwortlicher ?? undefined,
             bereich: item.Bereich,

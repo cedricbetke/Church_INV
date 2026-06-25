@@ -31,6 +31,7 @@ const Geraet = {
                 g.einkaufspreis AS einkaufspreis,
                 g.serien_nr AS serien_nr,
                 g.zustandshinweis AS zustandshinweis,
+                g.packliste AS packliste,
                 g.geraetefoto_url AS geraetefoto_url,
                 s.name AS Status,
                 h.name AS Hersteller,
@@ -66,7 +67,7 @@ const Geraet = {
         return maxId[0].next_number;
     },
 
-    create: async (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, zustandshinweis, geraetefoto_url) => {
+    create: async (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, zustandshinweis, packliste, geraetefoto_url) => {
         const _kaufdatum = kaufdatum || null;
         const _einkaufspreis = einkaufspreis || null;
         const _serien_nr = serien_nr || null;
@@ -74,11 +75,12 @@ const Geraet = {
         const _verantwortlicher_id = verantwortlicher_id || null;
         const _kategorie_id = kategorie_id || null;
         const _zustandshinweis = zustandshinweis || null;
+        const _packliste = packliste || null;
         const _geraetefoto_url = geraetefoto_url || null;
 
         await db.query(
-            'INSERT INTO geraet (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, zustandshinweis, geraetefoto_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [inv_nr, status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _zustandshinweis, _geraetefoto_url],
+            'INSERT INTO geraet (inv_nr, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, zustandshinweis, packliste, geraetefoto_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [inv_nr, status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _zustandshinweis, _packliste, _geraetefoto_url],
         );
 
         return {
@@ -93,11 +95,12 @@ const Geraet = {
             verantwortlicher_id: _verantwortlicher_id,
             kategorie_id: _kategorie_id,
             zustandshinweis: _zustandshinweis,
+            packliste: _packliste,
             geraetefoto_url: _geraetefoto_url,
         };
     },
 
-    update: async (id, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, zustandshinweis, geraetefoto_url) => {
+    update: async (id, status_id, modell_id, bereich_id, kaufdatum, einkaufspreis, serien_nr, standort_id, verantwortlicher_id, kategorie_id, zustandshinweis, packliste, geraetefoto_url) => {
         const _kaufdatum = kaufdatum || null;
         const _einkaufspreis = einkaufspreis || null;
         const _serien_nr = serien_nr || null;
@@ -105,11 +108,12 @@ const Geraet = {
         const _verantwortlicher_id = verantwortlicher_id || null;
         const _kategorie_id = kategorie_id || null;
         const _zustandshinweis = zustandshinweis || null;
+        const _packliste = packliste || null;
         const _geraetefoto_url = geraetefoto_url || null;
 
         await db.query(
-            'UPDATE geraet SET status_id = ?, modell_id = ?, bereich_id = ?, kaufdatum = ?, einkaufspreis = ?, serien_nr = ?, standort_id = ?, verantwortlicher_id = ?, kategorie_id = ?, zustandshinweis = ?, geraetefoto_url = ? WHERE inv_nr = ?',
-            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _zustandshinweis, _geraetefoto_url, id],
+            'UPDATE geraet SET status_id = ?, modell_id = ?, bereich_id = ?, kaufdatum = ?, einkaufspreis = ?, serien_nr = ?, standort_id = ?, verantwortlicher_id = ?, kategorie_id = ?, zustandshinweis = ?, packliste = ?, geraetefoto_url = ? WHERE inv_nr = ?',
+            [status_id, modell_id, bereich_id, _kaufdatum, _einkaufspreis, _serien_nr, _standort_id, _verantwortlicher_id, _kategorie_id, _zustandshinweis, _packliste, _geraetefoto_url, id],
         );
 
         return {
@@ -124,6 +128,7 @@ const Geraet = {
             verantwortlicher_id: _verantwortlicher_id,
             kategorie_id: _kategorie_id,
             zustandshinweis: _zustandshinweis,
+            packliste: _packliste,
             geraetefoto_url: _geraetefoto_url,
         };
     },

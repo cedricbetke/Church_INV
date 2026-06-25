@@ -84,6 +84,7 @@ Wichtige Gerätefelder zusätzlich zu den Relationen:
 - `kaufdatum`
 - `einkaufspreis`
 - `zustandshinweis`
+- `packliste`
 
 ## Medien
 

@@ -32,6 +32,7 @@ const DEFAULT_COLUMNS: Column[] = [
     { title: "Kaufdatum", key: "kaufdatum", numeric: false, sortDirection: undefined, visible: false },
     { title: "Einkaufspreis", key: "einkaufspreis", numeric: false, sortDirection: undefined, visible: false },
     { title: "Zustandshinweis", key: "zustandshinweis", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Packliste", key: "packliste", numeric: false, sortDirection: undefined, visible: false },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined, visible: true },
 ];
 
@@ -327,6 +328,8 @@ const InvTable = () => {
                 return compareValues(left.einkaufspreis, right.einkaufspreis, activeSortColumn.sortDirection);
             case "zustandshinweis":
                 return compareValues(left.zustandshinweis, right.zustandshinweis, activeSortColumn.sortDirection);
+            case "packliste":
+                return compareValues(left.packliste, right.packliste, activeSortColumn.sortDirection);
             case "foto":
                 return compareValues(
                     left.geraeteFoto ? 1 : 0,
@@ -406,5 +409,4 @@ const styles = StyleSheet.create({
 });
 
 export default InvTable;
-
 

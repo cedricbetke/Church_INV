@@ -97,6 +97,7 @@ const getInventorySearchTerms = (item: InventoryItem) => {
         item.kategorie,
         item.verantwortlicher,
         item.seriennummer,
+        item.packliste,
         isoDate,
         localizedDate,
         ...item.attachments.map((attachment) => attachment.name),

@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform, StyleSheet, Text, View, useWindowDimensions } from "react-native";
-import { HelperText, TextInput } from "react-native-paper";
+import { HelperText, IconButton, TextInput } from "react-native-paper";
 import { FormData } from "@/src/features/inventory/types/FormData";
 import UIGrid from "./DetailGrid";
 import { useAppThemeMode } from "@/src/shared/theme/AppThemeContext";
@@ -68,12 +68,38 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     const { isDarkMode } = useAppThemeMode();
     const { width } = useWindowDimensions();
     const isCompactViewport = width < 640;
+    const [packlisteDraft, setPacklisteDraft] = React.useState("");
+    const packlisteItems = React.useMemo(
+        () => formData.packliste
+            .split(/\r?\n/)
+            .map((entry) => entry.trim())
+            .filter(Boolean),
+        [formData.packliste],
+    );
     const openSelectionDialog = (showDialog: (show: boolean) => void) => {
         if (Platform.OS === "web" && typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
             document.activeElement.blur();
         }
 
         showDialog(true);
+    };
+
+    const updatePacklisteItems = (items: string[]) => {
+        handleChange("packliste", items.join("\n"));
+    };
+
+    const handleAddPacklisteItem = () => {
+        const nextItem = packlisteDraft.trim();
+        if (!nextItem) {
+            return;
+        }
+
+        updatePacklisteItems([...packlisteItems, nextItem]);
+        setPacklisteDraft("");
+    };
+
+    const handleRemovePacklisteItem = (index: number) => {
+        updatePacklisteItems(packlisteItems.filter((_, itemIndex) => itemIndex !== index));
     };
 
     const renderWebDateField = () => (
@@ -124,6 +150,8 @@ export const FormFields: React.FC<FormFieldsProps> = ({
             selectionOnly?: boolean;
             placeholder?: string;
             helperText?: string;
+            multiline?: boolean;
+            numberOfLines?: number;
         } = {},
     ) => (
         <View>
@@ -139,13 +167,63 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                 onFocus={options.onFocus}
                 onPressIn={options.onPressIn}
                 showSoftInputOnFocus={!options.selectionOnly}
+                multiline={options.multiline}
+                numberOfLines={options.numberOfLines}
                 right={options.rightIcon ? <TextInput.Icon icon={options.rightIcon} /> : undefined}
-                style={[styles.fieldInput, isDarkMode && styles.fieldInputDark]}
+                style={[styles.fieldInput, options.multiline && styles.multilineInput, isDarkMode && styles.fieldInputDark]}
             />
             {errors[name] && <HelperText type="error">{errors[name]}</HelperText>}
             {!errors[name] && options.helperText && <HelperText type="info">{options.helperText}</HelperText>}
             {name === "invNr" && loading && (
                 <HelperText type="info">Lade Inventarnummer...</HelperText>
+            )}
+        </View>
+    );
+
+    const renderPacklisteEditor = () => (
+        <View style={[styles.packlisteSection, isDarkMode && styles.packlisteSectionDark]}>
+            <View style={styles.packlisteHeader}>
+                <Text style={[styles.packlisteTitle, isDarkMode && styles.packlisteTitleDark]}>Packliste</Text>
+                <Text style={[styles.packlisteHint, isDarkMode && styles.packlisteHintDark]}>Optional</Text>
+            </View>
+            <View style={styles.packlisteInputRow}>
+                <TextInput
+                    mode="outlined"
+                    label="Eintrag hinzufügen"
+                    placeholder="z. B. 1x Netzteil"
+                    value={packlisteDraft}
+                    onChangeText={setPacklisteDraft}
+                    onSubmitEditing={handleAddPacklisteItem}
+                    returnKeyType="done"
+                    style={[styles.fieldInput, styles.packlisteInput, isDarkMode && styles.fieldInputDark]}
+                />
+                <IconButton
+                    icon="plus"
+                    mode="contained-tonal"
+                    size={22}
+                    disabled={!packlisteDraft.trim()}
+                    onPress={handleAddPacklisteItem}
+                    style={styles.packlisteAddButton}
+                    accessibilityLabel="Packlisten-Eintrag hinzufügen"
+                />
+            </View>
+            {packlisteItems.length === 0 ? (
+                <HelperText type="info">Ein Zubehörteil pro Eintrag hinzufügen.</HelperText>
+            ) : (
+                <View style={styles.packlisteItems}>
+                    {packlisteItems.map((item, index) => (
+                        <View key={`${item}-${index}`} style={[styles.packlisteItem, isDarkMode && styles.packlisteItemDark]}>
+                            <Text style={[styles.packlisteItemText, isDarkMode && styles.packlisteItemTextDark]}>{item}</Text>
+                            <IconButton
+                                icon="close"
+                                size={18}
+                                onPress={() => handleRemovePacklisteItem(index)}
+                                style={styles.packlisteRemoveButton}
+                                accessibilityLabel="Packlisten-Eintrag entfernen"
+                            />
+                        </View>
+                    ))}
+                </View>
             )}
         </View>
     );
@@ -225,6 +303,7 @@ export const FormFields: React.FC<FormFieldsProps> = ({
                     selectionOnly: true,
                 })}
             </UIGrid>
+            {renderPacklisteEditor()}
         </View>
     );
 };
@@ -257,7 +336,89 @@ const styles = StyleSheet.create({
     fieldInput: {
         backgroundColor: "#ffffff",
     },
+    multilineInput: {
+        minHeight: 120,
+    },
     fieldInputDark: {
         backgroundColor: "#11161d",
+    },
+    packlisteSection: {
+        gap: 12,
+        marginTop: 8,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#e0e0e0",
+        borderRadius: 10,
+        backgroundColor: "#fafafa",
+    },
+    packlisteSectionDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
+    packlisteHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 12,
+    },
+    packlisteTitle: {
+        color: "#1f2937",
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    packlisteTitleDark: {
+        color: "#f3f4f6",
+    },
+    packlisteHint: {
+        color: "#666",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    packlisteHintDark: {
+        color: "#9aa4b2",
+    },
+    packlisteInputRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    packlisteInput: {
+        flex: 1,
+    },
+    packlisteAddButton: {
+        margin: 0,
+        width: 48,
+        height: 48,
+    },
+    packlisteItems: {
+        gap: 8,
+    },
+    packlisteItem: {
+        minHeight: 44,
+        paddingLeft: 12,
+        borderWidth: 1,
+        borderColor: "#dfe3e8",
+        borderRadius: 8,
+        backgroundColor: "#ffffff",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+    },
+    packlisteItemDark: {
+        backgroundColor: "#11161d",
+        borderColor: "#334155",
+    },
+    packlisteItemText: {
+        flex: 1,
+        color: "#1f2937",
+        fontSize: 15,
+        lineHeight: 20,
+    },
+    packlisteItemTextDark: {
+        color: "#f3f4f6",
+    },
+    packlisteRemoveButton: {
+        margin: 0,
     },
 });
