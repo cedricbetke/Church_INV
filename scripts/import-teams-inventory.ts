@@ -329,10 +329,10 @@ const assertRequiredColumns = (rows: CsvRow[]) => {
     }
 };
 
-const ensureZustandshinweisColumn = async () => {
-    const [rows] = await db.query("SHOW COLUMNS FROM geraet LIKE 'zustandshinweis'");
+const ensureGeraetColumn = async (columnName: string) => {
+    const [rows] = await db.query("SHOW COLUMNS FROM geraet LIKE ?", [columnName]);
     if (!Array.isArray(rows) || rows.length === 0) {
-        throw new Error("Die DB-Spalte geraet.zustandshinweis fehlt. Bitte zuerst per ALTER TABLE anlegen.");
+        throw new Error(`Die DB-Spalte geraet.${columnName} fehlt. Bitte zuerst per ALTER TABLE anlegen.`);
     }
 };
 
@@ -382,7 +382,8 @@ const main = async () => {
     const csvContent = require("node:fs").readFileSync(filePath, "utf8");
     const csvRows = rowsToObjects(parseCsv(csvContent));
     assertRequiredColumns(csvRows);
-    await ensureZustandshinweisColumn();
+    await ensureGeraetColumn("zustandshinweis");
+    await ensureGeraetColumn("packliste");
 
     const summary: ImportSummary = {
         sourceFile: filePath,
@@ -698,6 +699,7 @@ const main = async () => {
                     kategorie?.id,
                     zustandshinweis,
                     null,
+                    null,
                 );
                 await GeraetVerlauf.logCreate(invNr);
                 summary.createdDevices += 1;
@@ -714,6 +716,7 @@ const main = async () => {
                     person?.id,
                     kategorie?.id,
                     zustandshinweis,
+                    beforeSnapshot.packliste ?? null,
                     beforeSnapshot.geraetefoto_url ?? null,
                 );
 

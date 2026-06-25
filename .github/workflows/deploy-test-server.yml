@@ -92,7 +92,8 @@ jobs:
               '${DEPLOY_PATH}' \
               '${DEPLOY_PATH}/data/uploads/geraete/thumbs' \
               '${DEPLOY_PATH}/data/uploads/dokumente' \
-              '${DEPLOY_PATH}/data/mysql'
+              '${DEPLOY_PATH}/data/mysql' \
+              '${DEPLOY_PATH}/data/backups'
           "
 
       - name: Sync repository to server
@@ -119,7 +120,11 @@ jobs:
             set +a
             export UPLOADS_DIR='${DEPLOY_PATH}/data/uploads'
             export MYSQL_DATA_DIR='${DEPLOY_PATH}/data/mysql'
+            export BACKUP_ROOT='${DEPLOY_PATH}/data/backups'
+            export BACKUP_CONFIG_FILE='${DEPLOY_PATH}/backup.env'
             docker compose build --pull
+            docker compose up -d db
+            bash scripts/run-db-patches.sh
             docker compose up -d --remove-orphans
           "
 

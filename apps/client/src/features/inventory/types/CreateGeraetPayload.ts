@@ -10,6 +10,7 @@ export interface CreateGeraetPayload {
     kaufdatum?: string;
     einkaufspreis?: number;
     zustandshinweis?: string;
+    packliste?: string;
     geraetefoto_url?: string;
 }
 

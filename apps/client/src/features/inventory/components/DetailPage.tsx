@@ -42,8 +42,8 @@ const formatCurrency = (value?: number) => {
 const getDisplayValue = (value?: string) => value?.trim() || "Nicht gesetzt";
 const isUnsetValue = (value: string) => value === "Nicht gesetzt";
 
-const DetailRow = ({ label, value, isDarkMode, compact = false }: { label: string; value: string; isDarkMode: boolean; compact?: boolean }) => (
-    <View style={[styles.detailItem, compact && styles.detailItemCompact]}>
+const DetailRow = ({ label, value, isDarkMode, compact = false, wide = false }: { label: string; value: string; isDarkMode: boolean; compact?: boolean; wide?: boolean }) => (
+    <View style={[styles.detailItem, (compact || wide) && styles.detailItemCompact]}>
         <Surface style={[styles.detailCard, isDarkMode && styles.detailCardDark]}>
             <Text style={[styles.cardLabel, isDarkMode && styles.cardLabelDark]}>{label}</Text>
             <Text style={[styles.cardValue, isDarkMode && styles.cardValueDark, isUnsetValue(value) && styles.cardValueMuted]}>{value}</Text>
@@ -341,6 +341,7 @@ const DetailModal: React.FC<DetailModalProps> = ({
                                     <DetailRow label="Einkaufspreis" value={formatCurrency(selectedItem.einkaufspreis)} isDarkMode={isDarkMode} compact={isCompactViewport} />
                                     <DetailRow label="Zustandshinweis" value={getDisplayValue(selectedItem.zustandshinweis)} isDarkMode={isDarkMode} compact={isCompactViewport} />
                                     <DetailRow label="Seriennummer" value={getDisplayValue(selectedItem.seriennummer)} isDarkMode={isDarkMode} compact={isCompactViewport} />
+                                    <DetailRow label="Packliste" value={getDisplayValue(selectedItem.packliste)} isDarkMode={isDarkMode} compact={isCompactViewport} wide />
                                     <DetailRow
                                         label="Foto"
                                         value={selectedItem.geraeteFoto ? "Vorhanden" : "Nicht gesetzt"}

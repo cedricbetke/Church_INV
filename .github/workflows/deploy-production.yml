@@ -59,7 +59,8 @@ jobs:
             /home/inventory/data/uploads/geraete/thumbs \
             /home/inventory/data/uploads/dokumente \
             /home/inventory/data/mysql \
-            /home/inventory/data/db-imports
+            /home/inventory/data/db-imports \
+            /home/inventory/backups
 
       - name: Deploy with Docker Compose
         run: |
@@ -67,4 +68,6 @@ jobs:
           . apps/api/.env
           set +a
           docker compose build --pull
+          docker compose up -d db
+          bash scripts/run-db-patches.sh
           docker compose up -d --remove-orphans
