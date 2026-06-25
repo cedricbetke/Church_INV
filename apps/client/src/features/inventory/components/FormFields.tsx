@@ -181,11 +181,15 @@ export const FormFields: React.FC<FormFieldsProps> = ({
     );
 
     const renderPacklisteEditor = () => (
-        <View style={styles.packlisteSection}>
+        <View style={[styles.packlisteSection, isDarkMode && styles.packlisteSectionDark]}>
+            <View style={styles.packlisteHeader}>
+                <Text style={[styles.packlisteTitle, isDarkMode && styles.packlisteTitleDark]}>Packliste</Text>
+                <Text style={[styles.packlisteHint, isDarkMode && styles.packlisteHintDark]}>Optional</Text>
+            </View>
             <View style={styles.packlisteInputRow}>
                 <TextInput
                     mode="outlined"
-                    label="Packliste"
+                    label="Eintrag hinzufügen"
                     placeholder="z. B. 1x Netzteil"
                     value={packlisteDraft}
                     onChangeText={setPacklisteDraft}
@@ -339,8 +343,39 @@ const styles = StyleSheet.create({
         backgroundColor: "#11161d",
     },
     packlisteSection: {
-        gap: 8,
-        marginTop: 4,
+        gap: 12,
+        marginTop: 8,
+        padding: 14,
+        borderWidth: 1,
+        borderColor: "#e0e0e0",
+        borderRadius: 10,
+        backgroundColor: "#fafafa",
+    },
+    packlisteSectionDark: {
+        backgroundColor: "#0f141b",
+        borderColor: "#263140",
+    },
+    packlisteHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: 12,
+    },
+    packlisteTitle: {
+        color: "#1f2937",
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    packlisteTitleDark: {
+        color: "#f3f4f6",
+    },
+    packlisteHint: {
+        color: "#666",
+        fontSize: 12,
+        fontWeight: "600",
+    },
+    packlisteHintDark: {
+        color: "#9aa4b2",
     },
     packlisteInputRow: {
         flexDirection: "row",
