@@ -200,6 +200,8 @@ Wenn du bereits einen vorgeschalteten Nginx- oder Traefik-Proxy hast, ist der sa
 
 Dann brauchst du nach aussen nur noch einen Einstiegspunkt.
 
+Der Client-Container setzt in `apps/client/nginx.conf` `client_max_body_size 20m`. Das ist noetig, weil Foto- und Dokument-Uploads aktuell als Base64-JSON durch `/api` laufen. Die App erlaubt Dokumente bis 10 MB; durch Base64 wird der Request groesser als die Originaldatei. Ohne dieses nginx-Limit beantwortet der Proxy groessere, aber erlaubte Dokumente mit `413 Request Entity Too Large`.
+
 ## GitHub Actions CI/CD
 
 Es gibt aktuell zwei getrennte Deploy-Wege:
@@ -216,7 +218,10 @@ Der Workflow macht:
 1. `docker compose build` auf GitHub Actions als Vorpruefung
 2. Sync des Repos per SSH und `rsync` auf den Zielserver
 3. `docker compose build --pull`
-4. `docker compose up -d --remove-orphans`
+4. Start des MySQL-Containers
+5. falls neue SQL-Patches offen sind: Backup von Datenbank und Uploads
+6. Anwendung der noch nicht ausgefuehrten SQL-Patches aus `schemas/patches`
+7. `docker compose up -d --remove-orphans`
 
 Im aktuellen Testserver-Setup ist der Web-Client extern auf `http://SERVER:51821` ausgelegt. Ein passender Healthcheck sollte deshalb ebenfalls auf Port `51821` zeigen.
 
@@ -235,7 +240,12 @@ Der Workflow macht:
 2. Checkout auf dem self-hosted Runner direkt auf dem Produktionsserver
 3. lokale Pruefung, ob `apps/api/.env` auf dem Server vorhanden ist
 4. `docker compose build --pull`
-5. `docker compose up -d --remove-orphans`
+5. Start des MySQL-Containers
+6. falls neue SQL-Patches offen sind: Backup von Datenbank und Uploads
+7. Anwendung der noch nicht ausgefuehrten SQL-Patches aus `schemas/patches`
+8. `docker compose up -d --remove-orphans`
+
+SQL-Patches werden in der Tabelle `schema_migrations` protokolliert und dadurch nur einmal ausgefuehrt. Vor jedem Lauf mit offenen Patches erstellt der Workflow ein Backup ueber [scripts/backup-production.sh](/c:/Users/cedri/vsProjects/ChurhINV_REPO/Church_INV/scripts/backup-production.sh). Wenn das Backup fehlschlaegt, werden keine DB-Patches angewendet.
 
 Standardmaessig laeuft der Produktions-Deploy:
 

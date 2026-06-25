@@ -85,6 +85,7 @@ const createGeraet = async (req, res) => {
             verantwortlicher_id,
             kategorie_id,
             zustandshinweis = null,
+            packliste = null,
             geraetefoto_url = null,  // Optionales Feld, Standardwert null
             kaufdatum = null,         // Optionales Feld, Standardwert null
             serien_nr = null          // Optionales Feld, Standardwert null
@@ -112,6 +113,7 @@ const createGeraet = async (req, res) => {
             verantwortlicher_id,// Optional: verantwortlicher_id
             kategorie_id,       // Optional: kategorie_id
             zustandshinweis,    // Optional: zustandshinweis
+            packliste,          // Optional: packliste
             geraetefoto_url     // Optional: geraetefoto_url
         );
 
@@ -143,6 +145,7 @@ const updateGeraet = async (req, res) => {
             verantwortlicher_id,
             kategorie_id,
             zustandshinweis = null,
+            packliste = null,
             einkaufspreis = null,
             geraetefoto_url = null,
             kaufdatum = null,
@@ -167,6 +170,7 @@ const updateGeraet = async (req, res) => {
             verantwortlicher_id,
             kategorie_id,
             zustandshinweis,
+            packliste,
             geraetefoto_url
         );
 

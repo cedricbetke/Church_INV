@@ -65,10 +65,23 @@ export const pickDocumentAsDataUrl = async (): Promise<PickedDocument | null> =>
         const input = document.createElement("input");
         input.type = "file";
         input.accept = DOCUMENT_UPLOAD_ACCEPT;
+        input.style.position = "fixed";
+        input.style.left = "-1000px";
+        input.style.top = "-1000px";
+        input.style.width = "1px";
+        input.style.height = "1px";
+        input.style.opacity = "0";
+
+        const cleanup = () => {
+            input.onchange = null;
+            input.oncancel = null;
+            input.remove();
+        };
 
         input.onchange = () => {
             const file = input.files?.[0];
             if (!file) {
+                cleanup();
                 resolve(null);
                 return;
             }
@@ -76,6 +89,7 @@ export const pickDocumentAsDataUrl = async (): Promise<PickedDocument | null> =>
             try {
                 validatePickedDocument(file);
             } catch (error) {
+                cleanup();
                 reject(error);
                 return;
             }
@@ -83,20 +97,31 @@ export const pickDocumentAsDataUrl = async (): Promise<PickedDocument | null> =>
             const reader = new FileReader();
             reader.onload = () => {
                 if (typeof reader.result !== "string") {
+                    cleanup();
                     reject(new Error("Datei konnte nicht gelesen werden."));
                     return;
                 }
 
+                cleanup();
                 resolve({
                     fileName: file.name,
                     mimeType: file.type || "application/octet-stream",
                     dataUrl: reader.result,
                 });
             };
-            reader.onerror = () => reject(new Error("Datei konnte nicht gelesen werden."));
+            reader.onerror = () => {
+                cleanup();
+                reject(new Error("Datei konnte nicht gelesen werden."));
+            };
             reader.readAsDataURL(file);
         };
 
+        input.oncancel = () => {
+            cleanup();
+            resolve(null);
+        };
+
+        document.body.appendChild(input);
         input.click();
     });
 };

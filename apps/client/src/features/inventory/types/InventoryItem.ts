@@ -12,6 +12,7 @@ interface InventoryItem {
     kaufdatum?: Date;
     einkaufspreis?: number;
     zustandshinweis?: string;
+    packliste?: string;
     standort: string;
     verantwortlicher?: string;
     bereich: string;

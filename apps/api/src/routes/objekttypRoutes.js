@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const objekttypController = require('../controllers/objekttypController');
+const requireAdmin = require('../middleware/requireAdmin');
 
 /**
  * @swagger
@@ -136,6 +137,7 @@ router.put('/:id', objekttypController.updateObjekttyp);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', objekttypController.deleteObjekttyp);
+router.post('/:id/merge', requireAdmin, objekttypController.mergeObjekttyp);
+router.delete('/:id', requireAdmin, objekttypController.deleteObjekttyp);
 
 module.exports = router;

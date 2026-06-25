@@ -1,4 +1,5 @@
 const db = require('../config/db'); // Import der DB-Verbindung
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Hersteller = {
     getAll: async () => {
@@ -9,6 +10,11 @@ const Hersteller = {
     getById: async (id) => {
         const [rows] = await db.query('SELECT * FROM hersteller WHERE id = ?', [id]);
         return rows[0];
+    },
+
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM modell WHERE hersteller_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
     },
 
     create: async (name) => {
@@ -24,7 +30,15 @@ const Hersteller = {
     delete: async (id) => {
         await db.query('DELETE FROM hersteller WHERE id = ?', [id]);
         return { message: `Hersteller mit ID ${id} gelöscht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'hersteller',
+        label: 'Hersteller',
+        references: [{ table: 'modell', column: 'hersteller_id' }],
+        sourceId,
+        targetId,
+    })
 };
 
 module.exports = Hersteller;

@@ -49,6 +49,17 @@ const updateStatus = async (req, res) => {
 
 const deleteStatus = async (req, res) => {
     try {
+        const status = await Status.getById(req.params.id);
+        if (!status) return res.status(404).json({ error: 'Status nicht gefunden' });
+
+        const usageCount = await Status.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Status wird noch von Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Status.delete(req.params.id);
         res.json(result);
     } catch (error) {
@@ -56,4 +67,14 @@ const deleteStatus = async (req, res) => {
     }
 };
 
-module.exports = { getAllStatus, getStatusById, createStatus, updateStatus, deleteStatus };
+const mergeStatus = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Status ist erforderlich' });
+        res.json(await Status.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllStatus, getStatusById, createStatus, updateStatus, deleteStatus, mergeStatus };

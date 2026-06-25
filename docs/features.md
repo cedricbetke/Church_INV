@@ -18,6 +18,7 @@ ChurchINV kann aktuell:
 - Geraete anlegen
 - Geraete bearbeiten
 - Geraete loeschen
+- Packliste bzw. einfaches Zubehoer pro Geraet hinterlegen
 - Pflichtfelder und Stammdaten beim Speichern pruefen
 
 ## Stammdaten
@@ -33,7 +34,13 @@ Im aktuellen Stand werden diese Stammdaten genutzt:
 - Person
 - Status
 
-Ein Teil der Pflege ist direkt ueber das Admin-Panel erreichbar.
+Admins koennen alle Stammdaten direkt in der Stammdaten-Maske anlegen und bearbeiten.
+
+Die API und die Stammdaten-Maske nutzen dabei die vorhandenen Datenbankfelder:
+
+- Standort: `name`
+- Person: `vorname`, `nachname`
+- Kategorie: `name`, `bereich_id`
 
 Beim Anlegen eines Geraets gilt aktuell:
 
@@ -56,10 +63,11 @@ Beim Anlegen eines Geraets gilt aktuell:
 - Kaufdatum
 - Einkaufspreis
 - Zustandshinweis
+- Packliste
 
 ## Suche und Tabellenansicht
 
-- Textsuche ueber Inventarnummer, Hersteller, Modell, Objekttyp, Standort, Bereich, Kategorie, verantwortliche Person, Seriennummer, Kaufdatum und Dokumentnamen
+- Textsuche ueber Inventarnummer, Hersteller, Modell, Objekttyp, Standort, Bereich, Kategorie, verantwortliche Person, Seriennummer, Kaufdatum, Packliste und Dokumentnamen
 - Freitextsuche ist toleranter bei Schreibweisen und kombiniert mehrere Suchwoerter robuster
 - Filter als separates Overlay statt inline ueber der Tabelle
 - Filterwerte fuer Status, Hersteller, Modell, Objekttyp, Bereich und Standort kommen alphabetisch sortiert aus der API

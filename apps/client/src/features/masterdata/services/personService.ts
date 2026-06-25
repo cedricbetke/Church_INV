@@ -1,5 +1,11 @@
 import { createCrudService } from "@/src/shared/api/createCrudService";
+import { createMergeService } from "@/src/features/masterdata/services/createMergeService";
 
-const personService = createCrudService<Person, { vorname: string; nachname: string; email: string }>("person");
+type PersonPayload = { vorname: string; nachname: string };
+
+const personService = {
+    ...createCrudService<Person, PersonPayload, PersonPayload>("person"),
+    ...createMergeService("person"),
+};
 
 export default personService;

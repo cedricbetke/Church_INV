@@ -52,6 +52,19 @@ const updateModell = async (req, res) => {
 
 const deleteModell = async (req, res) => {
     try {
+        const modell = await Modell.getById(req.params.id);
+        if (!modell) {
+            return res.status(404).json({ error: 'Modell nicht gefunden' });
+        }
+
+        const usageCount = await Modell.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Modell wird noch von Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Modell.delete(req.params.id);
         res.json(result);
     } catch (error) {
@@ -59,4 +72,14 @@ const deleteModell = async (req, res) => {
     }
 };
 
-module.exports = { getAllModelle, getModellById, createModell, updateModell, deleteModell };
+const mergeModell = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Modell ist erforderlich' });
+        res.json(await Modell.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllModelle, getModellById, createModell, updateModell, deleteModell, mergeModell };

@@ -45,6 +45,17 @@ const updateBereich = async (req, res) => {
 
 const deleteBereich = async (req, res) => {
     try {
+        const bereich = await Bereich.getById(req.params.id);
+        if (!bereich) return res.status(404).json({ error: 'Bereich nicht gefunden' });
+
+        const usageCount = await Bereich.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Bereich wird noch von Kategorien oder Geraeten verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Bereich.delete(req.params.id);
         res.json(result);
     } catch (error) {
@@ -52,4 +63,14 @@ const deleteBereich = async (req, res) => {
     }
 };
 
-module.exports = { getAllBereiche, getBereichById, createBereich, updateBereich, deleteBereich };
+const mergeBereich = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Bereich ist erforderlich' });
+        res.json(await Bereich.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllBereiche, getBereichById, createBereich, updateBereich, deleteBereich, mergeBereich };

@@ -1,4 +1,5 @@
 const db = require('../config/db'); // Import der DB-Verbindung
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Objekttyp = {
     getAll: async () => {
@@ -9,6 +10,11 @@ const Objekttyp = {
     getById: async (id) => {
         const [rows] = await db.query('SELECT * FROM objekttyp WHERE id = ?', [id]);
         return rows[0];
+    },
+
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM modell WHERE objekttyp_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
     },
 
     create: async (name) => {
@@ -24,7 +30,15 @@ const Objekttyp = {
     delete: async (id) => {
         await db.query('DELETE FROM objekttyp WHERE id = ?', [id]);
         return { message: `Objekttyp mit ID ${id} gelöscht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'objekttyp',
+        label: 'Objekttyp',
+        references: [{ table: 'modell', column: 'objekttyp_id' }],
+        sourceId,
+        targetId,
+    })
 };
 
 module.exports = Objekttyp;

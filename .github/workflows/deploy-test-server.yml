@@ -62,7 +62,8 @@ jobs:
           mkdir -p \
             "$PWD/data/uploads/geraete/thumbs" \
             "$PWD/data/uploads/dokumente" \
-            "$PWD/data/mysql"
+            "$PWD/data/mysql" \
+            "$PWD/data/backups"
           find "$PWD/data/uploads" -type d -exec chmod u+rwX {} + 2>/dev/null || true
           find "$PWD/data/uploads" -type f -user "$(id -u)" -exec chmod u+rw {} + 2>/dev/null || true
 
@@ -75,7 +76,11 @@ jobs:
           export API_HOST_PORT="${API_HOST_PORT:-0}"
           export UPLOADS_DIR="$PWD/data/uploads"
           export MYSQL_DATA_DIR="$PWD/data/mysql"
+          export BACKUP_ROOT="$PWD/data/backups"
+          export BACKUP_CONFIG_FILE="$PWD/backup.env"
           docker compose build --pull
+          docker compose up -d db
+          bash scripts/run-db-patches.sh
           docker compose up -d --remove-orphans
 
       - name: Internal healthcheck

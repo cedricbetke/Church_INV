@@ -7,6 +7,7 @@ export interface FormData {
     kaufdatum: string;
     einkaufspreis: string;
     zustandshinweis: string;
+    packliste: string;
     standort: string;
     bereich: string;
     kategorie: string;

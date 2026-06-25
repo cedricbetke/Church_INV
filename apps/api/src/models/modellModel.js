@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Modell = {
     getAll: async () => {
@@ -9,6 +10,11 @@ const Modell = {
     getById: async (id) => {
         const [rows] = await db.query('SELECT * FROM modell WHERE id = ?', [id]);
         return rows[0];
+    },
+
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE modell_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
     },
 
     create: async (name, hersteller_id, objekttyp_id = null) => {
@@ -32,7 +38,15 @@ const Modell = {
     delete: async (id) => {
         await db.query('DELETE FROM modell WHERE id = ?', [id]);
         return { message: `Modell mit ID ${id} geloescht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'modell',
+        label: 'Modell',
+        references: [{ table: 'geraet', column: 'modell_id' }],
+        sourceId,
+        targetId,
+    })
 };
 
 module.exports = Modell;

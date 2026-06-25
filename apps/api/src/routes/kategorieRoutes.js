@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const kategorieController = require('../controllers/kategorieController');
+const requireAdmin = require('../middleware/requireAdmin');
 
 /**
  * @swagger
@@ -144,6 +145,7 @@ router.put('/:id', kategorieController.updateKategorie);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', kategorieController.deleteKategorie);
+router.post('/:id/merge', requireAdmin, kategorieController.mergeKategorie);
+router.delete('/:id', requireAdmin, kategorieController.deleteKategorie);
 
 module.exports = router;

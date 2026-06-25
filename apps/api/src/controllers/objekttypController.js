@@ -45,6 +45,17 @@ const updateObjekttyp = async (req, res) => {
 
 const deleteObjekttyp = async (req, res) => {
     try {
+        const objekttyp = await Objekttyp.getById(req.params.id);
+        if (!objekttyp) return res.status(404).json({ error: 'Objekttyp nicht gefunden' });
+
+        const usageCount = await Objekttyp.getUsageCount(req.params.id);
+        if (usageCount > 0) {
+            return res.status(409).json({
+                error: 'Objekttyp wird noch von Modellen verwendet und kann nicht geloescht werden.',
+                usageCount,
+            });
+        }
+
         const result = await Objekttyp.delete(req.params.id);
         res.json(result);
     } catch (error) {
@@ -52,4 +63,14 @@ const deleteObjekttyp = async (req, res) => {
     }
 };
 
-module.exports = { getAllObjekttypen, getObjekttypById, createObjekttyp, updateObjekttyp, deleteObjekttyp };
+const mergeObjekttyp = async (req, res) => {
+    try {
+        const { targetId } = req.body;
+        if (!targetId) return res.status(400).json({ error: 'Ziel-Objekttyp ist erforderlich' });
+        res.json(await Objekttyp.merge(req.params.id, targetId));
+    } catch (error) {
+        res.status(error.statusCode || 500).json({ error: error.message });
+    }
+};
+
+module.exports = { getAllObjekttypen, getObjekttypById, createObjekttyp, updateObjekttyp, deleteObjekttyp, mergeObjekttyp };

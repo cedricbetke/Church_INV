@@ -74,6 +74,8 @@ create table if not exists geraet
     serien_nr           int            null,
     kaufdatum           date           null,
     einkaufspreis       decimal(10, 2) null,
+    zustandshinweis     text           null,
+    packliste           text           null,
     standort_id         int            null,
     verantwortlicher_id int            null,
     bereich_id          int            not null,

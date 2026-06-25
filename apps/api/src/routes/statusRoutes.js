@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const statusController = require('../controllers/statusController');
+const requireAdmin = require('../middleware/requireAdmin');
 
 /**
  * @swagger
@@ -150,6 +151,7 @@ router.put('/:id', statusController.updateStatus);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', statusController.deleteStatus);
+router.post('/:id/merge', requireAdmin, statusController.mergeStatus);
+router.delete('/:id', requireAdmin, statusController.deleteStatus);
 
 module.exports = router;

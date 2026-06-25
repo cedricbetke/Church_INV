@@ -20,6 +20,7 @@ import/sharepoint-storage-state.json
 apps/client/app/*.js
 apps/client/src/**/*.js
 scripts/*.js
+scripts/dev-test-db.ps1
 apps/api/src/app.js
 apps/api/src/server.js
 apps/api/src/config/loadEnv.js
@@ -36,3 +37,5 @@ expo-env.d.ts
 # local deploy keys
 github-actions-churchinv
 github-actions-churchinv.pub
+codex-usage.json
+scripts/codex-log-summary.used.log

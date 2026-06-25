@@ -11,8 +11,9 @@ interface SelectionDialogProps {
     onSearchChange: (text: string) => void;
     items: Array<{ id: number; name: string }>;
     onSelect: (name: string) => void;
+    onSelectItem?: (item: { id: number; name: string }) => void;
     onAddNew: () => Promise<void>;
-    canCreateNew: boolean;
+    canCreateNew?: boolean;
     isNewItem: boolean;
 }
 
@@ -24,8 +25,9 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
     onSearchChange,
     items,
     onSelect,
+    onSelectItem,
     onAddNew,
-    canCreateNew,
+    canCreateNew = false,
     isNewItem,
 }) => {
     const { isDarkMode } = useAppThemeMode();
@@ -70,7 +72,10 @@ const SelectionDialog: React.FC<SelectionDialogProps> = ({
                             <List.Item
                                 key={item.id}
                                 title={item.name}
-                                onPress={() => onSelect(item.name)}
+                                onPress={() => {
+                                    onSelectItem?.(item);
+                                    onSelect(item.name);
+                                }}
                                 style={[styles.listItem, isDarkMode && styles.listItemDark]}
                                 titleStyle={isDarkMode ? styles.listItemTitleDark : undefined}
                             />

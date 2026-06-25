@@ -2,16 +2,61 @@
   "app": "ChurchINV",
   "entries": [
     {
+      "version": "0.7.18",
+      "date": "2026-06-25",
+      "title": "Spaltenauswahl der Inventarliste gespeichert",
+      "summary": "Die Web-App merkt sich die ausgewaehlten Spalten der Inventaruebersicht im Browser und stellt sie beim naechsten Oeffnen wieder her.",
+      "items": [
+        "Die Sichtbarkeit der Inventarspalten wird lokal im Browser gespeichert",
+        "Beim erneuten Oeffnen der Inventaruebersicht wird die letzte Spaltenauswahl wiederhergestellt",
+        "Gesperrte Pflichtspalten bleiben weiterhin sichtbar",
+        "Neue oder unbekannte Spalten fallen automatisch auf die Standardauswahl zurueck"
+      ]
+    },
+    {
       "version": "0.7.17",
       "date": "2026-06-24",
-      "title": "Mobile Bedienung und Inventaruebersicht verbessert",
-      "summary": "Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen.",
+      "title": "Mobile Bedienung, Inventaruebersicht und Stammdaten verbessert",
+      "summary": "Der QR-Scan wird im Web nur noch angeboten, wenn der Browser Kamera-Zugriff auch erlauben kann. Ausserdem kann die Inventaruebersicht jetzt weitere Detailfelder als optionale Spalten anzeigen, und Stammdaten koennen kontrolliert bereinigt werden.",
       "items": [
         "Die QR-Aktion in der Inventarsuche wird bei unsicheren Web-Kontexten wie HTTP ueber LAN-IP ausgeblendet",
         "Die QR-Aktion in der Buchungs-Geraeteauswahl nutzt dieselbe Verfuegbarkeitspruefung",
         "Der Scanner bleibt ueber localhost, HTTPS und in der mobilen App sichtbar",
         "Falls der Scanner trotzdem in einem unsicheren Browser-Kontext geoeffnet wird, erscheint eine lesbare Hinweismeldung statt schlecht erkennbarem Text",
-        "Unter Spalten kann die Inventaruebersicht jetzt Seriennummer, Objekttyp, Kategorie, Verantwortlichen, Kaufdatum, Einkaufspreis und Zustandshinweis einblenden"
+        "Unter Spalten kann die Inventaruebersicht jetzt Seriennummer, Objekttyp, Kategorie, Verantwortlichen, Kaufdatum, Einkaufspreis und Zustandshinweis einblenden",
+        "Admins sehen in der Stammdaten-Maske jetzt Hersteller, Objekttypen, Modelle, Status, Bereiche, Standorte, Kategorien und Personen in einer uebersichtlicheren Tab-Navigation",
+        "Admins koennen dort unbenutzte Stammdaten loeschen",
+        "Stammdaten, die noch von anderen Stammdaten oder Geraeten verwendet werden, werden beim Loeschen serverseitig blockiert",
+        "Die Nutzungsanzeige der Stammdaten wird jetzt zentral von der API berechnet statt im Browser pro Zeile aus der Inventarliste abgeleitet",
+        "Die Stammdaten-Maske rendert nur noch den aktiven Tab und wird nach Admin-Freigabe im Hintergrund vorgeladen",
+        "Alle Stammdaten-Tabs koennen jetzt direkt in der Maske angelegt und bearbeitet werden",
+        "Die Stammdaten-Maske ist jetzt als kompakter Admin-Arbeitsbereich mit seitlicher Navigation und klarerem Editor aufgebaut",
+        "Stammdaten koennen in allen Tabs per Auswahlmodus zusammengefuehrt werden, um doppelte oder falsch angelegte Eintraege sauber zu bereinigen",
+        "Beim Zusammenfuehren verschiebt die API bestehende Verwendungen auf den gewaehlten Zieleintrag und loescht danach den doppelten Quelleintrag"
+      ]
+    },
+    {
+      "version": "0.7.16",
+      "date": "2026-06-21",
+      "title": "Dokumentauswahl in Safari stabilisiert",
+      "summary": "Der Dokument-Upload im Inventarformular ist fuer Safari auf macOS robuster. Ausgewaehlte Dateien werden nach dem Oeffnen des Datei-Dialogs zuverlaessiger in die Dokumentliste uebernommen.",
+      "items": [
+        "Der Web-Dokumentpicker haengt den Datei-Input fuer die Auswahl kurz unsichtbar ins DOM ein",
+        "Safari auf macOS uebernimmt ausgewaehlte Dokumente dadurch zuverlaessiger in den Add- und Edit-Flow",
+        "Nach Auswahl, Abbruch oder Lesefehler wird der temporaere Datei-Input wieder sauber entfernt",
+        "Chrome und iPad-Safari behalten den bestehenden Upload-Ablauf bei"
+      ]
+    },
+    {
+      "version": "0.7.15",
+      "date": "2026-06-03",
+      "title": "Dokument-Uploads im Serverbetrieb stabilisiert",
+      "summary": "Dokument-Uploads funktionieren im Docker-Deployment jetzt auch fuer groessere erlaubte Dateien zuverlaessiger. Der Web-Proxy akzeptiert Upload-Requests passend zum App-Limit, und technische HTML-Fehlerseiten werden im Formular nicht mehr direkt angezeigt.",
+      "items": [
+        "Der nginx-Client-Container erlaubt jetzt Requests bis 20 MB, damit Dokumente bis 10 MB auch mit Base64-Overhead durch den Proxy kommen",
+        "Fehlerseiten von nginx werden im Inventarformular nicht mehr als HTML angezeigt",
+        "Bei zu grossen Uploads zeigt die App jetzt eine lesbare Meldung statt einer technischen Serverantwort",
+        "Der Production-Deploy ist auf den dedizierten Production-Runner gepinnt, damit Production nicht versehentlich auf dem Testserver-Runner ausgefuehrt wird"
       ]
     },
     {

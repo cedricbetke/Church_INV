@@ -553,6 +553,7 @@ const AddPage: React.FC<AddPageProps> = ({
                 kaufdatum: formData.kaufdatum || undefined,
                 einkaufspreis: formData.einkaufspreis ? parsePrice(formData.einkaufspreis.trim()) : undefined,
                 zustandshinweis: formData.zustandshinweis.trim() || undefined,
+                packliste: formData.packliste.trim() || undefined,
                 geraetefoto_url: finalUploadedPhotoPath,
             };
 

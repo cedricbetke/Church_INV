@@ -8,7 +8,12 @@ import { CreateGeraetPayload } from "@/src/features/inventory/types/CreateGeraet
 import { Column } from "./dataTable";
 import DataTableComponent from "./dataTable";
 import geraeteService from "@/src/features/inventory/services/geraeteService";
-import { readStoredItemsPerPage, writeStoredItemsPerPage } from "@/src/shared/utils/inventoryTableStorage";
+import {
+    readStoredColumnVisibility,
+    readStoredItemsPerPage,
+    writeStoredColumnVisibility,
+    writeStoredItemsPerPage,
+} from "@/src/shared/utils/inventoryTableStorage";
 
 const DetailModal = React.lazy(() => import("./DetailPage"));
 const AddPage = React.lazy(() => import("./AddPage"));
@@ -27,6 +32,7 @@ const DEFAULT_COLUMNS: Column[] = [
     { title: "Kaufdatum", key: "kaufdatum", numeric: false, sortDirection: undefined, visible: false },
     { title: "Einkaufspreis", key: "einkaufspreis", numeric: false, sortDirection: undefined, visible: false },
     { title: "Zustandshinweis", key: "zustandshinweis", numeric: false, sortDirection: undefined, visible: false },
+    { title: "Packliste", key: "packliste", numeric: false, sortDirection: undefined, visible: false },
     { title: "Foto", key: "foto", numeric: false, sortDirection: undefined, visible: true },
 ];
 
@@ -132,7 +138,7 @@ const InvTable = () => {
     const [itemsPerPage, setItemsPerPage] = useState(() => readStoredItemsPerPage(numberOfItemsPerPageList, defaultItemsPerPage));
     const [visibleModal, setVisibleModal] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-    const [columns, setColumns] = useState<Column[]>(DEFAULT_COLUMNS);
+    const [columns, setColumns] = useState<Column[]>(() => readStoredColumnVisibility(DEFAULT_COLUMNS));
     const [isMounted, setIsMounted] = useState(Platform.OS !== "web");
 
     useEffect(() => {
@@ -178,6 +184,10 @@ const InvTable = () => {
     useEffect(() => {
         writeStoredItemsPerPage(itemsPerPage);
     }, [itemsPerPage]);
+
+    useEffect(() => {
+        writeStoredColumnVisibility(columns);
+    }, [columns]);
 
     const handleItemsPerPageChange = (nextItemsPerPage: number) => {
         setItemsPerPage(nextItemsPerPage);
@@ -318,6 +328,8 @@ const InvTable = () => {
                 return compareValues(left.einkaufspreis, right.einkaufspreis, activeSortColumn.sortDirection);
             case "zustandshinweis":
                 return compareValues(left.zustandshinweis, right.zustandshinweis, activeSortColumn.sortDirection);
+            case "packliste":
+                return compareValues(left.packliste, right.packliste, activeSortColumn.sortDirection);
             case "foto":
                 return compareValues(
                     left.geraeteFoto ? 1 : 0,
@@ -397,6 +409,3 @@ const styles = StyleSheet.create({
 });
 
 export default InvTable;
-
-
-

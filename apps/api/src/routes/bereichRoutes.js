@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bereichController = require('../controllers/bereichController');
+const requireAdmin = require('../middleware/requireAdmin');
 
 /**
  * @swagger
@@ -135,6 +136,7 @@ router.put('/:id', bereichController.updateBereich);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.delete('/:id', bereichController.deleteBereich);
+router.post('/:id/merge', requireAdmin, bereichController.mergeBereich);
+router.delete('/:id', requireAdmin, bereichController.deleteBereich);
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const db = require('../config/db'); // Import der DB-Verbindung
+const { mergeMasterdata } = require('./masterdataMergeModel');
 
 const Person = {
     getAll: async () => {
@@ -11,26 +12,40 @@ const Person = {
         return rows[0];
     },
 
-    create: async (vorname, nachname, email) => {
-        const [result] = await db.query(
-            'INSERT INTO person (vorname, nachname, email) VALUES (?, ?, ?)',
-            [vorname, nachname, email]
-        );
-        return { id: result.insertId, vorname, nachname, email };
+    getUsageCount: async (id) => {
+        const [rows] = await db.query('SELECT COUNT(*) AS count FROM geraet WHERE verantwortlicher_id = ?', [id]);
+        return Number(rows[0]?.count ?? 0);
     },
 
-    update: async (id, vorname, nachname, email) => {
-        await db.query(
-            'UPDATE person SET vorname = ?, nachname = ?, email = ? WHERE id = ?',
-            [vorname, nachname, email, id]
+    create: async (vorname, nachname) => {
+        const [result] = await db.query(
+            'INSERT INTO person (vorname, nachname) VALUES (?, ?)',
+            [vorname, nachname]
         );
-        return { id, vorname, nachname, email };
+        return { id: result.insertId, vorname, nachname };
+    },
+
+    update: async (id, vorname, nachname) => {
+        await db.query(
+            'UPDATE person SET vorname = ?, nachname = ? WHERE id = ?',
+            [vorname, nachname, id]
+        );
+        return { id, vorname, nachname };
     },
 
     delete: async (id) => {
         await db.query('DELETE FROM person WHERE id = ?', [id]);
         return { message: `Person mit ID ${id} gelöscht` };
-    }
+    },
+
+    merge: async (sourceId, targetId) => mergeMasterdata({
+        table: 'person',
+        label: 'Person',
+        references: [{ table: 'geraet', column: 'verantwortlicher_id' }],
+        sourceId,
+        targetId,
+        selectColumns: 'id, vorname, nachname',
+    })
 };
 
 module.exports = Person;
